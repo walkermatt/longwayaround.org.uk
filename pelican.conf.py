@@ -14,11 +14,13 @@ DEFAULT_LANG='en'
 LINKS =  ()
 
 # Social widget
-SOCIAL = (('linkedin', 'http://uk.linkedin.com/in/walkermatt'),
-        ('twitter', 'http://twitter.com/_walkermatt'),
+SOCIAL = (
+        ('linkedin', 'http://uk.linkedin.com/in/walkermatt'),
         ('delicious', 'http://delicious.com/walkermatt'),
+        ('github', 'http://github.com/organizations/AstunTechnology'),
         ('github', 'http://github.com/walkermatt'),
-        ('github', 'http://github.com/organizations/AstunTechnology'))
+        ('twitter', 'http://twitter.com/_walkermatt')
+)
 
 DEFAULT_PAGINATION = False
 

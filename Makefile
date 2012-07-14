@@ -7,9 +7,9 @@ INPUTDIR=$(BASEDIR)/src
 OUTPUTDIR=$(BASEDIR)/output
 CONFFILE=$(BASEDIR)/pelican.conf.py
 
-FTP_HOST=ftp.longwayaround.org.uk
-FTP_USER=user
-FTP_TARGET_DIR=/
+FTP_HOST=longwayaround.org.uk
+FTP_USER=longwaya
+FTP_TARGET_DIR=/public_html/test
 
 help:
 	@echo 'Makefile for a pelican Web site                                       '
@@ -40,7 +40,7 @@ ssh_upload: $(OUTPUTDIR)/index.html
 	scp -r $(OUTPUTDIR)/* $(SSH_USER)@$(SSH_HOST):$(SSH_TARGET_DIR)
 
 ftp_upload: $(OUTPUTDIR)/index.html
-	lftp ftp://$(FTP_USER)@$(FTP_HOST) -e "mirror -R $(OUTPUT_DIR)/* $(FTP_TARGET_DIR) ; quit"
+	lftp -e "set ftp:ssl-allow off ; mirror -R $(OUTPUTDIR) $(FTP_TARGET_DIR) ; quit" ftp://$(FTP_USER)@$(FTP_HOST)
 
 github: $(OUTPUTDIR)/index.html
 	ghp-import $(OUTPUTDIR)
