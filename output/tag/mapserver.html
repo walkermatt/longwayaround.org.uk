@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <title>longwayaround.org.uk - Mapserver</title>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href=".././theme/css/main.css" type="text/css" />
+        <link href=".././feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="longwayaround.org.uk ATOM Feed" />
+        
+        <link href=".././feeds/all.rss.xml" type="application/atom+xml" rel="alternate" title="longwayaround.org.uk RSS Feed" />
+        
+
+        <!--[if IE]>
+                <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+        <!--[if lte IE 7]>
+                <link rel="stylesheet" type="text/css" media="all" href=".././css/ie.css"/>
+                <script src=".././js/IE8.js" type="text/javascript"></script><![endif]-->
+
+        <!--[if lt IE 7]>
+                <link rel="stylesheet" type="text/css" media="all" href=".././css/ie6.css"/><![endif]-->
+
+</head>
+
+<body id="index" class="home">
+
+        <header id="banner" class="body">
+                <h1><a href="../.">longwayaround.org.uk  <strong>taking the scenic route and enjoying the journey</strong></a></h1>
+                <nav>
+                <ul>
+                
+                
+                
+                    <li><a href=".././pages/about/">about</a></li>
+                
+                
+                
+                    <li ><a href=".././notes/">notes</a></li>
+                
+                </ul>
+                </nav>
+                
+                    <ul class="social">
+                        <li><a href=".././feeds/all.atom.xml" rel="alternate"><img src=".././theme/images/icons/gosquared/18/rss.png" title="atom" width="18" height="18" /></a></li>
+                        
+                        <li><a href=".././feeds/all.rss.xml" rel="alternate"><img src=".././theme/images/icons/gosquared/18/rss.png" title="rss" width="18" height="18" /></a></li>
+                        
+                    
+                    <li><a href="http://uk.linkedin.com/in/walkermatt"><img src=".././theme/images/icons/gosquared/18/linkedin.png" title="linkedin" width="18" height="18" /></a></li>
+                    
+                    <li><a href="http://twitter.com/_walkermatt"><img src=".././theme/images/icons/gosquared/18/twitter.png" title="twitter" width="18" height="18" /></a></li>
+                    
+                    <li><a href="http://delicious.com/walkermatt"><img src=".././theme/images/icons/gosquared/18/delicious.png" title="delicious" width="18" height="18" /></a></li>
+                    
+                    <li><a href="http://github.com/walkermatt"><img src=".././theme/images/icons/gosquared/18/github.png" title="github" width="18" height="18" /></a></li>
+                    
+                    <li><a href="http://github.com/organizations/AstunTechnology"><img src=".././theme/images/icons/gosquared/18/github.png" title="github" width="18" height="18" /></a></li>
+                    
+                    </ul>
+                
+        </header><!-- /#banner -->
+        
+
+    
+
+        
+        
+            <aside id="featured" class="body">
+                <article>
+                    <h1 class="entry-title"><a href=".././notes/greyscale-maps-with-mapserver/">Greyscale maps with MapServer</a></h1> 
+                    <footer class="post-info">
+        <abbr class="published" title="2012-02-02T21:31:00">
+                Thu 02 February 2012
+        </abbr>
+
+        
+        <address class="vcard author">
+                By <a class="url fn" href=".././author/walkermatt.html">walkermatt</a>
+        </address>
+        
+<p>In <a href=".././category/notes.html">notes</a>. </p>
+<p>tags: <a href=".././tag/Mapserver.html">Mapserver</a></p>
+
+
+</footer><!-- /.post-info --><p>There have been a few times in the past (such as when I was preparing the base mapping for <a class="reference external" href="http://mywycombe.wycombe.gov.uk/?tab=2">My Wycombe</a>) when I've wanted to create greyscale base mapping using <a class="reference external" href="http://mapserver.org">MapServer</a>. Previously I've experimented with various processing options for raster images (with varying degrees of success), converting the source images using <a class="reference external" href="../static/www.imagemagick.org">ImageMagick</a> and converting colour RGB values to their greyscale equivalent for vector features and it's generally been time consuming.  Today the requirement came up again and I discovered a far simpler option: specifying a greyscale palette as an OUTPUTFORMAT FORMATOPTION.  The palette simply contains grey values from 0,0,0 (black) to 255,255,255 (white) and all values in between. MapServer then does the job of converting the colours for your source data into their greyscale equivalents.</p>
+<p>In the map file specify an <a class="reference external" href="http://mapserver.org/mapfile/outputformat.html">OUTPUTFORMAT</a> that used a specific palette:</p>
+<pre class="literal-block">
+# Specify a plain PNG output with a
+
+# greyscale palette
+
+IMAGETYPE &quot;AGG_PNG&quot;
+
+OUTPUTFORMAT
+
+    NAME  &quot;AGG_PNG&quot;
+
+    DRIVER  &quot;AGG/PNG&quot;
+
+    MIMETYPE &quot;image/png&quot;
+
+    IMAGEMODE &quot;RGB&quot;
+
+    EXTENSION &quot;png&quot;
+
+    FORMATOPTION &quot;INTERLACE=OFF&quot;
+
+    FORMATOPTION &quot;PALETTE_FORCE=ON&quot;
+
+    FORMATOPTION &quot;PALETTE=grey.txt&quot;
+
+END
+</pre>
+<p>Snippet from the palette file (<a class="reference external" href="http://longwayaround.org.uk/wordpress/wp-content/uploads/2012/02/grey.txt">download the full version</a>):</p>
+<pre class="literal-block">
+0,0,0
+
+1,1,1
+
+2,2,2
+
+--- you get the idea ---
+
+253,253,253
+
+254,254,254
+
+255,255,255
+</pre>
+<p>BTW I used the following Python to generate the values for the palette:</p>
+<div class="highlight"><pre><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">256</span><span class="p">):</span>
+
+    <span class="k">print</span> <span class="s">&#39;</span><span class="si">%i</span><span class="s">,</span><span class="si">%i</span><span class="s">,</span><span class="si">%i</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">)</span>
+</pre></div>
+<p><a href=".././notes/greyscale-maps-with-mapserver/#disqus_thread">comments</a>.</p>
+                </article>
+                
+                    
+                
+            </aside><!-- /#featured -->
+            
+        
+        
+        
+
+    
+
+
+        <section id="extras" class="body">
+        
+        </section><!-- /#extras -->
+
+        <footer id="contentinfo" class="body">
+                <address id="about" class="vcard body">
+                    <h3>Credits</h3>
+                    Powered by <a href="http://alexis.notmyidea.org/pelican/">Pelican</a> and <a href="http://python.org">Python</a>, using a modified <a href="http://coding.smashingmagazine.com/2009/08/04/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a> theme, background from <a href="http://subtlepatterns.com">Subtle Patterns</a> and icons from <a href="https://www.gosquared.com/blog/archives/2925">GoSocial</a>.
+                </address><!-- /#about -->
+        </footer><!-- /#contentinfo -->
+
+
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'longwayaroundorguk';
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
+
+</body>
+</html>

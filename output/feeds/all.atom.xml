@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>longwayaround.org.uk</title><link href="/" rel="alternate"></link><link href="/feeds/all.atom.xml" rel="self"></link><id>/</id><updated>2012-07-02T21:06:00+01:00</updated><entry><title>Using Leaflet with a custom projection and a MapProxy TMS</title><link href="/notes/using-leaflet-with-a-custom-projection-and-a-mapproxy-tms/" rel="alternate"></link><updated>2012-07-02T21:06:00+01:00</updated><author><name>walkermatt</name></author><id>tag:,2012-07-02:notes/using-leaflet-with-a-custom-projection-and-a-mapproxy-tms/</id><summary type="html">&lt;p&gt;&lt;a class="reference external" href="http://leaflet.cloudmade.com/"&gt;Leaflet&lt;/a&gt; is a lightweight JavaScript
+slippy map client well suited to use on mobile devices. It’s seen as an
+alternative to &lt;a class="reference external" href="http://openlayers.org/"&gt;OpenLayers&lt;/a&gt; but takes a
+different approach focusing on a small easy to use set of features.&lt;/p&gt;
+&lt;p&gt;By default Leaflet allow you to display a map in one of the common
+projections used to display tiles in the Google and
+&lt;a class="reference external" href="http://www.openstreetmap.org/"&gt;OSM&lt;/a&gt; tile schemes and the vast
+majority of examples you see use these. It is however possible to use
+another projection such as a local projection like British National Grid
+thanks to &lt;a class="reference external" href="https://github.com/kartena/Proj4Leaflet"&gt;Proj4Leaflet&lt;/a&gt;
+which allows you to provide a &lt;a class="reference external" href="http://trac.osgeo.org/proj/"&gt;Proj4&lt;/a&gt;
+projection definition and Transformation and scale functions which map
+projected coordinates to grid coordinates at a given zoom.&lt;/p&gt;
+&lt;p&gt;Setting up the definition is straight forward thanks to
+&lt;a class="reference external" href="http://spatialreference.org"&gt;spatialreference.org&lt;/a&gt; which allows you
+to look-up most projections and their definitions. In my case the
+Transformation and scale functions also turned out to be simple after a
+little trial and error.&lt;/p&gt;
+&lt;p&gt;I’ve been using a TMS layer provided by one of the MapProxy instances
+that form part of Astun Data Services, the configuration of which was as
+simple as providing a URL template and setting the &lt;tt class="docutils literal"&gt;TileLayer&lt;/tt&gt; scheme
+to &lt;tt class="docutils literal"&gt;tms&lt;/tt&gt;.&lt;/p&gt;
+&lt;p&gt;I’ve posted an example JavaScript snippet as a GitHub Gist with some
+notes here:
+&lt;a class="reference external" href="https://gist.github.com/3034742"&gt;https://gist.github.com/3034742&lt;/a&gt;&lt;/p&gt;
+</summary><category term="leaflet"></category><category term="mapproxy"></category></entry><entry><title>Greyscale maps with MapServer</title><link href="/notes/greyscale-maps-with-mapserver/" rel="alternate"></link><updated>2012-02-02T21:31:00+00:00</updated><author><name>walkermatt</name></author><id>tag:,2012-02-02:notes/greyscale-maps-with-mapserver/</id><summary type="html">&lt;p&gt;There have been a few times in the past (such as when I was preparing the base mapping for &lt;a class="reference external" href="http://mywycombe.wycombe.gov.uk/?tab=2"&gt;My Wycombe&lt;/a&gt;) when I've wanted to create greyscale base mapping using &lt;a class="reference external" href="http://mapserver.org"&gt;MapServer&lt;/a&gt;. Previously I've experimented with various processing options for raster images (with varying degrees of success), converting the source images using &lt;a class="reference external" href="www.imagemagick.org"&gt;ImageMagick&lt;/a&gt; and converting colour RGB values to their greyscale equivalent for vector features and it's generally been time consuming.  Today the requirement came up again and I discovered a far simpler option: specifying a greyscale palette as an OUTPUTFORMAT FORMATOPTION.  The palette simply contains grey values from 0,0,0 (black) to 255,255,255 (white) and all values in between. MapServer then does the job of converting the colours for your source data into their greyscale equivalents.&lt;/p&gt;
+&lt;p&gt;In the map file specify an &lt;a class="reference external" href="http://mapserver.org/mapfile/outputformat.html"&gt;OUTPUTFORMAT&lt;/a&gt; that used a specific palette:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+# Specify a plain PNG output with a
+
+# greyscale palette
+
+IMAGETYPE &amp;quot;AGG_PNG&amp;quot;
+
+OUTPUTFORMAT
+
+    NAME  &amp;quot;AGG_PNG&amp;quot;
+
+    DRIVER  &amp;quot;AGG/PNG&amp;quot;
+
+    MIMETYPE &amp;quot;image/png&amp;quot;
+
+    IMAGEMODE &amp;quot;RGB&amp;quot;
+
+    EXTENSION &amp;quot;png&amp;quot;
+
+    FORMATOPTION &amp;quot;INTERLACE=OFF&amp;quot;
+
+    FORMATOPTION &amp;quot;PALETTE_FORCE=ON&amp;quot;
+
+    FORMATOPTION &amp;quot;PALETTE=grey.txt&amp;quot;
+
+END
+&lt;/pre&gt;
+&lt;p&gt;Snippet from the palette file (&lt;a class="reference external" href="http://longwayaround.org.uk/wordpress/wp-content/uploads/2012/02/grey.txt"&gt;download the full version&lt;/a&gt;):&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+0,0,0
+
+1,1,1
+
+2,2,2
+
+--- you get the idea ---
+
+253,253,253
+
+254,254,254
+
+255,255,255
+&lt;/pre&gt;
+&lt;p&gt;BTW I used the following Python to generate the values for the palette:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;256&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+
+    &lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;&lt;/span&gt;&lt;span class="si"&gt;%i&lt;/span&gt;&lt;span class="s"&gt;,&lt;/span&gt;&lt;span class="si"&gt;%i&lt;/span&gt;&lt;span class="s"&gt;,&lt;/span&gt;&lt;span class="si"&gt;%i&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+</summary><category term="Mapserver"></category></entry><entry><title>Disaggregate MultiLineStrings using ST_Dump PostGIS</title><link href="/notes/disaggregate-multilinestrings-using-st_dump-postgis/" rel="alternate"></link><updated>2011-11-24T21:39:00+00:00</updated><author><name>walkermatt</name></author><id>tag:,2011-11-24:notes/disaggregate-multilinestrings-using-st_dump-postgis/</id><summary type="html">&lt;p&gt;PostGIS the spatial extension to the PostgreSQL database provides a host of functions for querying, creating and manipulating geometries within the database. ST_Dump allows you to disaggregate collection and multi geometries such as MultiPolygon and MultiLineSting easily. The example below demonstrates starting with a table that contains one row with a MultiLineString geometry and another with a LineString and running a query to disaggregate returning three rows all with a LineString geometry.&lt;/p&gt;
+&lt;p&gt;Create a table for our demo data:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;CREATE&lt;/span&gt; &lt;span class="k"&gt;TABLE&lt;/span&gt; &lt;span class="n"&gt;complex&lt;/span&gt;
+
+&lt;span class="p"&gt;(&lt;/span&gt;
+
+   &lt;span class="n"&gt;id&lt;/span&gt; &lt;span class="nb"&gt;serial&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+
+   &lt;span class="ss"&gt;&amp;quot;name&amp;quot;&lt;/span&gt; &lt;span class="nb"&gt;text&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+
+   &lt;span class="n"&gt;geom&lt;/span&gt; &lt;span class="n"&gt;geometry&lt;/span&gt;
+
+&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Insert one row with a MultiLineString with two parts ('Bob') and another with a single LineString ('Harry')&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;INSERT&lt;/span&gt; &lt;span class="k"&gt;INTO&lt;/span&gt; &lt;span class="n"&gt;complex&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;geom&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+  &lt;span class="k"&gt;VALUES&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;
+
+    &lt;span class="s1"&gt;&amp;#39;Bob&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+
+    &lt;span class="n"&gt;ST_GeomFromEWKT&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;MULTILINESTRING((498376.89 651569.6,498372.28 651571.89),(498372.28 651571.89,498371.77 651576.05))&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+  &lt;span class="p"&gt;);&lt;/span&gt;
+
+
+
+&lt;span class="k"&gt;INSERT&lt;/span&gt; &lt;span class="k"&gt;INTO&lt;/span&gt; &lt;span class="n"&gt;complex&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;geom&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+  &lt;span class="k"&gt;VALUES&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;
+
+    &lt;span class="s1"&gt;&amp;#39;Harry&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+
+    &lt;span class="n"&gt;ST_GeomFromEWKT&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;LINESTRING(598376.89 751569.6,398372.75 658771.03)&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+  &lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Query to show we have two rows one of which has a MultiLineString geometry:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;SELECT&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;ST_GeometryType&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;geom&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;geom_type&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;ST_AsEWKT&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;geom&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;geom_wkt&lt;/span&gt; &lt;span class="k"&gt;from&lt;/span&gt; &lt;span class="n"&gt;complex&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Results:&lt;/p&gt;
+&lt;table border="1" class="docutils"&gt;
+&lt;colgroup&gt;
+&lt;col width="2%" /&gt;
+&lt;col width="4%" /&gt;
+&lt;col width="18%" /&gt;
+&lt;col width="13%" /&gt;
+&lt;col width="62%" /&gt;
+&lt;/colgroup&gt;
+&lt;thead valign="bottom"&gt;
+&lt;tr&gt;&lt;th class="head"&gt;id&lt;/th&gt;
+&lt;th class="head"&gt;name&lt;/th&gt;
+&lt;th class="head"&gt;geom&lt;/th&gt;
+&lt;th class="head"&gt;geom_type&lt;/th&gt;
+&lt;th class="head"&gt;geom_wkt&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr&gt;&lt;td&gt;1&lt;/td&gt;
+&lt;td&gt;Bob&lt;/td&gt;
+&lt;td&gt;010500000002000000010200...&lt;/td&gt;
+&lt;td&gt;ST_MultiLineString&lt;/td&gt;
+&lt;td&gt;MULTILINESTRING((498376.89 651569.6,498372.28 651571.89),(498372.28 651571.89,498371.77 651576.05))&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;2&lt;/td&gt;
+&lt;td&gt;Harry&lt;/td&gt;
+&lt;td&gt;0102000000020000007B14AE...&lt;/td&gt;
+&lt;td&gt;ST_LineString&lt;/td&gt;
+&lt;td&gt;LINESTRING(598376.89 751569.6,598372.28 751571.89)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Use the ST_Dump function to split the row with a MultiLineString into two rows each with a LineString and generate a decimal id composed of the original rows id and the LineString's position in the MultiLineString as the fractional part so that each row still has a unique id that's derived from it's original id:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;SELECT&lt;/span&gt;
+
+  &lt;span class="n"&gt;COALESCE&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="k"&gt;simple&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;id&lt;/span&gt; &lt;span class="o"&gt;||&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;.&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;||&lt;/span&gt; &lt;span class="k"&gt;simple&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]::&lt;/span&gt;&lt;span class="nb"&gt;text&lt;/span&gt;&lt;span class="p"&gt;)::&lt;/span&gt;&lt;span class="nb"&gt;float&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;simple&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;id&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+
+  &lt;span class="k"&gt;simple&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+
+  &lt;span class="k"&gt;simple&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;simple_geom&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;geom&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+
+  &lt;span class="n"&gt;ST_GeometryType&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;simple&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;simple_geom&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;geom_type&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+
+  &lt;span class="n"&gt;ST_AsEWKT&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;simple&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;simple_geom&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;geom_wkt&lt;/span&gt;
+
+&lt;span class="k"&gt;FROM&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;
+
+  &lt;span class="k"&gt;SELECT&lt;/span&gt;
+
+    &lt;span class="n"&gt;dumped&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+
+    &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;dumped&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;geom_dump&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="n"&gt;geom&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;simple_geom&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+
+    &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;dumped&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;geom_dump&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;path&lt;/span&gt;
+
+  &lt;span class="k"&gt;FROM&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;
+
+    &lt;span class="k"&gt;SELECT&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;ST_Dump&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;geom&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;AS&lt;/span&gt; &lt;span class="n"&gt;geom_dump&lt;/span&gt; &lt;span class="k"&gt;FROM&lt;/span&gt; &lt;span class="n"&gt;complex&lt;/span&gt;
+
+  &lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;dumped&lt;/span&gt;
+
+&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;AS&lt;/span&gt; &lt;span class="k"&gt;simple&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Results:&lt;/p&gt;
+&lt;table border="1" class="docutils"&gt;
+&lt;colgroup&gt;
+&lt;col width="5%" /&gt;
+&lt;col width="6%" /&gt;
+&lt;col width="26%" /&gt;
+&lt;col width="15%" /&gt;
+&lt;col width="48%" /&gt;
+&lt;/colgroup&gt;
+&lt;thead valign="bottom"&gt;
+&lt;tr&gt;&lt;th class="head"&gt;id&lt;/th&gt;
+&lt;th class="head"&gt;name&lt;/th&gt;
+&lt;th class="head"&gt;geom&lt;/th&gt;
+&lt;th class="head"&gt;geom_type&lt;/th&gt;
+&lt;th class="head"&gt;geom_wkt&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr&gt;&lt;td&gt;1.1&lt;/td&gt;
+&lt;td&gt;Bob&lt;/td&gt;
+&lt;td&gt;010200000002000000F6285C...&lt;/td&gt;
+&lt;td&gt;ST_LineString&lt;/td&gt;
+&lt;td&gt;LINESTRING(498376.89 651569.6,498372.28 651571.89)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;1.2&lt;/td&gt;
+&lt;td&gt;Bob&lt;/td&gt;
+&lt;td&gt;010200000002000000EC51B8...&lt;/td&gt;
+&lt;td&gt;ST_LineString&lt;/td&gt;
+&lt;td&gt;LINESTRING(498372.28 651571.89,498371.77 651576.05)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;2&lt;/td&gt;
+&lt;td&gt;Harry&lt;/td&gt;
+&lt;td&gt;0102000000020000007B14AE...&lt;/td&gt;
+&lt;td&gt;ST_LineString&lt;/td&gt;
+&lt;td&gt;LINESTRING(598376.89 751569.6,598372.28 751571.89)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+</summary><category term="Postgis"></category></entry><entry><title>Recursively delete empty directories</title><link href="/notes/recursively-delete-empty-directories/" rel="alternate"></link><updated>2011-03-28T10:31:00+01:00</updated><author><name>walkermatt</name></author><id>tag:,2011-03-28:notes/recursively-delete-empty-directories/</id><summary type="html">&lt;p&gt;To recursively delete all empty directories from the command prompt in Windows. Open command prompt and change to the desired directory then enter the following:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;for&lt;/span&gt; /F &lt;span class="s2"&gt;&amp;quot;tokens=*&amp;quot;&lt;/span&gt; %f in &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;dir /AD /S /B ^| sort /R&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do &lt;/span&gt;&lt;span class="nb"&gt;echo &lt;/span&gt;rd &lt;span class="s2"&gt;&amp;quot;%f&amp;quot;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;This command generates a list of all directories and sub directories below the current directory in bare format (just the path) sorted in reverse order. The remove directory command (rm) is then called for each item in the list. The rm command will only delete empty directories so those directories containing files or other directories will not be deleted.&lt;/p&gt;
+</summary><category term="command-line"></category><category term="notes"></category></entry><entry><title>Convert a directory of TIFFs to greyscale using ImageMagick</title><link href="/notes/convert-a-directory-of-tiffs-to-greyscale-using-imagemagick/" rel="alternate"></link><updated>2011-01-07T17:53:00+00:00</updated><author><name>walkermatt</name></author><id>tag:,2011-01-07:notes/convert-a-directory-of-tiffs-to-greyscale-using-imagemagick/</id><summary type="html">&lt;p&gt;Change to the directory then run the command:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;mogrify -colorspace Gray *.tif
+&lt;/pre&gt;&lt;/div&gt;
+</summary><category term="command-line"></category><category term="notes"></category></entry><entry><title>Build OGR 1.8 with GML, WFS and PostGIS support on Ubuntu 10.04</title><link href="/notes/build-ogr-18-with-gml-wfs-and-postgis-support-on-ubuntu-1004/" rel="alternate"></link><updated>2010-12-19T21:06:00+00:00</updated><author><name>walkermatt</name></author><id>tag:,2010-12-19:notes/build-ogr-18-with-gml-wfs-and-postgis-support-on-ubuntu-1004/</id><summary type="html">&lt;p&gt;OGR 1.8 introduces support for reading GML with feature attributes expressed as nested elements as found in Ordnance Survey's OS MasterMap as well as support for accessing WFS. This is a brief script for building OGR (GDAL) 1.8 from source as it's not currently released: Download latest daily source export: &lt;a class="reference external" href="http://www.gdal.org/daily/"&gt;http://www.gdal.org/daily/&lt;/a&gt; and extract it's contents to a directory you have read, write and execute permissions in (I chose ~/Software/gdal-svn-trunk-2010.12.19) Ensure you have the tools required to build software using &lt;tt class="docutils literal"&gt;make&lt;/tt&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;sudo apt-get install build-essential
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Install the development package for Xerces-C:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;sudo apt-get install libxerces-c-dev
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Install the PostgreSQL development tools package:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;sudo apt-get install libpq-dev
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Install curl and the development package:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;sudo apt-get install curl libcurl4-gnutls-dev
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Change to the directory where you extracted the GDAL source (that's ~/Software/gdal-svn-trunk-2010.12.19 for me):&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nb"&gt;cd&lt;/span&gt; ~/Software/gdal-svn-trunk-2010.12.19
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Run the configure script which prepares the ground before we build GDAL with &lt;tt class="docutils literal"&gt;make&lt;/tt&gt;. Here we are specifying that we want to configure the build to include xerces support and PostgreSQL (/usr/bin/pg_config is a script provided with the PostgreSQL development tools package).&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;./configure --with-xerces&lt;span class="o"&gt;=&lt;/span&gt;yes --with-pg&lt;span class="o"&gt;=&lt;/span&gt;/usr/bin/pg_config --with-curl&lt;span class="o"&gt;=&lt;/span&gt;/usr/bin/curl-config &amp;gt; configure-output.txt
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Now we can actually build GDAL/OGR:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;make &amp;gt; make-output.txt
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Providing make did not error GDAL should now be built and ready to use.  You can find the executable utilities such as gdalinfo, ogrinfo, ogr2ogr etc. in the apps directory within the directory that you extracted the GDAL source (~/Software/gdal-svn-trunk-2010.12.19/apps/ogr2ogr for me.); to make it easier to run these utilities it may be worthwhile setting a variable to this path:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;GDAL_PATH&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;~/Software/gdal-svn-trunk-2010.12.19/apps/
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;It's also worth setting the GDAL_DATA environment variable so that resources such as coordinate system definitions etc.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nb"&gt;export &lt;/span&gt;&lt;span class="nv"&gt;GDAL_DATA&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nv"&gt;$GDAL_PATH&lt;/span&gt;../data
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;You can then use the utilities like so: Translate from GML to ESRI Shape. To parse nested feature attributes you will need to modify the .gfs file generated the first time the GML file is opened. The .gfs file allows you to map GML properties to feature attributes.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$GDAL_PATH&lt;/span&gt;/ogr2ogr -f &lt;span class="s1"&gt;&amp;#39;ESRI Shapefile&amp;#39;&lt;/span&gt; . test.gml
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Translate GML to PostGIS&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$GDAL_PATH&lt;/span&gt;/ogr2ogr -f PostgreSQL PG:&lt;span class="s2"&gt;&amp;quot;dbname=&amp;#39;postgis&amp;#39; active_schema=mapbase host=&amp;#39;localhost&amp;#39; user=&amp;#39;fred&amp;#39; password=&amp;#39;itscomplicated&amp;#39;&amp;quot;&lt;/span&gt; test.gml
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;List available layers from a WFS&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$GDAL_PATH&lt;/span&gt;/ogrinfo -ro WFS:&lt;span class="s2"&gt;&amp;quot;http://www.tinyows.org/cgi-bin/tinyows&amp;quot;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Get info about all features in a given layer including coordinates&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$GDAL_PATH&lt;/span&gt;/ogrinfo WFS:&lt;span class="s2"&gt;&amp;quot;http://www.tinyows.org/cgi-bin/tinyows&amp;quot;&lt;/span&gt; tows:world -ro -al
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Download all features from a layer and write to a good old ESRI Shape file&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nv"&gt;$GDAL_PATH&lt;/span&gt;/ogr2ogr -f &lt;span class="s1"&gt;&amp;#39;ESRI Shapefile&amp;#39;&lt;/span&gt; . WFS:&lt;span class="s2"&gt;&amp;quot;http://www.tinyows.org/cgi-bin/tinyows&amp;quot;&lt;/span&gt; tows:world
+&lt;/pre&gt;&lt;/div&gt;
+</summary><category term="Gml"></category><category term="Ogr"></category><category term="Postgis"></category><category term="Wfs"></category></entry></feed>
