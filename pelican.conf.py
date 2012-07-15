@@ -40,3 +40,7 @@ CATEGORY_URL = '{name}/'
 CATEGORY_SAVE_AS = '{name}/index.html'
 
 FEED_RSS = 'feeds/all.rss.xml'
+
+STATIC_PATHS = ['files']
+
+FILES_TO_COPY = (('.htaccess', '.htaccess'),)

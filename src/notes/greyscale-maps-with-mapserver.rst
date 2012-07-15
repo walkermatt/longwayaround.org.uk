@@ -70,4 +70,4 @@ BTW I used the following Python to generate the values for the palette:
 .. _MapServer: http://mapserver.org
 .. _ImageMagick: www.imagemagick.org
 .. _OUTPUTFORMAT: http://mapserver.org/mapfile/outputformat.html
-.. _download the full version: http://longwayaround.org.uk/wordpress/wp-content/uploads/2012/02/grey.txt
+.. _download the full version: files/grey.txt
