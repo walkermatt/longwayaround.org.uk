@@ -2,7 +2,7 @@ Disaggregate MultiLineStrings using ST_Dump PostGIS
 ###################################################
 :date: 2011-11-24 21:39
 :category: notes
-:tags: Postgis
+:tags: postgis
 
 PostGIS the spatial extension to the PostgreSQL database provides a host of functions for querying, creating and manipulating geometries within the database. ST\_Dump allows you to disaggregate collection and multi geometries such as MultiPolygon and MultiLineSting easily. The example below demonstrates starting with a table that contains one row with a MultiLineString geometry and another with a LineString and running a query to disaggregate returning three rows all with a LineString geometry.
 

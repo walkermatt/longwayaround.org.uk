@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-        <title>longwayaround.org.uk - Mapserver</title>
+        <title>longwayaround.org.uk - mapserver</title>
         <meta charset="utf-8" />
         <link rel="stylesheet" href=".././theme/css/main.css" type="text/css" />
         <link href=".././feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="longwayaround.org.uk ATOM Feed" />
@@ -78,7 +78,7 @@
         </address>
         
 <p>In <a href=".././category/notes.html">notes</a>. </p>
-<p>tags: <a href=".././tag/Mapserver.html">Mapserver</a></p>
+<p>tags: <a href=".././tag/mapserver.html">mapserver</a> </p>
 
 
 </footer><!-- /.post-info --><p>There have been a few times in the past (such as when I was preparing the base mapping for <a class="reference external" href="http://mywycombe.wycombe.gov.uk/?tab=2">My Wycombe</a>) when I've wanted to create greyscale base mapping using <a class="reference external" href="http://mapserver.org">MapServer</a>. Previously I've experimented with various processing options for raster images (with varying degrees of success), converting the source images using <a class="reference external" href="../static/www.imagemagick.org">ImageMagick</a> and converting colour RGB values to their greyscale equivalent for vector features and it's generally been time consuming.  Today the requirement came up again and I discovered a far simpler option: specifying a greyscale palette as an OUTPUTFORMAT FORMATOPTION.  The palette simply contains grey values from 0,0,0 (black) to 255,255,255 (white) and all values in between. MapServer then does the job of converting the colours for your source data into their greyscale equivalents.</p>

@@ -2,7 +2,7 @@ Build OGR 1.8 with GML, WFS and PostGIS support on Ubuntu 10.04
 ###############################################################
 :date: 2010-12-19 21:06
 :category: notes
-:tags: Gml, Ogr, Postgis, Wfs
+:tags: gml, ogr, postgis, wfs
 
 OGR 1.8 introduces support for reading GML with feature attributes expressed as nested elements as found in Ordnance Survey's OS MasterMap as well as support for accessing WFS. This is a brief script for building OGR (GDAL) 1.8 from source as it's not currently released: Download latest daily source export: http://www.gdal.org/daily/ and extract it's contents to a directory you have read, write and execute permissions in (I chose ~/Software/gdal-svn-trunk-2010.12.19) Ensure you have the tools required to build software using ``make``:
 

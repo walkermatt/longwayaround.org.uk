@@ -9,7 +9,7 @@ CONFFILE=$(BASEDIR)/pelican.conf.py
 
 FTP_HOST=longwayaround.org.uk
 FTP_USER=longwaya
-FTP_TARGET_DIR=/public_html/test
+FTP_TARGET_DIR=/public_html
 
 help:
 	@echo 'Makefile for a pelican Web site                                       '

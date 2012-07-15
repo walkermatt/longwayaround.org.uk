@@ -2,7 +2,7 @@ Greyscale maps with MapServer
 #############################
 :date: 2012-02-02 21:31
 :category: notes
-:tags: Mapserver
+:tags: mapserver
 
 There have been a few times in the past (such as when I was preparing the base mapping for `My Wycombe`_) when I've wanted to create greyscale base mapping using `MapServer`_. Previously I've experimented with various processing options for raster images (with varying degrees of success), converting the source images using `ImageMagick`_ and converting colour RGB values to their greyscale equivalent for vector features and it's generally been time consuming.  Today the requirement came up again and I discovered a far simpler option: specifying a greyscale palette as an OUTPUTFORMAT FORMATOPTION.  The palette simply contains grey values from 0,0,0 (black) to 255,255,255 (white) and all values in between. MapServer then does the job of converting the colours for your source data into their greyscale equivalents.
 
