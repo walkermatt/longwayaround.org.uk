@@ -10,4 +10,4 @@ To recursively delete all empty directories from the command prompt in Windows. 
 
     for /F "tokens=*" %f in ('dir /AD /S /B ^| sort /R') do echo rd "%f"
 
-This command generates a list of all directories and sub directories below the current directory in bare format (just the path) sorted in reverse order. The remove directory command (rm) is then called for each item in the list. The rm command will only delete empty directories so those directories containing files or other directories will not be deleted.
+This command generates a list of all directories and sub directories below the current directory in bare format (just the path) sorted in reverse order. The remove directory command (rd) is then called for each item in the list. The rd command will only delete empty directories so those directories containing files or other directories will not be deleted.
