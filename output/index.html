@@ -4,7 +4,7 @@
         <title>longwayaround.org.uk</title>
         <meta charset="utf-8" />
         <link rel="stylesheet" href="./theme/css/main.css" type="text/css" />
-        <link href="./feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="longwayaround.org.uk ATOM Feed" />
+        <link href="./" type="application/atom+xml" rel="alternate" title="longwayaround.org.uk ATOM Feed" />
         
         <link href="./feeds/all.rss.xml" type="application/atom+xml" rel="alternate" title="longwayaround.org.uk RSS Feed" />
         
@@ -40,7 +40,7 @@
                 </nav>
                 
                     <ul class="social">
-                        <li><a href="./feeds/all.atom.xml" rel="alternate"><img src="./theme/images/icons/gosquared/18/rss.png" title="atom" width="18" height="18" /></a></li>
+                        <li><a href="./" rel="alternate"><img src="./theme/images/icons/gosquared/18/rss.png" title="atom" width="18" height="18" /></a></li>
                         
                         <li><a href="./feeds/all.rss.xml" rel="alternate"><img src="./theme/images/icons/gosquared/18/rss.png" title="rss" width="18" height="18" /></a></li>
                         
@@ -129,7 +129,8 @@ notes here:
                         <h1><a href="./notes/greyscale-maps-with-mapserver/" rel="bookmark" title="Permalink to Greyscale maps with MapServer">Greyscale maps with MapServer</a></h1>
                 </header>
                 <div class="entry-content">
-                <footer class="post-info">
+                <div class="slug">
+                    <footer class="post-info">
         <abbr class="published" title="2012-02-02T21:31:00">
                 Thu 02 February 2012
         </abbr>
@@ -144,7 +145,6 @@ notes here:
 
 
 </footer><!-- /.post-info -->
-                <div class="slug">
                     <p>There have been a few times in the past (such as when I was preparing the base mapping for <a class="reference external" href="http://mywycombe.wycombe.gov.uk/?tab=2">My Wycombe</a>) when I've wanted to create greyscale base mapping using <a class="reference external" href="http://mapserver.org">MapServer</a>. Previously I've experimented with various processing options for raster images (with varying degrees of success), converting the ...</p>
                     <p>
                         <a href="./notes/greyscale-maps-with-mapserver/#disqus_thread">comments</a>.
@@ -165,7 +165,8 @@ notes here:
                         <h1><a href="./notes/disaggregate-multilinestrings-using-st_dump-postgis/" rel="bookmark" title="Permalink to Disaggregate MultiLineStrings using ST_Dump PostGIS">Disaggregate MultiLineStrings using ST_Dump PostGIS</a></h1>
                 </header>
                 <div class="entry-content">
-                <footer class="post-info">
+                <div class="slug">
+                    <footer class="post-info">
         <abbr class="published" title="2011-11-24T21:39:00">
                 Thu 24 November 2011
         </abbr>
@@ -180,7 +181,6 @@ notes here:
 
 
 </footer><!-- /.post-info -->
-                <div class="slug">
                     <p>PostGIS the spatial extension to the PostgreSQL database provides a host of functions for querying, creating and manipulating geometries within the database. ST_Dump allows you to disaggregate collection and multi geometries such as MultiPolygon and MultiLineSting easily. The example below demonstrates starting with a table that contains one row with ...</p>
                     <p>
                         <a href="./notes/disaggregate-multilinestrings-using-st_dump-postgis/#disqus_thread">comments</a>.
@@ -201,7 +201,8 @@ notes here:
                         <h1><a href="./notes/recursively-delete-empty-directories/" rel="bookmark" title="Permalink to Recursively delete empty directories">Recursively delete empty directories</a></h1>
                 </header>
                 <div class="entry-content">
-                <footer class="post-info">
+                <div class="slug">
+                    <footer class="post-info">
         <abbr class="published" title="2011-03-28T10:31:00">
                 Mon 28 March 2011
         </abbr>
@@ -216,7 +217,6 @@ notes here:
 
 
 </footer><!-- /.post-info -->
-                <div class="slug">
                     <p>To recursively delete all empty directories from the command prompt in Windows. Open command prompt and change to the desired directory then enter the following:</p>
 <div class="highlight"><pre><span class="k">for</span> /F <span class="s2">&quot;tokens=*&quot;</span> %f in <span class="o">(</span><span class="s1">&#39;dir /AD /S /B ^| sort /R&#39;</span><span class="o">)</span> <span class="k">do </span><span class="nb">echo </span>rd <span class="s2">&quot;%f&quot;</span>
 </pre></div>
@@ -240,7 +240,8 @@ notes here:
                         <h1><a href="./notes/convert-a-directory-of-tiffs-to-greyscale-using-imagemagick/" rel="bookmark" title="Permalink to Convert a directory of TIFFs to greyscale using ImageMagick">Convert a directory of TIFFs to greyscale using ImageMagick</a></h1>
                 </header>
                 <div class="entry-content">
-                <footer class="post-info">
+                <div class="slug">
+                    <footer class="post-info">
         <abbr class="published" title="2011-01-07T17:53:00">
                 Fri 07 January 2011
         </abbr>
@@ -255,7 +256,6 @@ notes here:
 
 
 </footer><!-- /.post-info -->
-                <div class="slug">
                     <p>Change to the directory then run the command:</p>
 <div class="highlight"><pre>mogrify -colorspace Gray *.tif
 </pre></div>
@@ -279,7 +279,8 @@ notes here:
                         <h1><a href="./notes/build-ogr-18-with-gml-wfs-and-postgis-support-on-ubuntu-1004/" rel="bookmark" title="Permalink to Build OGR 1.8 with GML, WFS and PostGIS support on Ubuntu 10.04">Build OGR 1.8 with GML, WFS and PostGIS support on Ubuntu 10.04</a></h1>
                 </header>
                 <div class="entry-content">
-                <footer class="post-info">
+                <div class="slug">
+                    <footer class="post-info">
         <abbr class="published" title="2010-12-19T21:06:00">
                 Sun 19 December 2010
         </abbr>
@@ -294,7 +295,6 @@ notes here:
 
 
 </footer><!-- /.post-info -->
-                <div class="slug">
                     <p>OGR 1.8 introduces support for reading GML with feature attributes expressed as nested elements as found in Ordnance Survey's OS MasterMap as well as support for accessing WFS. This is a brief script for building OGR (GDAL) 1.8 from source as it's not currently released: Download ...</p>
                     <p>
                         <a href="./notes/build-ogr-18-with-gml-wfs-and-postgis-support-on-ubuntu-1004/#disqus_thread">comments</a>.

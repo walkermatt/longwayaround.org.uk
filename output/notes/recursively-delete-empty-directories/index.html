@@ -4,7 +4,7 @@
         <title>Recursively delete empty directories</title>
         <meta charset="utf-8" />
         <link rel="stylesheet" href="../.././theme/css/main.css" type="text/css" />
-        <link href="../.././feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="longwayaround.org.uk ATOM Feed" />
+        <link href="../.././" type="application/atom+xml" rel="alternate" title="longwayaround.org.uk ATOM Feed" />
         
         <link href="../.././feeds/all.rss.xml" type="application/atom+xml" rel="alternate" title="longwayaround.org.uk RSS Feed" />
         
@@ -40,7 +40,7 @@
                 </nav>
                 
                     <ul class="social">
-                        <li><a href="../.././feeds/all.atom.xml" rel="alternate"><img src="../.././theme/images/icons/gosquared/18/rss.png" title="atom" width="18" height="18" /></a></li>
+                        <li><a href="../.././" rel="alternate"><img src="../.././theme/images/icons/gosquared/18/rss.png" title="atom" width="18" height="18" /></a></li>
                         
                         <li><a href="../.././feeds/all.rss.xml" rel="alternate"><img src="../.././theme/images/icons/gosquared/18/rss.png" title="rss" width="18" height="18" /></a></li>
                         
@@ -82,7 +82,7 @@
         <p>To recursively delete all empty directories from the command prompt in Windows. Open command prompt and change to the desired directory then enter the following:</p>
 <div class="highlight"><pre><span class="k">for</span> /F <span class="s2">&quot;tokens=*&quot;</span> %f in <span class="o">(</span><span class="s1">&#39;dir /AD /S /B ^| sort /R&#39;</span><span class="o">)</span> <span class="k">do </span><span class="nb">echo </span>rd <span class="s2">&quot;%f&quot;</span>
 </pre></div>
-<p>This command generates a list of all directories and sub directories below the current directory in bare format (just the path) sorted in reverse order. The remove directory command (rm) is then called for each item in the list. The rm command will only delete empty directories so those directories containing files or other directories will not be deleted.</p>
+<p>This command generates a list of all directories and sub directories below the current directory in bare format (just the path) sorted in reverse order. The remove directory command (rd) is then called for each item in the list. The rd command will only delete empty directories so those directories containing files or other directories will not be deleted.</p>
 
         </div><!-- /.entry-content -->
         
@@ -108,17 +108,17 @@
 <h1>Articles</h1>
 <ul>
 
-    <li><a href='../../notes/build-ogr-18-with-gml-wfs-and-postgis-support-on-ubuntu-1004/'>Build OGR 1.8 with GML, WFS and PostGIS support on Ubuntu 10.04</a></li>
-
-    <li><a href='../../notes/convert-a-directory-of-tiffs-to-greyscale-using-imagemagick/'>Convert a directory of TIFFs to greyscale using ImageMagick</a></li>
-
-    <li><a href='../../notes/recursively-delete-empty-directories/'>Recursively delete empty directories</a></li>
-
-    <li><a href='../../notes/disaggregate-multilinestrings-using-st_dump-postgis/'>Disaggregate MultiLineStrings using ST_Dump PostGIS</a></li>
+    <li><a href='../../notes/using-leaflet-with-a-custom-projection-and-a-mapproxy-tms/'>Using Leaflet with a custom projection and a MapProxy TMS</a></li>
 
     <li><a href='../../notes/greyscale-maps-with-mapserver/'>Greyscale maps with MapServer</a></li>
 
-    <li><a href='../../notes/using-leaflet-with-a-custom-projection-and-a-mapproxy-tms/'>Using Leaflet with a custom projection and a MapProxy TMS</a></li>
+    <li><a href='../../notes/disaggregate-multilinestrings-using-st_dump-postgis/'>Disaggregate MultiLineStrings using ST_Dump PostGIS</a></li>
+
+    <li><a href='../../notes/recursively-delete-empty-directories/'>Recursively delete empty directories</a></li>
+
+    <li><a href='../../notes/convert-a-directory-of-tiffs-to-greyscale-using-imagemagick/'>Convert a directory of TIFFs to greyscale using ImageMagick</a></li>
+
+    <li><a href='../../notes/build-ogr-18-with-gml-wfs-and-postgis-support-on-ubuntu-1004/'>Build OGR 1.8 with GML, WFS and PostGIS support on Ubuntu 10.04</a></li>
 
 </ul>
 </section>
