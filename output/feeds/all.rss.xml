@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>longwayaround.org.uk</title><link>/</link><description>taking the scenic route and enjoying the journey</description><atom:link href="/feeds/all.rss.xml" rel="self"></atom:link><lastBuildDate>Mon, 02 Jul 2012 21:06:00 +0100</lastBuildDate><item><title>Using Leaflet with a custom projection and a MapProxy TMS</title><link>/notes/using-leaflet-with-a-custom-projection-and-a-mapproxy-tms/</link><description>&lt;p&gt;&lt;a class="reference external" href="http://leaflet.cloudmade.com/"&gt;Leaflet&lt;/a&gt; is a lightweight JavaScript
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>longwayaround.org.uk</title><link>/</link><description>taking the scenic route and enjoying the journey</description><atom:link href="/feeds/all.rss.xml" rel="self"></atom:link><lastBuildDate>Mon, 02 Jul 2012 21:06:00 +0100</lastBuildDate><item><title>Using Leaflet with a custom projection and a MapProxy TMS</title><link>/notes/using-leaflet-with-a-custom-projection-and-a-mapproxy-tms/</link><description>&lt;p&gt;&lt;strong&gt;Update 2012-12-18&lt;/strong&gt; I've update the &lt;a class="reference external" href="https://gist.github.com/3034742"&gt;Gist&lt;/a&gt;
+to reflect changes in v0.4 of Leaflet, in particular the fact that the
+scale function now belongs to the CRS object instead of the Map and the
+way that the TileLayer scheme is specified has changed to simply &lt;tt class="docutils literal"&gt;tms: true&lt;/tt&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;a class="reference external" href="http://leaflet.cloudmade.com/"&gt;Leaflet&lt;/a&gt; is a lightweight JavaScript
 slippy map client well suited to use on mobile devices. It’s seen as an
 alternative to &lt;a class="reference external" href="http://openlayers.org/"&gt;OpenLayers&lt;/a&gt; but takes a
 different approach focusing on a small easy to use set of features.&lt;/p&gt;
