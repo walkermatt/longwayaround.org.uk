@@ -4,6 +4,11 @@ Using Leaflet with a custom projection and a MapProxy TMS
 :category: notes
 :tags: leaflet, mapproxy
 
+**Update 2012-12-18** I've update the `Gist <https://gist.github.com/3034742>`_
+to reflect changes in v0.4 of Leaflet, in particular the fact that the
+scale function now belongs to the CRS object instead of the Map and the
+way that the TileLayer scheme is specified has changed to simply ``tms: true``.
+
 `Leaflet <http://leaflet.cloudmade.com/>`_ is a lightweight JavaScript
 slippy map client well suited to use on mobile devices. It’s seen as an
 alternative to `OpenLayers <http://openlayers.org/>`_ but takes a
