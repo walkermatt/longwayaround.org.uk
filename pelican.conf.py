@@ -8,10 +8,10 @@ SITEURL = ''
 
 TIMEZONE = 'Europe/London'
 
-DEFAULT_LANG='en'
+DEFAULT_LANG = 'en'
 
 # Blogroll
-LINKS =  ()
+LINKS = ()
 
 # Social widget
 SOCIAL = (
@@ -22,11 +22,18 @@ SOCIAL = (
         ('twitter', 'http://twitter.com/_walkermatt')
 )
 
+PLUGINS = [
+    'pelican_gist'
+]
+
 DEFAULT_PAGINATION = False
 
 DISPLAY_PAGES_ON_MENU = True
 
-THEME = 'longwayaround.org.uk_theme'
+THEME = '../longwayaround.org.uk_theme'
+
+AUTHORS_SAVE_AS = None
+TAGS_SAVE_AS = None
 
 DISQUS_SITENAME = 'longwayaroundorguk'
 
@@ -41,6 +48,9 @@ CATEGORY_SAVE_AS = '{name}/index.html'
 
 FEED_RSS = 'feeds/all.rss.xml'
 
-STATIC_PATHS = ['files']
+STATIC_PATHS = ['files', '.htaccess']
 
-FILES_TO_COPY = (('.htaccess', '.htaccess'),)
+EXTRA_PATH_METADATA = {
+    'files': {'path': 'files/'},
+    '.htaccess': {'path': '.htaccess'}
+}

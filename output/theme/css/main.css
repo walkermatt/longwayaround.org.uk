@@ -178,6 +178,17 @@ pre {
     overflow: auto;
 }
 
+/* Ensure gist styles are determined by Github styles */
+pre.line-pre {
+    color: inherit;
+    overflow: inherit;
+}
+
+div.gist-file {
+    line-height: 1;
+    /* font-size: 1em; */
+}
+
 /* Quotes */
 blockquote {
     margin: 20px;
@@ -189,7 +200,7 @@ q {}
 
 /* Tables */
 table {
-    margin: .5em auto 1.5em auto;
+    /* margin: .5em auto 1.5em auto; */
     width: 98%;
 }
 
