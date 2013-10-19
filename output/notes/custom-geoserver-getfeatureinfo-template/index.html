@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-        <title>Recursively delete empty directories</title>
+        <title>Custom GeoServer GetFeatureInfo Template</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, target-densitydpi=device-dpi">
         <link rel="stylesheet" href="/theme/css/main.css" type="text/css" />
@@ -43,21 +43,44 @@
 <section id="content" class="body">    
 <article>
         <header> <h1 class="entry-title"><a href=""
-        rel="bookmark" title="Permalink to Recursively delete empty directories">Recursively delete empty directories</a></h1>  </header>
+        rel="bookmark" title="Permalink to Custom GeoServer GetFeatureInfo Template">Custom GeoServer GetFeatureInfo Template</a></h1>  </header>
         <div class="entry-content">
 <footer class="post-info">
-        <abbr class="published" title="2011-03-28T10:31:00">
-                Mon 28 March 2011
+        <abbr class="published" title="2013-10-18T17:24:00">
+                Fri 18 October 2013
         </abbr>
 
         <address class="vcard author">
                 By <a class="url fn" href="/author/walkermatt.html">walkermatt</a>
         </address>
 <p>In <a href="/category/notes.html">notes</a>. </p>
-<p>tags: <a href="/tag/command-line.html">command-line</a> <a href="/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->        <p>To recursively delete all empty directories from the command prompt in Windows. Open command prompt and change to the desired directory then enter the following:</p>
-<div class="highlight"><pre><span class="k">for</span> /F <span class="s2">&quot;tokens=*&quot;</span> %f in <span class="o">(</span><span class="s1">&#39;dir /AD /S /B ^| sort /R&#39;</span><span class="o">)</span> <span class="k">do </span><span class="nb">echo </span>rd <span class="s2">&quot;%f&quot;</span>
-</pre></div>
-<p>This command generates a list of all directories and sub directories below the current directory in bare format (just the path) sorted in reverse order. The remove directory command (rd) is then called for each item in the list. The rd command will only delete empty directories so those directories containing files or other directories will not be deleted.</p>
+<p>tags: <a href="/tag/geoserver.html">geoserver</a> <a href="/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->        <p>The default  <a class="reference external" href="http://geoserver.org/">GeoServer</a> GetFeatureInfo Freemarker template is a simple table and doesn't work very well when displaying the content in a web map popup. It's a common requirement to change the GetFeatureInfo template to an unordered list, to capitalise the title and attribute names. Here is a sample <cite>content.ftl</cite> that does just that and converts any attrubute values starting with <cite>http</cite> into a link:</p>
+<div class="gist">
+    <script src='https://gist.github.com/7052155.js?file=content.ftl'></script>
+    <noscript>
+        <pre><code><ul>
+<#list features as feature>
+  <li><h2>${type.name?capitalize}</h2>
+  <ul>
+  <#list feature.attributes as attribute>
+    <#if !attribute.isGeometry>
+      <li>${attribute.name?replace("_", " ", "i")?cap_first}: 
+        <#if attribute.value?starts_with('http')>
+          <a href="${attribute.value}">${attribute.value}</a>
+        <#else>
+         ${attribute.value}
+        </#if>
+      </li>
+    </#if>
+  </#list>
+  </ul>
+  </li>
+</#list>
+</ul>
+</code></pre>
+    </noscript>
+</div>
+<p>See the <a class="reference external" href="http://docs.geoserver.org/stable/en/user/tutorials/freemarker.html">GeoServer Freemarker tutorial</a> for details of where the content template needs to live. The <a class="reference external" href="http://freemarker.org/docs/">Freemaker Documentation</a> is comprehensive if you're interested in further customisation.</p>
 
         </div><!-- /.entry-content -->
         <div class="comments">
@@ -66,7 +89,7 @@
             <script type="text/javascript">
                // Don't set the identifier so that comments are
                // associated with the url
-               // var disqus_identifier = "notes/recursively-delete-empty-directories/";
+               // var disqus_identifier = "notes/custom-geoserver-getfeatureinfo-template/";
                (function() {
                var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
                dsq.src = 'http://longwayaroundorguk.disqus.com/embed.js';

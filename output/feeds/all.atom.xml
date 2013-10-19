@@ -1,5 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>longwayaround.org.uk</title><link href="/" rel="alternate"></link><link href="/feeds/all.atom.xml" rel="self"></link><id>/</id><updated>2012-07-02T21:06:00+01:00</updated><entry><title>Using Leaflet with a custom projection and a MapProxy TMS</title><link href="/notes/using-leaflet-with-a-custom-projection-and-a-mapproxy-tms/" rel="alternate"></link><updated>2012-07-02T21:06:00+01:00</updated><author><name>walkermatt</name></author><id>tag:,2012-07-02:notes/using-leaflet-with-a-custom-projection-and-a-mapproxy-tms/</id><summary type="html">&lt;p&gt;&lt;strong&gt;Update 2012-12-18&lt;/strong&gt; I've update the &lt;a class="reference external" href="https://gist.github.com/3034742"&gt;Gist&lt;/a&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>longwayaround.org.uk</title><link href="/" rel="alternate"></link><link href="/feeds/all.atom.xml" rel="self"></link><id>/</id><updated>2013-10-18T17:24:00+01:00</updated><entry><title>Custom GeoServer GetFeatureInfo Template</title><link href="/notes/custom-geoserver-getfeatureinfo-template/" rel="alternate"></link><updated>2013-10-18T17:24:00+01:00</updated><author><name>walkermatt</name></author><id>tag:,2013-10-18:notes/custom-geoserver-getfeatureinfo-template/</id><summary type="html">&lt;p&gt;The default  &lt;a class="reference external" href="http://geoserver.org/"&gt;GeoServer&lt;/a&gt; GetFeatureInfo Freemarker template is a simple table and doesn't work very well when displaying the content in a web map popup. It's a common requirement to change the GetFeatureInfo template to an unordered list, to capitalise the title and attribute names. Here is a sample &lt;cite&gt;content.ftl&lt;/cite&gt; that does just that and converts any attrubute values starting with &lt;cite&gt;http&lt;/cite&gt; into a link:&lt;/p&gt;
+&lt;div class="gist"&gt;
+    &lt;script src='https://gist.github.com/7052155.js?file=content.ftl'&gt;&lt;/script&gt;
+    &lt;noscript&gt;
+        &lt;pre&gt;&lt;code&gt;&lt;ul&gt;
+&lt;#list features as feature&gt;
+  &lt;li&gt;&lt;h2&gt;${type.name?capitalize}&lt;/h2&gt;
+  &lt;ul&gt;
+  &lt;#list feature.attributes as attribute&gt;
+    &lt;#if !attribute.isGeometry&gt;
+      &lt;li&gt;${attribute.name?replace("_", " ", "i")?cap_first}: 
+        &lt;#if attribute.value?starts_with('http')&gt;
+          &lt;a href="${attribute.value}"&gt;${attribute.value}&lt;/a&gt;
+        &lt;#else&gt;
+         ${attribute.value}
+        &lt;/#if&gt;
+      &lt;/li&gt;
+    &lt;/#if&gt;
+  &lt;/#list&gt;
+  &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/#list&gt;
+&lt;/ul&gt;
+&lt;/code&gt;&lt;/pre&gt;
+    &lt;/noscript&gt;
+&lt;/div&gt;
+&lt;p&gt;See the &lt;a class="reference external" href="http://docs.geoserver.org/stable/en/user/tutorials/freemarker.html"&gt;GeoServer Freemarker tutorial&lt;/a&gt; for details of where the content template needs to live. The &lt;a class="reference external" href="http://freemarker.org/docs/"&gt;Freemaker Documentation&lt;/a&gt; is comprehensive if you're interested in further customisation.&lt;/p&gt;
+</summary><category term="geoserver"></category><category term="notes"></category></entry><entry><title>Using Leaflet with a custom projection and a MapProxy TMS</title><link href="/notes/using-leaflet-with-a-custom-projection-and-a-mapproxy-tms/" rel="alternate"></link><updated>2012-07-02T21:06:00+01:00</updated><author><name>walkermatt</name></author><id>tag:,2012-07-02:notes/using-leaflet-with-a-custom-projection-and-a-mapproxy-tms/</id><summary type="html">&lt;p&gt;&lt;strong&gt;Update 2012-12-18&lt;/strong&gt; I've update the &lt;a class="reference external" href="https://gist.github.com/3034742"&gt;Gist&lt;/a&gt;
 to reflect changes in v0.4 of Leaflet, in particular the fact that the
 scale function now belongs to the CRS object instead of the Map and the
 way that the TileLayer scheme is specified has changed to simply &lt;tt class="docutils literal"&gt;tms: true&lt;/tt&gt;.&lt;/p&gt;
@@ -57,7 +84,7 @@ OUTPUTFORMAT
 
 END
 &lt;/pre&gt;
-&lt;p&gt;Snippet from the palette file (&lt;a class="reference external" href="files/grey.txt"&gt;download the full version&lt;/a&gt;):&lt;/p&gt;
+&lt;p&gt;Snippet from the palette file (&lt;a class="reference external" href="/files/grey.txt"&gt;download the full version&lt;/a&gt;):&lt;/p&gt;
 &lt;pre class="literal-block"&gt;
 0,0,0
 
