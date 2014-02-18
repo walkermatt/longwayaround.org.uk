@@ -42,7 +42,37 @@
 
             <aside id="featured" class="body">
                 <article>
-                    <h1 class="entry-title"><a href="/notes/recursively-delete-empty-directories/">Recursively delete empty directories</a></h1> 
+                    <h1 class="entry-title"><a href="/notes/first-few-months-of-clojure/">First few months of Clojure</a></h1> 
+<footer class="post-info">
+        <abbr class="published" title="2014-02-18T19:42:00">
+                Tue 18 February 2014
+        </abbr>
+
+        <address class="vcard author">
+                By <a class="url fn" href="/author/walkermatt.html">walkermatt</a>
+        </address>
+<p>In <a href="/category/notes.html">notes</a>. </p>
+<p>tags: <a href="/tag/command-line.html">command-line</a> <a href="/tag/notes.html">notes</a> <a href="/tag/clojure.html">clojure</a> </p></footer><!-- /.post-info --><p>I've been learning a bit of Lisp on and off for a few years, I first read (about half of) <a class="reference external" href="http://landoflisp.com/">Land of Lisp</a>, then <a class="reference external" href="http://www.gigamonkeys.com/book/">Practical Lisp</a> then I came across <a class="reference external" href="http://clojure.org/">Clojure</a> a modern Lisp that runs on the JVM and since I've been reading <a class="reference external" href="http://www.clojurebook.com/">Clojure Programming</a> and working through <a class="reference external" href="https://github.com/walkermatt/clojure-koans">koans</a> and <a class="reference external" href="https://github.com/walkermatt/yellow_belt_clojure_katas">katas</a>.</p>
+<p>I've also built a small Clojure library and command-line app <a class="reference external" href="https://github.com/walkermatt/gridref">GridRef</a> to convert between an Ordnance Survey GB grid reference and British National Grid coordinates. While I was at it I built a web API <a class="reference external" href="https://github.com/walkermatt/gridref-web">GridRef Web</a> which exposes the conversion functions via a <a class="reference external" href="https://github.com/ring-clojure/ring">Ring</a> web app, hosted on Heroku and available at <a class="reference external" href="http://gridref.longwayaround.org.uk/">http://gridref.longwayaround.org.uk/</a>. Having a real (all be it small) project to work on has helped massively in learning and while I found the move from Python and JavaScript initially challenging I'm finding that I'm now thinking more functionally elsewhere.</p>
+<p>A few months in I'm really enjoying working with Clojure which feels like a thoughtfully designed language that incorporates sound theory in a practical way. The way the language and tooling favour interactive development really suits (especially <a class="reference external" href="https://github.com/technomancy/leiningen">lein</a> and <a class="reference external" href="https://github.com/tpope/vim-fireplace">vim-fireplace</a>) and I'm really drawn to the Lisp everything is an expression and code-as-data principles.</p>
+<p>What little contact I've had with the community as been positive, it feels like a community of bright individuals from a range of backgrounds which give it enthusiasm and a healthy balance.</p>
+<p>I was a bit hesitant of it being hosted on the JVM at first and it does suffer in places from the &quot;window into hell&quot; syndrome where you are exposed to the guts of the implementation but the infrastructure provided by the JVM seems to largely make up for this.</p>
+<p>I'm sure Clojure is likely to my language of choice for a while, I'm now looking forward to getting on to exploring some of it's key features such as concurrency which I've only scratched the surface of so far.</p>
+<p><a href="/notes/first-few-months-of-clojure/#disqus_thread">comments</a>.</p>
+                </article>
+            </aside><!-- /#featured -->
+                <section id="content" class="body">
+                    <h1>Other articles</h1>
+                    <hr />
+                        <ol id="posts-list" class="hfeed">
+
+ 
+            <li><article class="hentry">
+                <header>
+                        <h1><a href="/notes/recursively-delete-empty-directories/" rel="bookmark" title="Permalink to Recursively delete empty directories">Recursively delete empty directories</a></h1>
+                </header>
+                <div class="entry-content">
+                <div class="slug">
 <footer class="post-info">
         <abbr class="published" title="2011-03-28T10:31:00">
                 Mon 28 March 2011
@@ -52,17 +82,16 @@
                 By <a class="url fn" href="/author/walkermatt.html">walkermatt</a>
         </address>
 <p>In <a href="/category/notes.html">notes</a>. </p>
-<p>tags: <a href="/tag/command-line.html">command-line</a> <a href="/tag/notes.html">notes</a> </p></footer><!-- /.post-info --><p>To recursively delete all empty directories from the command prompt in Windows. Open command prompt and change to the desired directory then enter the following:</p>
+<p>tags: <a href="/tag/command-line.html">command-line</a> <a href="/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->                    <p>To recursively delete all empty directories from the command prompt in Windows. Open command prompt and change to the desired directory then enter the following:</p>
 <div class="highlight"><pre><span class="k">for</span> /F <span class="s2">&quot;tokens=*&quot;</span> %f in <span class="o">(</span><span class="s1">&#39;dir /AD /S /B ^| sort /R&#39;</span><span class="o">)</span> <span class="k">do </span><span class="nb">echo </span>rd <span class="s2">&quot;%f&quot;</span>
 </pre></div>
-<p>This command generates a list of all directories and sub directories below the current directory in bare format (just the path) sorted in reverse order. The remove directory command (rd) is then called for each item in the list. The rd command will only delete empty directories so those directories containing files or other directories will not be deleted.</p>
-<p><a href="/notes/recursively-delete-empty-directories/#disqus_thread">comments</a>.</p>
-                </article>
-            </aside><!-- /#featured -->
-                <section id="content" class="body">
-                    <h1>Other articles</h1>
-                    <hr />
-                        <ol id="posts-list" class="hfeed">
+<p>This command generates a list of all directories and sub ...</p>
+                    <p>
+<a href="/notes/recursively-delete-empty-directories/#disqus_thread">comments</a>.                        <a class="readmore" href="/notes/recursively-delete-empty-directories/">read more</a>
+                    </p>
+                </div>
+                </div><!-- /.entry-content -->
+            </article></li>
 
  
             <li><article class="hentry">
