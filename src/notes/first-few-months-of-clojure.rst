@@ -15,3 +15,17 @@ What little contact I've had with the community as been positive, it feels like 
 I was a bit hesitant of it being hosted on the JVM at first and it does suffer in places from the "window into hell" syndrome where you are exposed to the guts of the implementation but the infrastructure provided by the JVM seems to largely make up for this.
 
 I'm sure Clojure is likely to my language of choice for a while, I'm now looking forward to getting on to exploring some of it's key features such as concurrency which I've only scratched the surface of so far.
+
+Resources
+---------
+
+Some links to resources I've found useful or interesting while learning the basics:
+
+* `Learn Clojure in Y minutes <http://learnxinyminutes.com/docs/clojure/>`_ - very brief overview of the language basics by example
+* `Leiningen <https://github.com/technomancy/leiningen>`_ - installing Leiningen will set up a sane Clojure enviroment for you and provide access to a Clojure Read Eval Print Loop via ``lein repl``
+* `ClojureDocs <http://clojuredocs.org>`_ - community documentation site
+* `Clojure for the Brave and True <http://www.braveclojure.com/>`_ -  witty book for beginners
+* `Yellow belt Clojure katas <https://github.com/walkermatt/yellow_belt_clojure_katas>`_ - a handful of small exercises to learn from
+* `Clojure Koans <https://github.com/walkermatt/clojure-koans>`_ - a much more extensive set of exercises
+* `reddit.com/r/clojure <http://reddit.com/r/clojure>`_ - Clojure community on Reddit
+* `Intro to Clojure <https://github.com/walkermatt/clojure-intro>`_ - brief intro based on learnxinyminutes.com/docs/clojure
