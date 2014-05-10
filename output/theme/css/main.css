@@ -1,25 +1,15 @@
-/*
-    Name: Smashing HTML5
-    Date: July 2009
-    Description: Sample layout for HTML5 and CSS3 goodness.
-    Version: 1.0
-    Author: Enrique Ramírez
-    Autor URI: http://enrique-ramirez.com
-*/
-
 /* Imports */
 @import url("reset.css");
 @import url("pygment.css");
-@import url(http://fonts.googleapis.com/css?family=Ubuntu&subset=latin);
+@import url(http://fonts.googleapis.com/css?family=Alegreya+Sans);
 
 /***** Global *****/
 /* Body */
 body {
-    background: url("../images/cartographer.png") repeat fixed 0 0 #262626;
     color: #000305;
-    /* font-size: 87.5%; /1* Base font size: 14px *1/ */
+    background-color: #FAFAD2;
     font-size: 105%;
-    font-family: 'Trebuchet MS', Trebuchet, 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-family: 'Alegreya Sans', sans-serif;
     line-height: 1.429;
     margin: 0;
     padding: 0;
@@ -27,20 +17,18 @@ body {
 }
 
 /* Headings */
-h1 {
-    font-size: 2em 
-}
-h2 {font-size: 1.571em}    /* 22px */
-h3 {font-size: 1.429em}    /* 20px */
-h4 {font-size: 1.286em}    /* 18px */
-h5 {font-size: 1.143em}    /* 16px */
-h6 {font-size: 1em}        /* 14px */
+h1 {font-size: 2em}
+h2 {font-size: 1.571em}
+h3 {font-size: 1.429em}
+h4 {font-size: 1.286em}
+h5 {font-size: 1.143em}
+h6 {font-size: 1em}
 
 h1, h2, h3, h4, h5, h6 {
     font-weight: 400;
     line-height: 1.1;
     margin-bottom: .8em;
-    font-family: 'Ubuntu', arial, sans-serif;
+    font-family: 'Alegreya Sans', sans-serif;
 }
 
 h3, h4, h5, h6 {
@@ -48,7 +36,7 @@ h3, h4, h5, h6 {
 }
 
 hr {
-    border: 2px solid #333;
+    border: 1px solid #4B8E49;
 }
 
 /* Anchors */
@@ -62,17 +50,14 @@ a img {
 }
 
 a:link, a:visited {
-    color: #00121f;
+    color: #4B8E49;
     padding: 0 1px;
     text-decoration: none;
-    border-bottom: 1px dotted #333333;
 }
 
 a:hover, a:active {
-    color: #00121f;
-    text-decoration: none;
-    text-shadow: 1px 1px 1px #333;
-    border-bottom: 1px dotted #CCCCCC;
+    color: #4B8E49;
+    border-bottom: 1px dotted #4B8E49;
 }
 
 h1 a:hover {
@@ -92,15 +77,6 @@ em, i {
     font-style: italic;
 }
 
-::-moz-selection {
-    background: #F6CF74;
-    color: #fff;
-}
-::selection {
-    background: #F6CF74;
-    color: #fff;
-}
-
 /* Lists */
 ul {
     list-style: outside disc;
@@ -118,7 +94,7 @@ li {
 }
 
 .post-info {
-    border-right: 4px solid #333;
+    border-right: 2px solid #4B8E49;
     float:right;
     margin:10px;
     padding:5px;
@@ -129,14 +105,14 @@ li {
 }
 
 .entry-content .post-info, #featured .post-info {
-    border-left: 4px solid #333;
+    border-left: 2px solid #4B8E49;
     border-right: 0;
     margin: 20px 20px 20px 10px;
     padding: 5px 5px 5px 15px;
 }
 
 #posts-list .post-info {
-    border-right: 4px solid #333;
+    border-right: 2px solid #4B8E49;
     border-left: 0;
     float: left;
     margin: 0 20px 0 10px;
@@ -166,11 +142,7 @@ dd {
 }
 
 pre {
-    border-radius: 5px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
     line-height: 80%;
-    font-size: 120%;
     background-color: #000;
     padding: 10px;
     color: #fff;
@@ -184,6 +156,10 @@ pre.line-pre {
     overflow: inherit;
 }
 
+div.gist {
+    clear: both;
+}
+
 div.gist-file {
     line-height: 1;
 }
@@ -194,12 +170,8 @@ blockquote {
     font-style: italic;
 }
 
-cite {}
-q {}
-
 /* Tables */
 table {
-    /* margin: .5em auto 1.5em auto; */
     width: 98%;
 }
 
@@ -233,7 +205,6 @@ aside, nav, article, figure {
 .body {
     clear: both;
     margin: 0 auto;
-    /* width: 800px; */
     max-width: 800px;
 }
 
@@ -267,17 +238,14 @@ img.left, figure.left {
 }
 
 #banner h1 a:link, #banner h1 a:visited {
-    color: white;
     display: block;
-    font-weight: bold;
     margin: 0 0 0.2em 0em;
     text-decoration: none;
     word-wrap: break-word;
 }
 #banner h1 a:hover, #banner h1 a:active {
     background: none;
-    color: #EEEEEE;
-    text-shadow: none;
+    color: #333;
 }
 
 #banner h1 strong {
@@ -296,7 +264,6 @@ img.left, figure.left {
     padding: 0;
     text-align: center;
     max-width: 800px;
-    border-bottom: 4px solid #4b8e49;
 }
 
 #banner nav ul {
@@ -313,7 +280,6 @@ img.left, figure.left {
 }
 
 #banner nav a:link, #banner nav a:visited {
-    color: white;
     margin-right: 2px;
     display: inline-block;
     height: 26px;
@@ -323,18 +289,7 @@ img.left, figure.left {
 
 #banner nav a:hover, #banner nav a:active,
 #banner nav .active a:link, #banner nav .active a:visited {
-    background: #4B8E49;
-    color: #fff;
-    text-shadow: none !important;
-}
-
-#banner nav li a {
-    border-top-left-radius: 5px;
-    -moz-border-radius-topleft: 5px;
-    -webkit-border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    -moz-border-radius-topright: 5px;
-    -webkit-border-top-right-radius: 5px;
+    border-bottom: 2px solid #4B8E49;
 }
 
 #banner ul.social {
@@ -354,14 +309,10 @@ img.left, figure.left {
     Featured
 *****************/
 #featured {
-    background: #fff;
     margin-bottom: 2em;
     overflow: hidden;
-    padding: 20px;
-    max-width: 760px;
-    border-radius: 10px;
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
+    padding: 20px 0;
+    max-width: 800px;
 }
 
 #featured figure {
@@ -377,7 +328,6 @@ img.left, figure.left {
 }
 
 #featured h2 {
-    color: #C74451;
     font-size: 1.714em;
     margin-bottom: 0.333em;
 }
@@ -386,26 +336,14 @@ img.left, figure.left {
     margin-bottom: .5em;
 }
 
-#featured h3 a:link, #featured h3 a:visited {
-    color: #000305;
-    text-decoration: none;
-}
-#featured h3 a:hover, #featured h3 a:active {
-    color: #fff;
-}
-
 /*
     Body
 *****************/
 #content {
-    background: #fff;
     margin-bottom: 2em;
     overflow: hidden;
     padding: 20px 20px;
     max-width: 760px;
-    border-radius: 10px;
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
 }
 
 /*
@@ -470,35 +408,8 @@ img.left, figure.left {
     padding-left: 25px;
 }
 
-/* Icons */
-/* .social a[href*='delicious.com'] { */
-/*     background-image: url('../images/icons/delicious.png'); */
-/* } */
-/* .social a[href*='digg.com'] { */
-/*     background-image: url('../images/icons/digg.png'); */
-/* } */
-/* .social a[href*='facebook.com'] { */
-/*     background-image: url('../images/icons/facebook.png'); */
-/* } */
-/* .social a[href*='last.fm'], .social a[href*='lastfm.'] { */
-/*     background-image: url('../images/icons/lastfm.png'); */
-/* } */
-/* .social a[href*='atom.xml'] { */
-/*     background-image: url('../images/icons/rss.png'); */
-/* } */
-/* .social a[href*='twitter.com'] { */
-/*     background-image: url('../images/icons/twitter.png'); */
-/* } */
-/* .social a[href*='linkedin.com'] { */
-/*     background-image: url('../images/icons/linkedin.png'); */
-/* } */
-/* .social a[href*='github.com'] { */
-/*     background-image: url('../images/icons/github.png'); */
-/* } */
-
 /* About */
 #about {
-    background: #fff;
     font-size: 0.9em;
     font-style: normal;
     margin-bottom: 2em;
@@ -506,9 +417,6 @@ img.left, figure.left {
     padding: 20px;
     text-align: left;
     max-width: 760px;
-    border-radius: 10px;
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
 }
 
 #about .primary {
@@ -571,10 +479,6 @@ li:last-child .hentry, #content > .hentry {
     color: #333;
 }
 
-.entry-title a:visited {
-    background-color: #fff;
-}
-
 .hentry .post-info * {
     font-style: normal;
 }
@@ -605,14 +509,10 @@ li:last-child .hentry, #content > .hentry {
 
 /* About the Author */
 #about-author {
-    background: #f9f9f9;
     clear: both;
     font-style: normal;
     margin: 2em 0;
     padding: 10px 20px 15px 20px;
-    border-radius: 5px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
 }
 
 #about-author strong {
@@ -633,16 +533,15 @@ li:last-child .hentry, #content > .hentry {
     list-style: none;
     margin: 0 1em;
 }
+
 #comments-list blockquote {
     background: #f8f8f8;
     clear: both;
     font-style: normal;
     margin: 0;
     padding: 15px 20px;
-    border-radius: 5px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
 }
+
 #comments-list footer {
     color: #888;
     padding: .5em 1em 0 0;

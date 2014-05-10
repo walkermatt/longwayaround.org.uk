@@ -5,7 +5,6 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, target-densitydpi=device-dpi">
         <link rel="stylesheet" href="/theme/css/main.css" type="text/css" />
-        <link href="/" type="application/atom+xml" rel="alternate" title="longwayaround.org.uk ATOM Feed" />
         <link href="/feeds/all.rss.xml" type="application/atom+xml" rel="alternate" title="longwayaround.org.uk RSS Feed" />
 
         <!--[if IE]>
@@ -30,7 +29,6 @@
                 </ul>
                 </nav>
                     <ul class="social">
-                        <li><a href="/" rel="alternate"><img src="/theme/images/icons/gosquared/18/rss.png" title="atom" width="18" height="18" /></a></li>
                         <li><a href="/feeds/all.rss.xml" rel="alternate"><img src="/theme/images/icons/gosquared/18/rss.png" title="rss" width="18" height="18" /></a></li>
                     <li><a href="http://uk.linkedin.com/in/walkermatt"><img src="/theme/images/icons/gosquared/18/linkedin.png" title="linkedin" width="18" height="18" /></a></li>
                     <li><a href="http://delicious.com/walkermatt"><img src="/theme/images/icons/gosquared/18/delicious.png" title="delicious" width="18" height="18" /></a></li>
@@ -54,7 +52,7 @@
                 By <a class="url fn" href="/author/walkermatt.html">walkermatt</a>
         </address>
 <p>In <a href="/category/notes.html">notes</a>. </p>
-<p>tags: <a href="/tag/mapserver.html">mapserver</a> </p></footer><!-- /.post-info -->        <p>There have been a few times in the past (such as when I was preparing the base mapping for <a class="reference external" href="http://mywycombe.wycombe.gov.uk/?tab=2">My Wycombe</a>) when I've wanted to create greyscale base mapping using <a class="reference external" href="http://mapserver.org">MapServer</a>. Previously I've experimented with various processing options for raster images (with varying degrees of success), converting the source images using <a class="reference external" href="www.imagemagick.org">ImageMagick</a> and converting colour RGB values to their greyscale equivalent for vector features and it's generally been time consuming.  Today the requirement came up again and I discovered a far simpler option: specifying a greyscale palette as an OUTPUTFORMAT FORMATOPTION.  The palette simply contains grey values from 0,0,0 (black) to 255,255,255 (white) and all values in between. MapServer then does the job of converting the colours for your source data into their greyscale equivalents.</p>
+<p>Tags: <a href="/tag/mapserver.html">mapserver</a> </p></footer><!-- /.post-info -->        <p>There have been a few times in the past (such as when I was preparing the base mapping for <a class="reference external" href="http://mywycombe.wycombe.gov.uk/?tab=2">My Wycombe</a>) when I've wanted to create greyscale base mapping using <a class="reference external" href="http://mapserver.org">MapServer</a>. Previously I've experimented with various processing options for raster images (with varying degrees of success), converting the source images using <a class="reference external" href="www.imagemagick.org">ImageMagick</a> and converting colour RGB values to their greyscale equivalent for vector features and it's generally been time consuming.  Today the requirement came up again and I discovered a far simpler option: specifying a greyscale palette as an OUTPUTFORMAT FORMATOPTION.  The palette simply contains grey values from 0,0,0 (black) to 255,255,255 (white) and all values in between. MapServer then does the job of converting the colours for your source data into their greyscale equivalents.</p>
 <p>In the map file specify an <a class="reference external" href="http://mapserver.org/mapfile/outputformat.html">OUTPUTFORMAT</a> that used a specific palette:</p>
 <pre class="literal-block">
 # Specify a plain PNG output with a
@@ -141,7 +139,6 @@ END
 
         <footer id="contentinfo" class="body">
                 <address id="about" class="vcard body">
-                    <h3>Credits</h3>
                     Powered by <a href="http://alexis.notmyidea.org/pelican/">Pelican</a> and <a href="http://python.org">Python</a>, using a modified <a href="http://coding.smashingmagazine.com/2009/08/04/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a> theme, background from <a href="http://subtlepatterns.com">Subtle Patterns</a> and icons from <a href="https://www.gosquared.com/blog/archives/2925">GoSocial</a>.
                 </address><!-- /#about -->
         </footer><!-- /#contentinfo -->
