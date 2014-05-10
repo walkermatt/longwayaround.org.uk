@@ -11,14 +11,11 @@ Contact
 
 You can find me here:
 
--  Twitter: `http://twitter.com/\_walkermatt`_
--  LinkedIn: `http://uk.linkedin.com/in/walkermatt`_
--  Github: `https://github.com/walkermatt`_
--  Github: `https://github.com/organizations/AstunTechnology`_
+-  Twitter: http://twitter.com/_walkermatt
+-  LinkedIn: http://uk.linkedin.com/in/walkermatt
+-  Github: https://github.com/walkermatt
+-  Github: https://github.com/organizations/AstunTechnology
+-  OSGeo: http://wiki.osgeo.org/wiki/User:walkermatt
 
 .. _Astun Technology: http://www.astuntechnology.com/
 .. _Dotted Eyes Ltd.: http://www.dottedeyes.com/
-.. _`http://twitter.com/\_walkermatt`: http://twitter.com/_walkermatt
-.. _`http://uk.linkedin.com/in/walkermatt`: http://uk.linkedin.com/in/walkermatt
-.. _`https://github.com/walkermatt`: https://github.com/walkermatt
-.. _`https://github.com/organizations/AstunTechnology`: https://github.com/organizations/AstunTechnology
