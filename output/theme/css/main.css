@@ -7,7 +7,7 @@
 /* Body */
 body {
     color: #000305;
-    background-color: #FAFAD2;
+    background-color: whitesmoke;
     font-size: 105%;
     font-family: 'Alegreya Sans', sans-serif;
     line-height: 1.429;
@@ -311,8 +311,8 @@ img.left, figure.left {
 #featured {
     margin-bottom: 2em;
     overflow: hidden;
-    padding: 20px 0;
-    max-width: 800px;
+    padding: 20px;
+    max-width: 760px;
 }
 
 #featured figure {
