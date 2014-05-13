@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*- #
 
+# Set to false before publishing
+# RELATIVE_URLS = True
+
 AUTHOR = u"walkermatt"
 SITENAME = u"longwayaround.org.uk"
 SITESUBTITLE = u"taking the scenic route and enjoying the journey"
-SITEURL = ''
+SITEURL = u"http://longwayaround.org.uk"
 
 TIMEZONE = 'Europe/London'
 
@@ -15,11 +18,11 @@ LINKS = ()
 
 # Social widget
 SOCIAL = (
-        ('linkedin', 'http://uk.linkedin.com/in/walkermatt'),
-        ('delicious', 'http://delicious.com/walkermatt'),
-        ('github', 'http://github.com/organizations/AstunTechnology'),
-        ('github', 'http://github.com/walkermatt'),
-        ('twitter', 'http://twitter.com/_walkermatt')
+    ('linkedin', 'http://uk.linkedin.com/in/walkermatt'),
+    ('delicious', 'http://delicious.com/walkermatt'),
+    ('github', 'http://github.com/organizations/AstunTechnology'),
+    ('github', 'http://github.com/walkermatt'),
+    ('twitter', 'http://twitter.com/_walkermatt')
 )
 
 PLUGINS = [
