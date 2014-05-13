@@ -40,7 +40,7 @@ ssh_upload: $(OUTPUTDIR)/index.html
 	scp -r $(OUTPUTDIR)/* $(SSH_USER)@$(SSH_HOST):$(SSH_TARGET_DIR)
 
 ftp_upload: $(OUTPUTDIR)/index.html
-	lftp -e "set ftp:ssl-allow off ; mirror -R $(OUTPUTDIR) $(FTP_TARGET_DIR) ; quit" ftp://$(FTP_USER)@$(FTP_HOST)
+	lftp -e "set ftp:ssl-allow off ; mirror --reverse --no-perms $(OUTPUTDIR) $(FTP_TARGET_DIR) ; quit" ftp://$(FTP_USER)@$(FTP_HOST)
 
 github: $(OUTPUTDIR)/index.html
 	ghp-import $(OUTPUTDIR)
