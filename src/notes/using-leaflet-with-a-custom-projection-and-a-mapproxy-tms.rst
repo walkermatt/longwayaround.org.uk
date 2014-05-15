@@ -4,6 +4,12 @@ Using Leaflet with a custom projection and a MapProxy TMS
 :category: notes
 :tags: leaflet, mapproxy
 
+**Update 2014-05-15** For examples of displaying a Web Map Service (WMS) layer
+in a custom projection (EPSG:27700) within Leaflet and OpenLayers 3 (ol3) see:
+`astun-leaflet-examples
+<https://github.com/AstunTechnology/astun-leaflet-examples>`_ and
+`astun-ol3-examples <https://github.com/AstunTechnology/astun-ol3-examples>`_.
+
 **Update 2012-12-18** I've update the `Gist <https://gist.github.com/3034742>`_
 to reflect changes in v0.4 of Leaflet, in particular the fact that the
 scale function now belongs to the CRS object instead of the Map and the
