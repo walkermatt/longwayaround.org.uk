@@ -46,7 +46,11 @@
     &lt;/noscript&gt;
 &lt;/div&gt;
 &lt;p&gt;See the &lt;a class="reference external" href="http://docs.geoserver.org/stable/en/user/tutorials/freemarker.html"&gt;GeoServer Freemarker tutorial&lt;/a&gt; for details of where the content template needs to live. The &lt;a class="reference external" href="http://freemarker.org/docs/"&gt;Freemaker Documentation&lt;/a&gt; is comprehensive if you're interested in further customisation.&lt;/p&gt;
-</summary><category term="geoserver"></category><category term="notes"></category></entry><entry><title>Using Leaflet with a custom projection and a MapProxy TMS</title><link href="http://longwayaround.org.uk/notes/using-leaflet-with-a-custom-projection-and-a-mapproxy-tms/" rel="alternate"></link><updated>2012-07-02T21:06:00+01:00</updated><author><name>walkermatt</name></author><id>tag:longwayaround.org.uk,2012-07-02:notes/using-leaflet-with-a-custom-projection-and-a-mapproxy-tms/</id><summary type="html">&lt;p&gt;&lt;strong&gt;Update 2012-12-18&lt;/strong&gt; I've update the &lt;a class="reference external" href="https://gist.github.com/3034742"&gt;Gist&lt;/a&gt;
+</summary><category term="geoserver"></category><category term="notes"></category></entry><entry><title>Using Leaflet with a custom projection and a MapProxy TMS</title><link href="http://longwayaround.org.uk/notes/using-leaflet-with-a-custom-projection-and-a-mapproxy-tms/" rel="alternate"></link><updated>2012-07-02T21:06:00+01:00</updated><author><name>walkermatt</name></author><id>tag:longwayaround.org.uk,2012-07-02:notes/using-leaflet-with-a-custom-projection-and-a-mapproxy-tms/</id><summary type="html">&lt;p&gt;&lt;strong&gt;Update 2014-05-15&lt;/strong&gt; For examples of displaying a Web Map Service (WMS) layer
+in a custom projection (EPSG:27700) within Leaflet and OpenLayers 3 (ol3) see:
+&lt;a class="reference external" href="https://github.com/AstunTechnology/astun-leaflet-examples"&gt;astun-leaflet-examples&lt;/a&gt; and
+&lt;a class="reference external" href="https://github.com/AstunTechnology/astun-ol3-examples"&gt;astun-ol3-examples&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Update 2012-12-18&lt;/strong&gt; I've update the &lt;a class="reference external" href="https://gist.github.com/3034742"&gt;Gist&lt;/a&gt;
 to reflect changes in v0.4 of Leaflet, in particular the fact that the
 scale function now belongs to the CRS object instead of the Map and the
 way that the TileLayer scheme is specified has changed to simply &lt;tt class="docutils literal"&gt;tms: true&lt;/tt&gt;.&lt;/p&gt;
