@@ -2,7 +2,7 @@ First few months of Clojure
 ###########################
 :date: 2014-02-18 19:42
 :category: notes
-:tags: command-line, notes, clojure
+:tags: command-line, clojure, notes
 
 I've been learning a bit of Lisp on and off for a few years, I first read (about half of) `Land of Lisp <http://landoflisp.com/>`_, then `Practical Lisp <http://www.gigamonkeys.com/book/>`_ then I came across `Clojure <http://clojure.org/>`_ a modern Lisp that runs on the JVM and since I've been reading `Clojure Programming <http://www.clojurebook.com/>`_ and working through `koans <https://github.com/walkermatt/clojure-koans>`_ and `katas <https://github.com/walkermatt/yellow_belt_clojure_katas>`_.
 

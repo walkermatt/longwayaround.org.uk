@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-        <title>Using Leaflet with a custom projection and a MapProxy TMS</title>
+        <title>GNU Parallel all the things!</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, target-densitydpi=device-dpi">
         <link rel="stylesheet" href="http://longwayaround.org.uk/theme/css/main.css" type="text/css" />
@@ -41,50 +41,53 @@
 <section id="content" class="body">    
 <article>
         <header> <h1 class="entry-title"><a href=""
-        rel="bookmark" title="Permalink to Using Leaflet with a custom projection and a MapProxy TMS">Using Leaflet with a custom projection and a MapProxy TMS</a></h1>  </header>
+        rel="bookmark" title="Permalink to GNU Parallel all the things!">GNU Parallel all the things!</a></h1>  </header>
         <div class="entry-content">
 <footer class="post-info">
-        <abbr class="published" title="2012-07-02T21:06:00">
-                Mon 02 July 2012
+        <abbr class="published" title="2014-07-17T19:45:00">
+                Thu 17 July 2014
         </abbr>
 
         <address class="vcard author">
                 By <a class="url fn" href="http://longwayaround.org.uk/author/walkermatt.html">walkermatt</a>
         </address>
 <p>In <a href="http://longwayaround.org.uk/category/notes.html">notes</a>. </p>
-<p>Tags: <a href="http://longwayaround.org.uk/tag/leaflet.html">leaflet</a> <a href="http://longwayaround.org.uk/tag/mapproxy.html">mapproxy</a> </p></footer><!-- /.post-info -->        <p><strong>Update 2014-05-15</strong> For examples of displaying a Web Map Service (WMS) layer
-in a custom projection (EPSG:27700) within Leaflet and OpenLayers 3 (ol3) see:
-<a class="reference external" href="https://github.com/AstunTechnology/astun-leaflet-examples">astun-leaflet-examples</a> and
-<a class="reference external" href="https://github.com/AstunTechnology/astun-ol3-examples">astun-ol3-examples</a>.</p>
-<p><strong>Update 2012-12-18</strong> I've update the <a class="reference external" href="https://gist.github.com/3034742">Gist</a>
-to reflect changes in v0.4 of Leaflet, in particular the fact that the
-scale function now belongs to the CRS object instead of the Map and the
-way that the TileLayer scheme is specified has changed to simply <tt class="docutils literal">tms: true</tt>.</p>
-<p><a class="reference external" href="http://leaflet.cloudmade.com/">Leaflet</a> is a lightweight JavaScript
-slippy map client well suited to use on mobile devices. It’s seen as an
-alternative to <a class="reference external" href="http://openlayers.org/">OpenLayers</a> but takes a
-different approach focusing on a small easy to use set of features.</p>
-<p>By default Leaflet allow you to display a map in one of the common
-projections used to display tiles in the Google and
-<a class="reference external" href="http://www.openstreetmap.org/">OSM</a> tile schemes and the vast
-majority of examples you see use these. It is however possible to use
-another projection such as a local projection like British National Grid
-thanks to <a class="reference external" href="https://github.com/kartena/Proj4Leaflet">Proj4Leaflet</a>
-which allows you to provide a <a class="reference external" href="http://trac.osgeo.org/proj/">Proj4</a>
-projection definition and Transformation and scale functions which map
-projected coordinates to grid coordinates at a given zoom.</p>
-<p>Setting up the definition is straight forward thanks to
-<a class="reference external" href="http://spatialreference.org">spatialreference.org</a> which allows you
-to look-up most projections and their definitions. In my case the
-Transformation and scale functions also turned out to be simple after a
-little trial and error.</p>
-<p>I’ve been using a TMS layer provided by one of the MapProxy instances
-that form part of Astun Data Services, the configuration of which was as
-simple as providing a URL template and setting the <tt class="docutils literal">TileLayer</tt> scheme
-to <tt class="docutils literal">tms</tt>.</p>
-<p>I’ve posted an example JavaScript snippet as a GitHub Gist with some
-notes here:
-<a class="reference external" href="https://gist.github.com/3034742">https://gist.github.com/3034742</a></p>
+<p>Tags: <a href="http://longwayaround.org.uk/tag/command-line.html">command-line</a> <a href="http://longwayaround.org.uk/tag/postgis.html">postgis</a> <a href="http://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->        <p>I've been doing a lot of data processing recently and have been looking for a way of running bulk data loads into PostGIS in parallel to make use of all available cores. The work has mainly revolved around loading national cover of Ordnance Survey OS MasterMap and VectorMap local for <a class="reference external" href="http://astuntechology.com/">Astun's</a> base map services using <a class="reference external" href="https://github.com/AstunTechnology/Loader">Loader</a>. Loader doesn't have any parallel processing baked in but a <a class="reference external" href="https://github.com/AstunTechnology/Loader/commit/199e66f7064e341b1365eb10a3d5a572b45b7fdb">small change to how it creates it's temporary directory</a> allows multiple instance to be ran in parallel each processing a single file at a time. The key component to enable this is <a class="reference external" href="http://www.gnu.org/software/parallel/">GNU Parallel</a>, from the projects homepage:</p>
+<blockquote>
+GNU parallel is a shell tool for executing jobs in parallel using one or more computers. A job can be a single command or a small script that has to be run for each of the lines in the input. The typical input is a list of files, a list of hosts, a list of users, a list of URLs, or a list of tables. A job can also be a command that reads from a pipe. GNU parallel can then split the input and pipe it into commands in parallel.</blockquote>
+<p>The way I've been using Parallel with Loader is to build a list of files to process using <tt class="docutils literal">find</tt> which is piped to <tt class="docutils literal">parallel</tt> which handles executing as many processes as there are cores (by default). For example:</p>
+<div class="gist">
+    <script src='https://gist.github.com/99181c8454233fca2c8d.js?file=loader_parallel.sh'></script>
+    <noscript>
+        <pre><code>find /var/data/osmm/ -type f -print0 | \
+parallel -0 python loader.py loader.config "src_dir={}"</code></pre>
+    </noscript>
+</div>
+<p>Using this approach on an 8 core EC2 server with SSD volumes national OS MasterMap Topography Layer can be loaded over a weekend.</p>
+<p>Another example of using <tt class="docutils literal">parallel</tt> would be to build on the bash one-liner that Tim Sutton posted a while back to <a class="reference external" href="http://linfiniti.com/2012/03/another-bash-one-liner-load-all-natural-earth-layers-into-postgis-in-one-go/">load all natural earth layers into PostGIS in one go</a>. Tim's original command used <tt class="docutils literal">find</tt> to build a list of files then loops over the list and runs <tt class="docutils literal">shp2pgsql</tt> for each piping the output to <tt class="docutils literal">psql</tt> to do the actual load. Here's the original command tweaked slightly to exclude the <tt class="docutils literal">tools</tt> directory and specify the encoding including timing:</p>
+<div class="gist">
+    <script src='https://gist.github.com/99181c8454233fca2c8d.js?file=natural_earth_loop.sh'></script>
+    <noscript>
+        <pre><code>time for FILE in `find . -name '*.shp' -not -path "./tools/*"`; do \
+    BASE=`basename $FILE .shp`; \
+    shp2pgsql -s 4326 -I $FILE world.$BASE \
+    | psql; done
+
+real	4m31.680s</code></pre>
+    </noscript>
+</div>
+<p>The example below is the equivalent using <cite>parallel</cite> which significantly reduces load time:</p>
+<div class="gist">
+    <script src='https://gist.github.com/99181c8454233fca2c8d.js?file=natural_earth_parallel.sh'></script>
+    <noscript>
+        <pre><code>time find . -name '*.shp' -not -path "./tools/*" | \
+     xargs -I '{}' echo 'shp2pgsql -s 4326 -I {} world.$(basename {} .shp) | psql' | \
+     parallel
+
+real	1m50.772s</code></pre>
+    </noscript>
+</div>
+<p>Again <tt class="docutils literal">find</tt> is used to build a list of input shapefiles which are piped to <tt class="docutils literal">parallel</tt> which builds a command that is piped to another <tt class="docutils literal">parallel</tt> instance to execute. By default <tt class="docutils literal">parallel</tt> provides the <tt class="docutils literal">{}</tt> replacement string for the current argument (file path in this case) and <tt class="docutils literal"><span class="pre">{/.}</span></tt> which strips the path and extension from when the replacement string is a file path.</p>
 
         </div><!-- /.entry-content -->
         <div class="comments">
@@ -93,7 +96,7 @@ notes here:
             <script type="text/javascript">
                // Don't set the identifier so that comments are
                // associated with the url
-               // var disqus_identifier = "notes/using-leaflet-with-a-custom-projection-and-a-mapproxy-tms/";
+               // var disqus_identifier = "notes/gnu-parallel-all-the-things/";
                (function() {
                var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
                dsq.src = 'http://longwayaroundorguk.disqus.com/embed.js';
