@@ -22,4 +22,4 @@ The example below is the equivalent using `parallel` which significantly reduces
 
 [gist:id=99181c8454233fca2c8d,file=natural_earth_parallel.sh]
 
-Again ``find`` is used to build a list of input shapefiles which are piped to ``parallel`` which builds a command that is piped to another ``parallel`` instance to execute. By default ``parallel`` provides the ``{}`` replacement string for the current argument (file path in this case) and ``{/.}`` which strips the path and extension from when the replacement string is a file path.
+Again ``find`` is used to build a list of input shapefiles which are piped to ``parallel`` which builds and executes the ``shp2pgsql`` and ``psql`` combination. By default ``parallel`` provides the ``{}`` replacement string for the current argument (file path in this case) and ``{/.}`` which strips the path and extension from when the replacement string is a file path.
