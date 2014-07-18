@@ -68,24 +68,23 @@ parallel -0 python loader.py loader.config "src_dir={}"</code></pre>
     <noscript>
         <pre><code>time for FILE in `find . -name '*.shp' -not -path "./tools/*"`; do \
     BASE=`basename $FILE .shp`; \
-    shp2pgsql -s 4326 -I $FILE world.$BASE \
+    shp2pgsql -W LATIN1 -s 4326 -I $FILE world.$BASE \
     | psql; done
 
-real	4m31.680s</code></pre>
+real	6m14.569s</code></pre>
     </noscript>
 </div>
 <p>The example below is the equivalent using <cite>parallel</cite> which significantly reduces load time:</p>
 <div class="gist">
     <script src='https://gist.github.com/99181c8454233fca2c8d.js?file=natural_earth_parallel.sh'></script>
     <noscript>
-        <pre><code>time find . -name '*.shp' -not -path "./tools/*" | \
-     xargs -I '{}' echo 'shp2pgsql -s 4326 -I {} world.$(basename {} .shp) | psql' | \
-     parallel
+        <pre><code>time find . -name '*.shp' -not -path "./tools/*" \
+     | parallel "shp2pgsql -W LATIN1 -s 4326 -I {} world.{/.} | psql"
 
-real	1m50.772s</code></pre>
+real	3m11.030s</code></pre>
     </noscript>
 </div>
-<p>Again <tt class="docutils literal">find</tt> is used to build a list of input shapefiles which are piped to <tt class="docutils literal">parallel</tt> which builds a command that is piped to another <tt class="docutils literal">parallel</tt> instance to execute. By default <tt class="docutils literal">parallel</tt> provides the <tt class="docutils literal">{}</tt> replacement string for the current argument (file path in this case) and <tt class="docutils literal"><span class="pre">{/.}</span></tt> which strips the path and extension from when the replacement string is a file path.</p>
+<p>Again <tt class="docutils literal">find</tt> is used to build a list of input shapefiles which are piped to <tt class="docutils literal">parallel</tt> which builds and executes the <tt class="docutils literal">shp2pgsql</tt> and <tt class="docutils literal">psql</tt> combination. By default <tt class="docutils literal">parallel</tt> provides the <tt class="docutils literal">{}</tt> replacement string for the current argument (file path in this case) and <tt class="docutils literal"><span class="pre">{/.}</span></tt> which strips the path and extension from when the replacement string is a file path.</p>
 <p><a href="http://longwayaround.org.uk/notes/gnu-parallel-all-the-things/#disqus_thread">comments</a>.</p>
                 </article>
             </aside><!-- /#featured -->

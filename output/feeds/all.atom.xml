@@ -17,24 +17,23 @@ parallel -0 python loader.py loader.config "src_dir={}"&lt;/code&gt;&lt;/pre&gt;
     &lt;noscript&gt;
         &lt;pre&gt;&lt;code&gt;time for FILE in `find . -name '*.shp' -not -path "./tools/*"`; do \
     BASE=`basename $FILE .shp`; \
-    shp2pgsql -s 4326 -I $FILE world.$BASE \
+    shp2pgsql -W LATIN1 -s 4326 -I $FILE world.$BASE \
     | psql; done
 
-real	4m31.680s&lt;/code&gt;&lt;/pre&gt;
+real	6m14.569s&lt;/code&gt;&lt;/pre&gt;
     &lt;/noscript&gt;
 &lt;/div&gt;
 &lt;p&gt;The example below is the equivalent using &lt;cite&gt;parallel&lt;/cite&gt; which significantly reduces load time:&lt;/p&gt;
 &lt;div class="gist"&gt;
     &lt;script src='https://gist.github.com/99181c8454233fca2c8d.js?file=natural_earth_parallel.sh'&gt;&lt;/script&gt;
     &lt;noscript&gt;
-        &lt;pre&gt;&lt;code&gt;time find . -name '*.shp' -not -path "./tools/*" | \
-     xargs -I '{}' echo 'shp2pgsql -s 4326 -I {} world.$(basename {} .shp) | psql' | \
-     parallel
+        &lt;pre&gt;&lt;code&gt;time find . -name '*.shp' -not -path "./tools/*" \
+     | parallel "shp2pgsql -W LATIN1 -s 4326 -I {} world.{/.} | psql"
 
-real	1m50.772s&lt;/code&gt;&lt;/pre&gt;
+real	3m11.030s&lt;/code&gt;&lt;/pre&gt;
     &lt;/noscript&gt;
 &lt;/div&gt;
-&lt;p&gt;Again &lt;tt class="docutils literal"&gt;find&lt;/tt&gt; is used to build a list of input shapefiles which are piped to &lt;tt class="docutils literal"&gt;parallel&lt;/tt&gt; which builds a command that is piped to another &lt;tt class="docutils literal"&gt;parallel&lt;/tt&gt; instance to execute. By default &lt;tt class="docutils literal"&gt;parallel&lt;/tt&gt; provides the &lt;tt class="docutils literal"&gt;{}&lt;/tt&gt; replacement string for the current argument (file path in this case) and &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;{/.}&lt;/span&gt;&lt;/tt&gt; which strips the path and extension from when the replacement string is a file path.&lt;/p&gt;
+&lt;p&gt;Again &lt;tt class="docutils literal"&gt;find&lt;/tt&gt; is used to build a list of input shapefiles which are piped to &lt;tt class="docutils literal"&gt;parallel&lt;/tt&gt; which builds and executes the &lt;tt class="docutils literal"&gt;shp2pgsql&lt;/tt&gt; and &lt;tt class="docutils literal"&gt;psql&lt;/tt&gt; combination. By default &lt;tt class="docutils literal"&gt;parallel&lt;/tt&gt; provides the &lt;tt class="docutils literal"&gt;{}&lt;/tt&gt; replacement string for the current argument (file path in this case) and &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;{/.}&lt;/span&gt;&lt;/tt&gt; which strips the path and extension from when the replacement string is a file path.&lt;/p&gt;
 </summary><category term="command-line"></category><category term="postgis"></category><category term="notes"></category></entry><entry><title>First few months of Clojure</title><link href="http://longwayaround.org.uk/notes/first-few-months-of-clojure/" rel="alternate"></link><updated>2014-02-18T19:42:00+00:00</updated><author><name>walkermatt</name></author><id>tag:longwayaround.org.uk,2014-02-18:notes/first-few-months-of-clojure/</id><summary type="html">&lt;p&gt;I've been learning a bit of Lisp on and off for a few years, I first read (about half of) &lt;a class="reference external" href="http://landoflisp.com/"&gt;Land of Lisp&lt;/a&gt;, then &lt;a class="reference external" href="http://www.gigamonkeys.com/book/"&gt;Practical Lisp&lt;/a&gt; then I came across &lt;a class="reference external" href="http://clojure.org/"&gt;Clojure&lt;/a&gt; a modern Lisp that runs on the JVM and since I've been reading &lt;a class="reference external" href="http://www.clojurebook.com/"&gt;Clojure Programming&lt;/a&gt; and working through &lt;a class="reference external" href="https://github.com/walkermatt/clojure-koans"&gt;koans&lt;/a&gt; and &lt;a class="reference external" href="https://github.com/walkermatt/yellow_belt_clojure_katas"&gt;katas&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;I've also built a small Clojure library and command-line app &lt;a class="reference external" href="https://github.com/walkermatt/gridref"&gt;GridRef&lt;/a&gt; to convert between an Ordnance Survey GB grid reference and British National Grid coordinates. While I was at it I built a web API &lt;a class="reference external" href="https://github.com/walkermatt/gridref-web"&gt;GridRef Web&lt;/a&gt; which exposes the conversion functions via a &lt;a class="reference external" href="https://github.com/ring-clojure/ring"&gt;Ring&lt;/a&gt; web app, hosted on Heroku and available at &lt;a class="reference external" href="http://gridref.longwayaround.org.uk/"&gt;http://gridref.longwayaround.org.uk/&lt;/a&gt;. Having a real (all be it small) project to work on has helped massively in learning and while I found the move from Python and JavaScript initially challenging I'm finding that I'm now thinking more functionally elsewhere.&lt;/p&gt;
 &lt;p&gt;A few months in I'm really enjoying working with Clojure which feels like a thoughtfully designed language that incorporates sound theory in a practical way. The way the language and tooling favour interactive development really suits (especially &lt;a class="reference external" href="https://github.com/technomancy/leiningen"&gt;lein&lt;/a&gt; and &lt;a class="reference external" href="https://github.com/tpope/vim-fireplace"&gt;vim-fireplace&lt;/a&gt;) and I'm really drawn to the Lisp everything is an expression and code-as-data principles.&lt;/p&gt;
