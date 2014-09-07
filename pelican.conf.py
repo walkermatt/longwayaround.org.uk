@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*- #
 
 # Set to false before publishing
-# RELATIVE_URLS = True
+RELATIVE_URLS = False
 
 AUTHOR = u"walkermatt"
 SITENAME = u"longwayaround.org.uk"

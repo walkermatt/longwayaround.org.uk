@@ -11,15 +11,10 @@ Create a table for our demo data:
 .. code-block:: sql
 
     CREATE TABLE complex
-
     (
-
        id serial, 
-
        "name" text,
-
        geom geometry
-
     );
 
 Insert one row with a MultiLineString with two parts ('Bob') and another with a single LineString ('Harry')
@@ -27,25 +22,15 @@ Insert one row with a MultiLineString with two parts ('Bob') and another with a 
 .. code-block:: sql
 
     INSERT INTO complex (name, geom)
-
       VALUES (
-
         'Bob',
-
         ST_GeomFromEWKT('MULTILINESTRING((498376.89 651569.6,498372.28 651571.89),(498372.28 651571.89,498371.77 651576.05))')
-
       );
 
-
-
     INSERT INTO complex (name, geom)
-
       VALUES (
-
         'Harry',
-
         ST_GeomFromEWKT('LINESTRING(598376.89 751569.6,398372.75 658771.03)')
-
       );
 
 Query to show we have two rows one of which has a MultiLineString geometry:
@@ -69,33 +54,19 @@ Use the ST\_Dump function to split the row with a MultiLineString into two rows 
 .. code-block:: sql
 
     SELECT
-
       COALESCE((simple.id || '.' || simple.path[1]::text)::float, simple.id) as id,
-
       simple.name,
-
       simple.simple_geom as geom,
-
       ST_GeometryType(simple.simple_geom) as geom_type,
-
       ST_AsEWKT(simple.simple_geom) as geom_wkt
-
     FROM (
-
       SELECT
-
         dumped.*,
-
         (dumped.geom_dump).geom as simple_geom,
-
         (dumped.geom_dump).path as path
-
       FROM (
-
         SELECT *, ST_Dump(geom) AS geom_dump FROM complex
-
       ) as dumped
-
     ) AS simple;
 
 Results:
