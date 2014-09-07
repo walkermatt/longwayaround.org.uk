@@ -56,36 +56,24 @@
 <blockquote>
 GNU parallel is a shell tool for executing jobs in parallel using one or more computers. A job can be a single command or a small script that has to be run for each of the lines in the input. The typical input is a list of files, a list of hosts, a list of users, a list of URLs, or a list of tables. A job can also be a command that reads from a pipe. GNU parallel can then split the input and pipe it into commands in parallel.</blockquote>
 <p>The way I've been using Parallel with Loader is to build a list of files to process using <tt class="docutils literal">find</tt> which is piped to <tt class="docutils literal">parallel</tt> which handles executing as many processes as there are cores (by default). For example:</p>
-<div class="gist">
-    <script src='https://gist.github.com/99181c8454233fca2c8d.js?file=loader_parallel.sh'></script>
-    <noscript>
-        <pre><code>find /var/data/osmm/ -type f -print0 | \
-parallel -0 python loader.py loader.config "src_dir={}"</code></pre>
-    </noscript>
-</div>
+<div class="highlight"><pre>find /var/data/osmm/ -type f -print0 | <span class="se">\</span>
+parallel -0 python loader.py loader.config <span class="s2">&quot;src_dir={}&quot;</span>
+</pre></div>
 <p>Using this approach on an 8 core EC2 server with SSD volumes national OS MasterMap Topography Layer can be loaded over a weekend.</p>
 <p>Another example of using <tt class="docutils literal">parallel</tt> would be to build on the bash one-liner that Tim Sutton posted a while back to <a class="reference external" href="http://linfiniti.com/2012/03/another-bash-one-liner-load-all-natural-earth-layers-into-postgis-in-one-go/">load all natural earth layers into PostGIS in one go</a>. Tim's original command used <tt class="docutils literal">find</tt> to build a list of files then loops over the list and runs <tt class="docutils literal">shp2pgsql</tt> for each piping the output to <tt class="docutils literal">psql</tt> to do the actual load. Here's the original command tweaked slightly to exclude the <tt class="docutils literal">tools</tt> directory and specify the encoding including timing:</p>
-<div class="gist">
-    <script src='https://gist.github.com/99181c8454233fca2c8d.js?file=natural_earth_loop.sh'></script>
-    <noscript>
-        <pre><code>time for FILE in `find . -name '*.shp' -not -path "./tools/*"`; do \
-    BASE=`basename $FILE .shp`; \
-    shp2pgsql -W LATIN1 -s 4326 -I $FILE world.$BASE \
-    | psql; done
+<div class="highlight"><pre><span class="nb">time </span><span class="k">for </span>FILE in <span class="sb">`</span>find . -name <span class="s1">&#39;*.shp&#39;</span> -not -path <span class="s2">&quot;./tools/*&quot;</span><span class="sb">`</span>; <span class="k">do</span> <span class="se">\</span>
+<span class="nv">BASE</span><span class="o">=</span><span class="sb">`</span>basename <span class="nv">$FILE</span> .shp<span class="sb">`</span>; <span class="se">\</span>
+shp2pgsql -W LATIN1 -s 4326 -I <span class="nv">$FILE</span> world.<span class="nv">$BASE</span> <span class="se">\</span>
+| psql; <span class="k">done</span>
 
-real	6m14.569s</code></pre>
-    </noscript>
-</div>
+real        6m14.569s
+</pre></div>
 <p>The example below is the equivalent using <cite>parallel</cite> which significantly reduces load time:</p>
-<div class="gist">
-    <script src='https://gist.github.com/99181c8454233fca2c8d.js?file=natural_earth_parallel.sh'></script>
-    <noscript>
-        <pre><code>time find . -name '*.shp' -not -path "./tools/*" \
-     | parallel "shp2pgsql -W LATIN1 -s 4326 -I {} world.{/.} | psql"
+<div class="highlight"><pre><span class="nb">time </span>find . -name <span class="s1">&#39;*.shp&#39;</span> -not -path <span class="s2">&quot;./tools/*&quot;</span> <span class="se">\</span>
+| parallel <span class="s2">&quot;shp2pgsql -W LATIN1 -s 4326 -I {} world.{/.} | psql&quot;</span>
 
-real	3m11.030s</code></pre>
-    </noscript>
-</div>
+real        3m11.030s
+</pre></div>
 <p>Again <tt class="docutils literal">find</tt> is used to build a list of input shapefiles which are piped to <tt class="docutils literal">parallel</tt> which builds and executes the <tt class="docutils literal">shp2pgsql</tt> and <tt class="docutils literal">psql</tt> combination. By default <tt class="docutils literal">parallel</tt> provides the <tt class="docutils literal">{}</tt> replacement string for the current argument (file path in this case) and <tt class="docutils literal"><span class="pre">{/.}</span></tt> which strips the path and extension from when the replacement string is a file path.</p>
 
         </div><!-- /.entry-content -->

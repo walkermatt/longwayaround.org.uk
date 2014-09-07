@@ -55,38 +55,23 @@
 <p>Tags: <a href="http://longwayaround.org.uk/tag/postgis.html">postgis</a> </p></footer><!-- /.post-info -->        <p>PostGIS the spatial extension to the PostgreSQL database provides a host of functions for querying, creating and manipulating geometries within the database. ST_Dump allows you to disaggregate collection and multi geometries such as MultiPolygon and MultiLineSting easily. The example below demonstrates starting with a table that contains one row with a MultiLineString geometry and another with a LineString and running a query to disaggregate returning three rows all with a LineString geometry.</p>
 <p>Create a table for our demo data:</p>
 <div class="highlight"><pre><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">complex</span>
-
 <span class="p">(</span>
-
    <span class="n">id</span> <span class="nb">serial</span><span class="p">,</span>
-
    <span class="ss">&quot;name&quot;</span> <span class="nb">text</span><span class="p">,</span>
-
    <span class="n">geom</span> <span class="n">geometry</span>
-
 <span class="p">);</span>
 </pre></div>
 <p>Insert one row with a MultiLineString with two parts ('Bob') and another with a single LineString ('Harry')</p>
 <div class="highlight"><pre><span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">complex</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">geom</span><span class="p">)</span>
-
   <span class="k">VALUES</span> <span class="p">(</span>
-
     <span class="s1">&#39;Bob&#39;</span><span class="p">,</span>
-
     <span class="n">ST_GeomFromEWKT</span><span class="p">(</span><span class="s1">&#39;MULTILINESTRING((498376.89 651569.6,498372.28 651571.89),(498372.28 651571.89,498371.77 651576.05))&#39;</span><span class="p">)</span>
-
   <span class="p">);</span>
 
-
-
 <span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">complex</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">geom</span><span class="p">)</span>
-
   <span class="k">VALUES</span> <span class="p">(</span>
-
     <span class="s1">&#39;Harry&#39;</span><span class="p">,</span>
-
     <span class="n">ST_GeomFromEWKT</span><span class="p">(</span><span class="s1">&#39;LINESTRING(598376.89 751569.6,398372.75 658771.03)&#39;</span><span class="p">)</span>
-
   <span class="p">);</span>
 </pre></div>
 <p>Query to show we have two rows one of which has a MultiLineString geometry:</p>
@@ -126,33 +111,19 @@
 </table>
 <p>Use the ST_Dump function to split the row with a MultiLineString into two rows each with a LineString and generate a decimal id composed of the original rows id and the LineString's position in the MultiLineString as the fractional part so that each row still has a unique id that's derived from it's original id:</p>
 <div class="highlight"><pre><span class="k">SELECT</span>
-
   <span class="n">COALESCE</span><span class="p">((</span><span class="k">simple</span><span class="p">.</span><span class="n">id</span> <span class="o">||</span> <span class="s1">&#39;.&#39;</span> <span class="o">||</span> <span class="k">simple</span><span class="p">.</span><span class="n">path</span><span class="p">[</span><span class="mi">1</span><span class="p">]::</span><span class="nb">text</span><span class="p">)::</span><span class="nb">float</span><span class="p">,</span> <span class="k">simple</span><span class="p">.</span><span class="n">id</span><span class="p">)</span> <span class="k">as</span> <span class="n">id</span><span class="p">,</span>
-
   <span class="k">simple</span><span class="p">.</span><span class="n">name</span><span class="p">,</span>
-
   <span class="k">simple</span><span class="p">.</span><span class="n">simple_geom</span> <span class="k">as</span> <span class="n">geom</span><span class="p">,</span>
-
   <span class="n">ST_GeometryType</span><span class="p">(</span><span class="k">simple</span><span class="p">.</span><span class="n">simple_geom</span><span class="p">)</span> <span class="k">as</span> <span class="n">geom_type</span><span class="p">,</span>
-
   <span class="n">ST_AsEWKT</span><span class="p">(</span><span class="k">simple</span><span class="p">.</span><span class="n">simple_geom</span><span class="p">)</span> <span class="k">as</span> <span class="n">geom_wkt</span>
-
 <span class="k">FROM</span> <span class="p">(</span>
-
   <span class="k">SELECT</span>
-
     <span class="n">dumped</span><span class="p">.</span><span class="o">*</span><span class="p">,</span>
-
     <span class="p">(</span><span class="n">dumped</span><span class="p">.</span><span class="n">geom_dump</span><span class="p">).</span><span class="n">geom</span> <span class="k">as</span> <span class="n">simple_geom</span><span class="p">,</span>
-
     <span class="p">(</span><span class="n">dumped</span><span class="p">.</span><span class="n">geom_dump</span><span class="p">).</span><span class="n">path</span> <span class="k">as</span> <span class="n">path</span>
-
   <span class="k">FROM</span> <span class="p">(</span>
-
     <span class="k">SELECT</span> <span class="o">*</span><span class="p">,</span> <span class="n">ST_Dump</span><span class="p">(</span><span class="n">geom</span><span class="p">)</span> <span class="k">AS</span> <span class="n">geom_dump</span> <span class="k">FROM</span> <span class="n">complex</span>
-
   <span class="p">)</span> <span class="k">as</span> <span class="n">dumped</span>
-
 <span class="p">)</span> <span class="k">AS</span> <span class="k">simple</span><span class="p">;</span>
 </pre></div>
 <p>Results:</p>

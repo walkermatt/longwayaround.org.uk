@@ -3,36 +3,24 @@
 &lt;blockquote&gt;
 GNU parallel is a shell tool for executing jobs in parallel using one or more computers. A job can be a single command or a small script that has to be run for each of the lines in the input. The typical input is a list of files, a list of hosts, a list of users, a list of URLs, or a list of tables. A job can also be a command that reads from a pipe. GNU parallel can then split the input and pipe it into commands in parallel.&lt;/blockquote&gt;
 &lt;p&gt;The way I've been using Parallel with Loader is to build a list of files to process using &lt;tt class="docutils literal"&gt;find&lt;/tt&gt; which is piped to &lt;tt class="docutils literal"&gt;parallel&lt;/tt&gt; which handles executing as many processes as there are cores (by default). For example:&lt;/p&gt;
-&lt;div class="gist"&gt;
-    &lt;script src='https://gist.github.com/99181c8454233fca2c8d.js?file=loader_parallel.sh'&gt;&lt;/script&gt;
-    &lt;noscript&gt;
-        &lt;pre&gt;&lt;code&gt;find /var/data/osmm/ -type f -print0 | \
-parallel -0 python loader.py loader.config "src_dir={}"&lt;/code&gt;&lt;/pre&gt;
-    &lt;/noscript&gt;
-&lt;/div&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;find /var/data/osmm/ -type f -print0 | &lt;span class="se"&gt;\&lt;/span&gt;
+parallel -0 python loader.py loader.config &lt;span class="s2"&gt;&amp;quot;src_dir={}&amp;quot;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Using this approach on an 8 core EC2 server with SSD volumes national OS MasterMap Topography Layer can be loaded over a weekend.&lt;/p&gt;
 &lt;p&gt;Another example of using &lt;tt class="docutils literal"&gt;parallel&lt;/tt&gt; would be to build on the bash one-liner that Tim Sutton posted a while back to &lt;a class="reference external" href="http://linfiniti.com/2012/03/another-bash-one-liner-load-all-natural-earth-layers-into-postgis-in-one-go/"&gt;load all natural earth layers into PostGIS in one go&lt;/a&gt;. Tim's original command used &lt;tt class="docutils literal"&gt;find&lt;/tt&gt; to build a list of files then loops over the list and runs &lt;tt class="docutils literal"&gt;shp2pgsql&lt;/tt&gt; for each piping the output to &lt;tt class="docutils literal"&gt;psql&lt;/tt&gt; to do the actual load. Here's the original command tweaked slightly to exclude the &lt;tt class="docutils literal"&gt;tools&lt;/tt&gt; directory and specify the encoding including timing:&lt;/p&gt;
-&lt;div class="gist"&gt;
-    &lt;script src='https://gist.github.com/99181c8454233fca2c8d.js?file=natural_earth_loop.sh'&gt;&lt;/script&gt;
-    &lt;noscript&gt;
-        &lt;pre&gt;&lt;code&gt;time for FILE in `find . -name '*.shp' -not -path "./tools/*"`; do \
-    BASE=`basename $FILE .shp`; \
-    shp2pgsql -W LATIN1 -s 4326 -I $FILE world.$BASE \
-    | psql; done
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nb"&gt;time &lt;/span&gt;&lt;span class="k"&gt;for &lt;/span&gt;FILE in &lt;span class="sb"&gt;`&lt;/span&gt;find . -name &lt;span class="s1"&gt;&amp;#39;*.shp&amp;#39;&lt;/span&gt; -not -path &lt;span class="s2"&gt;&amp;quot;./tools/*&amp;quot;&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt;; &lt;span class="k"&gt;do&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+&lt;span class="nv"&gt;BASE&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt;basename &lt;span class="nv"&gt;$FILE&lt;/span&gt; .shp&lt;span class="sb"&gt;`&lt;/span&gt;; &lt;span class="se"&gt;\&lt;/span&gt;
+shp2pgsql -W LATIN1 -s 4326 -I &lt;span class="nv"&gt;$FILE&lt;/span&gt; world.&lt;span class="nv"&gt;$BASE&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+| psql; &lt;span class="k"&gt;done&lt;/span&gt;
 
-real	6m14.569s&lt;/code&gt;&lt;/pre&gt;
-    &lt;/noscript&gt;
-&lt;/div&gt;
+real        6m14.569s
+&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;The example below is the equivalent using &lt;cite&gt;parallel&lt;/cite&gt; which significantly reduces load time:&lt;/p&gt;
-&lt;div class="gist"&gt;
-    &lt;script src='https://gist.github.com/99181c8454233fca2c8d.js?file=natural_earth_parallel.sh'&gt;&lt;/script&gt;
-    &lt;noscript&gt;
-        &lt;pre&gt;&lt;code&gt;time find . -name '*.shp' -not -path "./tools/*" \
-     | parallel "shp2pgsql -W LATIN1 -s 4326 -I {} world.{/.} | psql"
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nb"&gt;time &lt;/span&gt;find . -name &lt;span class="s1"&gt;&amp;#39;*.shp&amp;#39;&lt;/span&gt; -not -path &lt;span class="s2"&gt;&amp;quot;./tools/*&amp;quot;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+| parallel &lt;span class="s2"&gt;&amp;quot;shp2pgsql -W LATIN1 -s 4326 -I {} world.{/.} | psql&amp;quot;&lt;/span&gt;
 
-real	3m11.030s&lt;/code&gt;&lt;/pre&gt;
-    &lt;/noscript&gt;
-&lt;/div&gt;
+real        3m11.030s
+&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Again &lt;tt class="docutils literal"&gt;find&lt;/tt&gt; is used to build a list of input shapefiles which are piped to &lt;tt class="docutils literal"&gt;parallel&lt;/tt&gt; which builds and executes the &lt;tt class="docutils literal"&gt;shp2pgsql&lt;/tt&gt; and &lt;tt class="docutils literal"&gt;psql&lt;/tt&gt; combination. By default &lt;tt class="docutils literal"&gt;parallel&lt;/tt&gt; provides the &lt;tt class="docutils literal"&gt;{}&lt;/tt&gt; replacement string for the current argument (file path in this case) and &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;{/.}&lt;/span&gt;&lt;/tt&gt; which strips the path and extension from when the replacement string is a file path.&lt;/p&gt;
 </summary><category term="command-line"></category><category term="postgis"></category><category term="notes"></category></entry><entry><title>First few months of Clojure</title><link href="http://longwayaround.org.uk/notes/first-few-months-of-clojure/" rel="alternate"></link><updated>2014-02-18T19:42:00+00:00</updated><author><name>walkermatt</name></author><id>tag:longwayaround.org.uk,2014-02-18:notes/first-few-months-of-clojure/</id><summary type="html">&lt;p&gt;I've been learning a bit of Lisp on and off for a few years, I first read (about half of) &lt;a class="reference external" href="http://landoflisp.com/"&gt;Land of Lisp&lt;/a&gt;, then &lt;a class="reference external" href="http://www.gigamonkeys.com/book/"&gt;Practical Lisp&lt;/a&gt; then I came across &lt;a class="reference external" href="http://clojure.org/"&gt;Clojure&lt;/a&gt; a modern Lisp that runs on the JVM and since I've been reading &lt;a class="reference external" href="http://www.clojurebook.com/"&gt;Clojure Programming&lt;/a&gt; and working through &lt;a class="reference external" href="https://github.com/walkermatt/clojure-koans"&gt;koans&lt;/a&gt; and &lt;a class="reference external" href="https://github.com/walkermatt/yellow_belt_clojure_katas"&gt;katas&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;I've also built a small Clojure library and command-line app &lt;a class="reference external" href="https://github.com/walkermatt/gridref"&gt;GridRef&lt;/a&gt; to convert between an Ordnance Survey GB grid reference and British National Grid coordinates. While I was at it I built a web API &lt;a class="reference external" href="https://github.com/walkermatt/gridref-web"&gt;GridRef Web&lt;/a&gt; which exposes the conversion functions via a &lt;a class="reference external" href="https://github.com/ring-clojure/ring"&gt;Ring&lt;/a&gt; web app, hosted on Heroku and available at &lt;a class="reference external" href="http://gridref.longwayaround.org.uk/"&gt;http://gridref.longwayaround.org.uk/&lt;/a&gt;. Having a real (all be it small) project to work on has helped massively in learning and while I found the move from Python and JavaScript initially challenging I'm finding that I'm now thinking more functionally elsewhere.&lt;/p&gt;
@@ -55,31 +43,26 @@ real	3m11.030s&lt;/code&gt;&lt;/pre&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 </summary><category term="command-line"></category><category term="clojure"></category><category term="notes"></category></entry><entry><title>Custom GeoServer GetFeatureInfo Template</title><link href="http://longwayaround.org.uk/notes/custom-geoserver-getfeatureinfo-template/" rel="alternate"></link><updated>2013-10-18T17:24:00+01:00</updated><author><name>walkermatt</name></author><id>tag:longwayaround.org.uk,2013-10-18:notes/custom-geoserver-getfeatureinfo-template/</id><summary type="html">&lt;p&gt;The default  &lt;a class="reference external" href="http://geoserver.org/"&gt;GeoServer&lt;/a&gt; GetFeatureInfo Freemarker template is a simple table and doesn't work very well when displaying the content in a web map popup. It's a common requirement to change the GetFeatureInfo template to an unordered list, to capitalise the title and attribute names. Here is a sample &lt;cite&gt;content.ftl&lt;/cite&gt; that does just that and converts any attrubute values starting with &lt;cite&gt;http&lt;/cite&gt; into a link:&lt;/p&gt;
-&lt;div class="gist"&gt;
-    &lt;script src='https://gist.github.com/7052155.js?file=content.ftl'&gt;&lt;/script&gt;
-    &lt;noscript&gt;
-        &lt;pre&gt;&lt;code&gt;&lt;ul&gt;
-&lt;#list features as feature&gt;
-  &lt;li&gt;&lt;h2&gt;${feature.type.title}&lt;/h2&gt;
-  &lt;ul&gt;
-  &lt;#list feature.attributes as attribute&gt;
-    &lt;#if !attribute.isGeometry&gt;
-      &lt;li&gt;${attribute.name?replace("_", " ", "i")?cap_first}: 
-        &lt;#if attribute.value?starts_with('http')&gt;
-          &lt;a href="${attribute.value}"&gt;${attribute.value}&lt;/a&gt;
-        &lt;#else&gt;
-         ${attribute.value}
-        &lt;/#if&gt;
-      &lt;/li&gt;
-    &lt;/#if&gt;
-  &lt;/#list&gt;
-  &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/#list&gt;
-&lt;/ul&gt;
-&lt;/code&gt;&lt;/pre&gt;
-    &lt;/noscript&gt;
-&lt;/div&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nt"&gt;&amp;lt;ul&amp;gt;&lt;/span&gt;
+&lt;span class="err"&gt;&amp;lt;&lt;/span&gt;#list features as feature&amp;gt;
+&lt;span class="nt"&gt;&amp;lt;li&amp;gt;&amp;lt;h2&amp;gt;&lt;/span&gt;${feature.type.title}&lt;span class="nt"&gt;&amp;lt;/h2&amp;gt;&lt;/span&gt;
+&lt;span class="nt"&gt;&amp;lt;ul&amp;gt;&lt;/span&gt;
+&lt;span class="err"&gt;&amp;lt;&lt;/span&gt;#list feature.attributes as attribute&amp;gt;
+    &lt;span class="err"&gt;&amp;lt;&lt;/span&gt;#if !attribute.isGeometry&amp;gt;
+    &lt;span class="nt"&gt;&amp;lt;li&amp;gt;&lt;/span&gt;${attribute.name?replace(&amp;quot;_&amp;quot;, &amp;quot; &amp;quot;, &amp;quot;i&amp;quot;)?cap_first}:
+        &lt;span class="err"&gt;&amp;lt;&lt;/span&gt;#if attribute.value?starts_with(&amp;#39;http&amp;#39;)&amp;gt;
+        &lt;span class="nt"&gt;&amp;lt;a&lt;/span&gt; &lt;span class="na"&gt;href=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;${attribute.value}&amp;quot;&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;${attribute.value}&lt;span class="nt"&gt;&amp;lt;/a&amp;gt;&lt;/span&gt;
+        &lt;span class="err"&gt;&amp;lt;&lt;/span&gt;#else&amp;gt;
+        ${attribute.value}
+        &lt;span class="err"&gt;&amp;lt;&lt;/span&gt;/#if&amp;gt;
+    &lt;span class="nt"&gt;&amp;lt;/li&amp;gt;&lt;/span&gt;
+    &lt;span class="err"&gt;&amp;lt;&lt;/span&gt;/#if&amp;gt;
+&lt;span class="err"&gt;&amp;lt;&lt;/span&gt;/#list&amp;gt;
+&lt;span class="nt"&gt;&amp;lt;/ul&amp;gt;&lt;/span&gt;
+&lt;span class="nt"&gt;&amp;lt;/li&amp;gt;&lt;/span&gt;
+&lt;span class="err"&gt;&amp;lt;&lt;/span&gt;/#list&amp;gt;
+&lt;span class="nt"&gt;&amp;lt;/ul&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;See the &lt;a class="reference external" href="http://docs.geoserver.org/stable/en/user/tutorials/freemarker.html"&gt;GeoServer Freemarker tutorial&lt;/a&gt; for details of where the content template needs to live. The &lt;a class="reference external" href="http://freemarker.org/docs/"&gt;Freemaker Documentation&lt;/a&gt; is comprehensive if you're interested in further customisation.&lt;/p&gt;
 </summary><category term="geoserver"></category><category term="notes"></category></entry><entry><title>Using Leaflet with a custom projection and a MapProxy TMS</title><link href="http://longwayaround.org.uk/notes/using-leaflet-with-a-custom-projection-and-a-mapproxy-tms/" rel="alternate"></link><updated>2012-07-02T21:06:00+01:00</updated><author><name>walkermatt</name></author><id>tag:longwayaround.org.uk,2012-07-02:notes/using-leaflet-with-a-custom-projection-and-a-mapproxy-tms/</id><summary type="html">&lt;p&gt;&lt;strong&gt;Update 2014-05-15&lt;/strong&gt; For examples of displaying a Web Map Service (WMS) layer
 in a custom projection (EPSG:27700) within Leaflet and OpenLayers 3 (ol3) see:
@@ -167,38 +150,23 @@ END
 </summary><category term="mapserver"></category></entry><entry><title>Disaggregate MultiLineStrings using ST_Dump PostGIS</title><link href="http://longwayaround.org.uk/notes/disaggregate-multilinestrings-using-st_dump-postgis/" rel="alternate"></link><updated>2011-11-24T21:39:00+00:00</updated><author><name>walkermatt</name></author><id>tag:longwayaround.org.uk,2011-11-24:notes/disaggregate-multilinestrings-using-st_dump-postgis/</id><summary type="html">&lt;p&gt;PostGIS the spatial extension to the PostgreSQL database provides a host of functions for querying, creating and manipulating geometries within the database. ST_Dump allows you to disaggregate collection and multi geometries such as MultiPolygon and MultiLineSting easily. The example below demonstrates starting with a table that contains one row with a MultiLineString geometry and another with a LineString and running a query to disaggregate returning three rows all with a LineString geometry.&lt;/p&gt;
 &lt;p&gt;Create a table for our demo data:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;CREATE&lt;/span&gt; &lt;span class="k"&gt;TABLE&lt;/span&gt; &lt;span class="n"&gt;complex&lt;/span&gt;
-
 &lt;span class="p"&gt;(&lt;/span&gt;
-
    &lt;span class="n"&gt;id&lt;/span&gt; &lt;span class="nb"&gt;serial&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-
    &lt;span class="ss"&gt;&amp;quot;name&amp;quot;&lt;/span&gt; &lt;span class="nb"&gt;text&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-
    &lt;span class="n"&gt;geom&lt;/span&gt; &lt;span class="n"&gt;geometry&lt;/span&gt;
-
 &lt;span class="p"&gt;);&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Insert one row with a MultiLineString with two parts ('Bob') and another with a single LineString ('Harry')&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;INSERT&lt;/span&gt; &lt;span class="k"&gt;INTO&lt;/span&gt; &lt;span class="n"&gt;complex&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;geom&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-
   &lt;span class="k"&gt;VALUES&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;
-
     &lt;span class="s1"&gt;&amp;#39;Bob&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-
     &lt;span class="n"&gt;ST_GeomFromEWKT&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;MULTILINESTRING((498376.89 651569.6,498372.28 651571.89),(498372.28 651571.89,498371.77 651576.05))&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-
   &lt;span class="p"&gt;);&lt;/span&gt;
 
-
-
 &lt;span class="k"&gt;INSERT&lt;/span&gt; &lt;span class="k"&gt;INTO&lt;/span&gt; &lt;span class="n"&gt;complex&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;geom&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-
   &lt;span class="k"&gt;VALUES&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;
-
     &lt;span class="s1"&gt;&amp;#39;Harry&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-
     &lt;span class="n"&gt;ST_GeomFromEWKT&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;LINESTRING(598376.89 751569.6,398372.75 658771.03)&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-
   &lt;span class="p"&gt;);&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Query to show we have two rows one of which has a MultiLineString geometry:&lt;/p&gt;
@@ -238,33 +206,19 @@ END
 &lt;/table&gt;
 &lt;p&gt;Use the ST_Dump function to split the row with a MultiLineString into two rows each with a LineString and generate a decimal id composed of the original rows id and the LineString's position in the MultiLineString as the fractional part so that each row still has a unique id that's derived from it's original id:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;SELECT&lt;/span&gt;
-
   &lt;span class="n"&gt;COALESCE&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="k"&gt;simple&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;id&lt;/span&gt; &lt;span class="o"&gt;||&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;.&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;||&lt;/span&gt; &lt;span class="k"&gt;simple&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]::&lt;/span&gt;&lt;span class="nb"&gt;text&lt;/span&gt;&lt;span class="p"&gt;)::&lt;/span&gt;&lt;span class="nb"&gt;float&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;simple&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;id&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-
   &lt;span class="k"&gt;simple&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-
   &lt;span class="k"&gt;simple&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;simple_geom&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;geom&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-
   &lt;span class="n"&gt;ST_GeometryType&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;simple&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;simple_geom&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;geom_type&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-
   &lt;span class="n"&gt;ST_AsEWKT&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;simple&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;simple_geom&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;geom_wkt&lt;/span&gt;
-
 &lt;span class="k"&gt;FROM&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;
-
   &lt;span class="k"&gt;SELECT&lt;/span&gt;
-
     &lt;span class="n"&gt;dumped&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-
     &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;dumped&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;geom_dump&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="n"&gt;geom&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;simple_geom&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-
     &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;dumped&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;geom_dump&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;path&lt;/span&gt;
-
   &lt;span class="k"&gt;FROM&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;
-
     &lt;span class="k"&gt;SELECT&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;ST_Dump&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;geom&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;AS&lt;/span&gt; &lt;span class="n"&gt;geom_dump&lt;/span&gt; &lt;span class="k"&gt;FROM&lt;/span&gt; &lt;span class="n"&gt;complex&lt;/span&gt;
-
   &lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;dumped&lt;/span&gt;
-
 &lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;AS&lt;/span&gt; &lt;span class="k"&gt;simple&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Results:&lt;/p&gt;

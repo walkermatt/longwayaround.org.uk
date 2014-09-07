@@ -141,28 +141,16 @@ dd {
     margin-left: 1.5em;
 }
 
-pre {
-    line-height: 80%;
-    background-color: #000;
+/* Code blocks */
+.highlight pre {
+    border: 1px solid #CCC;
     padding: 10px;
-    color: #fff;
-    margin: 10px;
+    margin: 10px 0;
     overflow: auto;
 }
 
-/* Ensure gist styles are determined by Github styles */
-pre.line-pre {
-    color: inherit;
-    overflow: inherit;
-}
-
-div.gist {
-    clear: both;
-}
-
-div.gist-file {
-    font-size: 85%;
-    line-height: 1;
+.highlight pre .err {
+    border: none;
 }
 
 /* Quotes */
