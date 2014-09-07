@@ -40,7 +40,40 @@
 
             <aside id="featured" class="body">
                 <article>
-                    <h1 class="entry-title"><a href="http://longwayaround.org.uk/notes/using-leaflet-with-a-custom-projection-and-a-mapproxy-tms/">Using Leaflet with a custom projection and a MapProxy TMS</a></h1> 
+                    <h1 class="entry-title"><a href="http://longwayaround.org.uk/notes/practical-openlayers-3-leaflet/">Practical OpenLayers 3 &amp; Leaflet</a></h1> 
+<footer class="post-info">
+        <abbr class="published" title="2014-09-07T21:30:00">
+                Sun 07 September 2014
+        </abbr>
+
+        <address class="vcard author">
+                By <a class="url fn" href="http://longwayaround.org.uk/author/walkermatt.html">walkermatt</a>
+        </address>
+<p>In <a href="http://longwayaround.org.uk/category/notes.html">notes</a>. </p>
+<p>Tags: <a href="http://longwayaround.org.uk/tag/workshop.html">workshop</a> <a href="http://longwayaround.org.uk/tag/ol3.html">ol3</a> <a href="http://longwayaround.org.uk/tag/leaflet.html">leaflet</a> <a href="http://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info --><p>I ran a 2 hour workshop at <a class="reference external" href="http://www.nottingham.ac.uk/osgis/home.aspx">OSGIS 2014</a> introducing OpenLayers 3 and
+Leaflet.</p>
+<blockquote>
+A hands on introduction to using OpenLayer 3 (OL3) and Leaflet to display
+spatial data on the web. The workshop will introduce the two libraries, the
+underpinning concepts and strengths of each, and take delegates through
+creating a series of examples.</blockquote>
+<p>The <a class="reference external" href="http://astuntechnology.github.io/osgis-ol3-leaflet/">full workshop documentation is available</a> if you'd like to follow
+along at home.</p>
+<p><a href="http://longwayaround.org.uk/notes/practical-openlayers-3-leaflet/#disqus_thread">comments</a>.</p>
+                </article>
+            </aside><!-- /#featured -->
+                <section id="content" class="body">
+                    <h1>Other articles</h1>
+                    <hr />
+                        <ol id="posts-list" class="hfeed">
+
+ 
+            <li><article class="hentry">
+                <header>
+                        <h1><a href="http://longwayaround.org.uk/notes/using-leaflet-with-a-custom-projection-and-a-mapproxy-tms/" rel="bookmark" title="Permalink to Using Leaflet with a custom projection and a MapProxy TMS">Using Leaflet with a custom projection and a MapProxy TMS</a></h1>
+                </header>
+                <div class="entry-content">
+                <div class="slug">
 <footer class="post-info">
         <abbr class="published" title="2012-07-02T21:06:00">
                 Mon 02 July 2012
@@ -50,42 +83,19 @@
                 By <a class="url fn" href="http://longwayaround.org.uk/author/walkermatt.html">walkermatt</a>
         </address>
 <p>In <a href="http://longwayaround.org.uk/category/notes.html">notes</a>. </p>
-<p>Tags: <a href="http://longwayaround.org.uk/tag/leaflet.html">leaflet</a> <a href="http://longwayaround.org.uk/tag/mapproxy.html">mapproxy</a> </p></footer><!-- /.post-info --><p><strong>Update 2014-05-15</strong> For examples of displaying a Web Map Service (WMS) layer
-in a custom projection (EPSG:27700) within Leaflet and OpenLayers 3 (ol3) see:
-<a class="reference external" href="https://github.com/AstunTechnology/astun-leaflet-examples">astun-leaflet-examples</a> and
-<a class="reference external" href="https://github.com/AstunTechnology/astun-ol3-examples">astun-ol3-examples</a>.</p>
-<p><strong>Update 2012-12-18</strong> I've update the <a class="reference external" href="https://gist.github.com/3034742">Gist</a>
-to reflect changes in v0.4 of Leaflet, in particular the fact that the
-scale function now belongs to the CRS object instead of the Map and the
-way that the TileLayer scheme is specified has changed to simply <tt class="docutils literal">tms: true</tt>.</p>
-<p><a class="reference external" href="http://leaflet.cloudmade.com/">Leaflet</a> is a lightweight JavaScript
-slippy map client well suited to use on mobile devices. It’s seen as an
-alternative to <a class="reference external" href="http://openlayers.org/">OpenLayers</a> but takes a
-different approach focusing on a small easy to use set of features.</p>
-<p>By default Leaflet allow you to display a map in one of the common
-projections used to display tiles in the Google and
-<a class="reference external" href="http://www.openstreetmap.org/">OSM</a> tile schemes and the vast
-majority of examples you see use these. It is however possible to use
-another projection such as a local projection like British National Grid
-thanks to <a class="reference external" href="https://github.com/kartena/Proj4Leaflet">Proj4Leaflet</a>
-which allows you to provide a <a class="reference external" href="http://trac.osgeo.org/proj/">Proj4</a>
-projection definition and Transformation and scale functions which map
-projected coordinates to grid coordinates at a given zoom.</p>
-<p>Setting up the definition is straight forward thanks to
-<a class="reference external" href="http://spatialreference.org">spatialreference.org</a> which allows you
-to look-up most projections and their definitions. In my case the
-Transformation and scale functions also turned out to be simple after a
-little trial and error.</p>
-<p>I’ve been using a TMS layer provided by one of the MapProxy instances
-that form part of Astun Data Services, the configuration of which was as
-simple as providing a URL template and setting the <tt class="docutils literal">TileLayer</tt> scheme
-to <tt class="docutils literal">tms</tt>.</p>
-<p>I’ve posted an example JavaScript snippet as a GitHub Gist with some
-notes here:
-<a class="reference external" href="https://gist.github.com/3034742">https://gist.github.com/3034742</a></p>
-<p><a href="http://longwayaround.org.uk/notes/using-leaflet-with-a-custom-projection-and-a-mapproxy-tms/#disqus_thread">comments</a>.</p>
-                </article>
-            </aside><!-- /#featured -->
+<p>Tags: <a href="http://longwayaround.org.uk/tag/leaflet.html">leaflet</a> <a href="http://longwayaround.org.uk/tag/mapproxy.html">mapproxy</a> </p></footer><!-- /.post-info -->                    <p><strong>Update 2014-09-07</strong> I've just ran a workshop based on the Astun Leaflet &amp; and
+ol3 examples at <a class="reference external" href="http://www.nottingham.ac.uk/osgis/home.aspx">OSGIS 2014</a>,
+see <a class="reference external" href="/notes/practical-openlayers-3-leaflet/">Practical OpenLayers 3 &amp; Leaflet</a> for details.</p>
+<p><strong>Update 2014-05-15</strong> For examples of displaying a Web Map Service (WMS) layer
+in a custom projection (EPSG:27700) within Leaflet and OpenLayers 3 (ol3 ...</p>
+                    <p>
+<a href="http://longwayaround.org.uk/notes/using-leaflet-with-a-custom-projection-and-a-mapproxy-tms/#disqus_thread">comments</a>.                        <a class="readmore" href="http://longwayaround.org.uk/notes/using-leaflet-with-a-custom-projection-and-a-mapproxy-tms/">read more</a>
+                    </p>
+                </div>
+                </div><!-- /.entry-content -->
+            </article></li>
+    </ol><!-- /#posts-list -->
+    </section><!-- /#content -->
         <section id="extras" class="body">
         </section><!-- /#extras -->
 
