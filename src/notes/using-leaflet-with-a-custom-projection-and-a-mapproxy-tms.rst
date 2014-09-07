@@ -4,6 +4,11 @@ Using Leaflet with a custom projection and a MapProxy TMS
 :category: notes
 :tags: leaflet, mapproxy
 
+**Update 2014-09-07** I've just ran a workshop based on the Astun Leaflet & and
+ol3 examples at `OSGIS 2014 <http://www.nottingham.ac.uk/osgis/home.aspx>`_,
+see `Practical OpenLayers 3 & Leaflet
+</notes/practical-openlayers-3-leaflet/>`_ for details.
+
 **Update 2014-05-15** For examples of displaying a Web Map Service (WMS) layer
 in a custom projection (EPSG:27700) within Leaflet and OpenLayers 3 (ol3) see:
 `astun-leaflet-examples
