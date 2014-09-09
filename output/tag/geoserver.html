@@ -40,17 +40,9 @@
 
             <aside id="featured" class="body">
                 <article>
+                    <abbr class="published" title="2013-10-18T17:24:00">Fri 18 October 2013</abbr>
                     <h1 class="entry-title"><a href="http://longwayaround.org.uk/notes/custom-geoserver-getfeatureinfo-template/">Custom GeoServer GetFeatureInfo Template</a></h1> 
-<footer class="post-info">
-        <abbr class="published" title="2013-10-18T17:24:00">
-                Fri 18 October 2013
-        </abbr>
-
-        <address class="vcard author">
-                By <a class="url fn" href="http://longwayaround.org.uk/author/walkermatt.html">walkermatt</a>
-        </address>
-<p>In <a href="http://longwayaround.org.uk/category/notes.html">notes</a>. </p>
-<p>Tags: <a href="http://longwayaround.org.uk/tag/geoserver.html">geoserver</a> <a href="http://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info --><p>The default  <a class="reference external" href="http://geoserver.org/">GeoServer</a> GetFeatureInfo Freemarker template is a simple table and doesn't work very well when displaying the content in a web map popup. It's a common requirement to change the GetFeatureInfo template to an unordered list, to capitalise the title and attribute names. Here is a sample <cite>content.ftl</cite> that does just that and converts any attrubute values starting with <cite>http</cite> into a link:</p>
+                    <p>The default  <a class="reference external" href="http://geoserver.org/">GeoServer</a> GetFeatureInfo Freemarker template is a simple table and doesn't work very well when displaying the content in a web map popup. It's a common requirement to change the GetFeatureInfo template to an unordered list, to capitalise the title and attribute names. Here is a sample <cite>content.ftl</cite> that does just that and converts any attrubute values starting with <cite>http</cite> into a link:</p>
 <div class="highlight"><pre><span class="nt">&lt;ul&gt;</span>
 <span class="err">&lt;</span>#list features as feature&gt;
 <span class="nt">&lt;li&gt;&lt;h2&gt;</span>${feature.type.title}<span class="nt">&lt;/h2&gt;</span>
@@ -72,7 +64,10 @@
 <span class="nt">&lt;/ul&gt;</span>
 </pre></div>
 <p>See the <a class="reference external" href="http://docs.geoserver.org/stable/en/user/tutorials/freemarker.html">GeoServer Freemarker tutorial</a> for details of where the content template needs to live. The <a class="reference external" href="http://freemarker.org/docs/">Freemaker Documentation</a> is comprehensive if you're interested in further customisation.</p>
-<p><a href="http://longwayaround.org.uk/notes/custom-geoserver-getfeatureinfo-template/#disqus_thread">comments</a>.</p>
+
+<footer class="post-info">
+    <abbr class="published" title="2013-10-18T17:24:00">Fri 18 October 2013</abbr>
+<p>Tags: <a href="http://longwayaround.org.uk/tag/geoserver.html">geoserver</a> <a href="http://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->                    <p><a href="http://longwayaround.org.uk/notes/custom-geoserver-getfeatureinfo-template/#disqus_thread">comments</a>.</p>
                 </article>
             </aside><!-- /#featured -->
         <section id="extras" class="body">

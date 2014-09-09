@@ -9,13 +9,15 @@ Geospatial Technologist at `Astun Technology`_, former Technical Director at `Do
 Contact
 ~~~~~~~
 
-You can find me here:
+.. raw:: html
 
--  Twitter: http://twitter.com/_walkermatt
--  LinkedIn: http://uk.linkedin.com/in/walkermatt
--  Github: https://github.com/walkermatt
--  Github: https://github.com/organizations/AstunTechnology
--  OSGeo: http://wiki.osgeo.org/wiki/User:walkermatt
+    <ul class="contact-links simple">
+        <li class="icon twitter"><a class="reference external" href="http://twitter.com/_walkermatt" title="Twitter">@_walkermatt</a></li>
+        <li class="icon github"><a class="reference external" href="https://github.com/walkermatt" title="GitHub">@walkermatt</a></li>
+        <li class="icon osgeo"><a class="reference external" href="http://wiki.osgeo.org/wiki/User:walkermatt" title="OSGeo">walkermatt</a></li>
+        <li class="icon linkedin"><a class="reference external" href="http://uk.linkedin.com/in/walkermatt" title="LinkedIn">walkermatt</a></li>
+    </ul>
+
 
 .. _Astun Technology: http://www.astuntechnology.com/
 .. _Dotted Eyes Ltd.: http://www.dottedeyes.com/

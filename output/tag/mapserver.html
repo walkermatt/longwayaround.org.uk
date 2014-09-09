@@ -40,17 +40,9 @@
 
             <aside id="featured" class="body">
                 <article>
+                    <abbr class="published" title="2012-02-02T21:31:00">Thu 02 February 2012</abbr>
                     <h1 class="entry-title"><a href="http://longwayaround.org.uk/notes/greyscale-maps-with-mapserver/">Greyscale maps with MapServer</a></h1> 
-<footer class="post-info">
-        <abbr class="published" title="2012-02-02T21:31:00">
-                Thu 02 February 2012
-        </abbr>
-
-        <address class="vcard author">
-                By <a class="url fn" href="http://longwayaround.org.uk/author/walkermatt.html">walkermatt</a>
-        </address>
-<p>In <a href="http://longwayaround.org.uk/category/notes.html">notes</a>. </p>
-<p>Tags: <a href="http://longwayaround.org.uk/tag/mapserver.html">mapserver</a> </p></footer><!-- /.post-info --><p>There have been a few times in the past (such as when I was preparing the base mapping for <a class="reference external" href="http://mywycombe.wycombe.gov.uk/?tab=2">My Wycombe</a>) when I've wanted to create greyscale base mapping using <a class="reference external" href="http://mapserver.org">MapServer</a>. Previously I've experimented with various processing options for raster images (with varying degrees of success), converting the source images using <a class="reference external" href="www.imagemagick.org">ImageMagick</a> and converting colour RGB values to their greyscale equivalent for vector features and it's generally been time consuming.  Today the requirement came up again and I discovered a far simpler option: specifying a greyscale palette as an OUTPUTFORMAT FORMATOPTION.  The palette simply contains grey values from 0,0,0 (black) to 255,255,255 (white) and all values in between. MapServer then does the job of converting the colours for your source data into their greyscale equivalents.</p>
+                    <p>There have been a few times in the past (such as when I was preparing the base mapping for <a class="reference external" href="http://mywycombe.wycombe.gov.uk/?tab=2">My Wycombe</a>) when I've wanted to create greyscale base mapping using <a class="reference external" href="http://mapserver.org">MapServer</a>. Previously I've experimented with various processing options for raster images (with varying degrees of success), converting the source images using <a class="reference external" href="www.imagemagick.org">ImageMagick</a> and converting colour RGB values to their greyscale equivalent for vector features and it's generally been time consuming.  Today the requirement came up again and I discovered a far simpler option: specifying a greyscale palette as an OUTPUTFORMAT FORMATOPTION.  The palette simply contains grey values from 0,0,0 (black) to 255,255,255 (white) and all values in between. MapServer then does the job of converting the colours for your source data into their greyscale equivalents.</p>
 <p>In the map file specify an <a class="reference external" href="http://mapserver.org/mapfile/outputformat.html">OUTPUTFORMAT</a> that used a specific palette:</p>
 <pre class="literal-block">
 # Specify a plain PNG output with a
@@ -100,7 +92,10 @@ END
 
     <span class="k">print</span> <span class="s">&#39;</span><span class="si">%i</span><span class="s">,</span><span class="si">%i</span><span class="s">,</span><span class="si">%i</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">)</span>
 </pre></div>
-<p><a href="http://longwayaround.org.uk/notes/greyscale-maps-with-mapserver/#disqus_thread">comments</a>.</p>
+
+<footer class="post-info">
+    <abbr class="published" title="2012-02-02T21:31:00">Thu 02 February 2012</abbr>
+<p>Tags: <a href="http://longwayaround.org.uk/tag/mapserver.html">mapserver</a> </p></footer><!-- /.post-info -->                    <p><a href="http://longwayaround.org.uk/notes/greyscale-maps-with-mapserver/#disqus_thread">comments</a>.</p>
                 </article>
             </aside><!-- /#featured -->
         <section id="extras" class="body">

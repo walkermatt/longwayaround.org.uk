@@ -27,7 +27,7 @@ h6 {font-size: 1em}
 h1, h2, h3, h4, h5, h6 {
     font-weight: 400;
     line-height: 1.1;
-    margin-bottom: .8em;
+    margin-bottom: 0.4em;
     font-family: 'Alegreya Sans', sans-serif;
 }
 
@@ -93,9 +93,16 @@ li {
     padding-bottom: 0.5em;
 }
 
+abbr.published {
+    color: #93a4ad;
+}
+
+.post-info abbr.published {
+    color: inherit;
+}
+
 .post-info {
-    border-right: 2px solid #4B8E49;
-    float:right;
+    color: #93a4ad;
     margin:10px;
     padding:5px;
 }
@@ -105,15 +112,11 @@ li {
 }
 
 .entry-content .post-info, #featured .post-info {
-    border-left: 2px solid #4B8E49;
-    border-right: 0;
     margin: 20px 20px 20px 10px;
     padding: 5px 5px 5px 15px;
 }
 
 #posts-list .post-info {
-    border-right: 2px solid #4B8E49;
-    border-left: 0;
     float: left;
     margin: 0 20px 0 10px;
     padding: 5px 15px 5px 5px;
@@ -573,4 +576,44 @@ li:last-child .hentry, #content > .hentry {
 }
 #add-comment * {
     margin-bottom: .5em;
+}
+
+ul.contact-links {
+    float: left;
+    width: 100%;
+}
+
+li.icon {
+    background-repeat: no-repeat;
+    background-position: 0 3px;
+    padding-left: 22px;
+    float: left;
+    width: 45%;
+}
+
+li.icon.twitter {
+    background-image: url('../images/icons/gosquared/18/twitter.png');
+}
+
+li.icon.linkedin {
+    background-image: url('../images/icons/gosquared/18/linkedin.png');
+}
+
+li.icon.github {
+    background-image: url('../images/icons/gosquared/18/github.png');
+}
+
+li.icon.osgeo {
+    background-image: url('../images/icons/gosquared/18/osgeo.png');
+}
+
+#matt-walker {
+    background-image: url('../images/icons/walkermatt.png');
+    background-repeat: no-repeat;
+    background-size: 45px;
+    padding-left: 56px;
+}
+
+#matt-walker h2 {
+    margin-bottom: 0.1em;
 }
