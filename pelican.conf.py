@@ -9,6 +9,8 @@ SITENAME = u"longwayaround.org.uk"
 SITESUBTITLE = u"taking the scenic route and enjoying the journey"
 SITEURL = u"http://longwayaround.org.uk"
 
+DIRECT_TEMPLATES = ('index', 'archives')
+
 TIMEZONE = 'Europe/London'
 
 DEFAULT_LANG = 'en'
