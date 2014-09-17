@@ -1,0 +1,4 @@
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule ^notes/build-ogr-1-8-with-gml-wfs-and-postgis-support-on-ubuntu-10-04/$ /notes/build-ogr-18-with-gml-wfs-and-postgis-support-on-ubuntu-1004/ [R=301,L]
+</IfModule>

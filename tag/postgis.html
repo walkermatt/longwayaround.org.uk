@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <title>longwayaround.org.uk - postgis</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, target-densitydpi=device-dpi">
+        <link rel="stylesheet" href="http://longwayaround.org.uk/theme/css/main.css" type="text/css" />
+        <link href="http://longwayaround.org.uk/feeds/all.rss.xml" type="application/atom+xml" rel="alternate" title="longwayaround.org.uk RSS Feed" />
+
+        <!--[if IE]>
+                <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+        <!--[if lte IE 7]>
+                <link rel="stylesheet" type="text/css" media="all" href="http://longwayaround.org.uk/css/ie.css"/>
+                <script src="http://longwayaround.org.uk/js/IE8.js" type="text/javascript"></script><![endif]-->
+
+        <!--[if lt IE 7]>
+                <link rel="stylesheet" type="text/css" media="all" href="http://longwayaround.org.uk/css/ie6.css"/><![endif]-->
+
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">longwayaround.org.uk  <strong>taking the scenic route and enjoying the journey</strong></a></h1>
+                <nav>
+                <ul>
+                    <li ><a href="http://longwayaround.org.uk/notes/">notes</a></li>
+                    <li><a href="http://longwayaround.org.uk/pages/about/">about</a></li>
+                </ul>
+                </nav>
+                    <ul class="social">
+                        <li><a href="http://longwayaround.org.uk/feeds/all.rss.xml" rel="alternate"><img src="http://longwayaround.org.uk/theme/images/icons/gosquared/18/rss.png" title="rss" width="18" height="18" /></a></li>
+                    <li><a href="http://uk.linkedin.com/in/walkermatt"><img src="http://longwayaround.org.uk/theme/images/icons/gosquared/18/linkedin.png" title="linkedin" width="18" height="18" /></a></li>
+                    <li><a href="http://delicious.com/walkermatt"><img src="http://longwayaround.org.uk/theme/images/icons/gosquared/18/delicious.png" title="delicious" width="18" height="18" /></a></li>
+                    <li><a href="http://github.com/organizations/AstunTechnology"><img src="http://longwayaround.org.uk/theme/images/icons/gosquared/18/github.png" title="github" width="18" height="18" /></a></li>
+                    <li><a href="http://github.com/walkermatt"><img src="http://longwayaround.org.uk/theme/images/icons/gosquared/18/github.png" title="github" width="18" height="18" /></a></li>
+                    <li><a href="http://twitter.com/_walkermatt"><img src="http://longwayaround.org.uk/theme/images/icons/gosquared/18/twitter.png" title="twitter" width="18" height="18" /></a></li>
+                    </ul>
+        </header><!-- /#banner -->
+
+            <aside id="featured" class="body">
+                <article>
+                    <abbr class="published" title="2014-07-17T19:45:00">Thu 17 July 2014</abbr>
+                    <h1 class="entry-title"><a href="http://longwayaround.org.uk/notes/gnu-parallel-all-the-things/">GNU Parallel all the things!</a></h1> 
+                    <p>I've been doing a lot of data processing recently and have been looking for a way of running bulk data loads into PostGIS in parallel to make use of all available cores. The work has mainly revolved around loading national cover of Ordnance Survey OS MasterMap and VectorMap Local for <a class="reference external" href="http://astuntechnology.com/">Astun Tech's</a> base map services using <a class="reference external" href="https://github.com/AstunTechnology/Loader">Loader</a>. Loader doesn't have any parallel processing baked in but a <a class="reference external" href="https://github.com/AstunTechnology/Loader/commit/199e66f7064e341b1365eb10a3d5a572b45b7fdb">small change to how it creates it's temporary directory</a> allows multiple instance to be ran in parallel each processing a single file at a time. The key component to enable this is <a class="reference external" href="http://www.gnu.org/software/parallel/">GNU Parallel</a>, from the projects homepage:</p>
+<blockquote>
+GNU parallel is a shell tool for executing jobs in parallel using one or more computers. A job can be a single command or a small script that has to be run for each of the lines in the input. The typical input is a list of files, a list of hosts, a list of users, a list of URLs, or a list of tables. A job can also be a command that reads from a pipe. GNU parallel can then split the input and pipe it into commands in parallel.</blockquote>
+<p>The way I've been using Parallel with Loader is to build a list of files to process using <tt class="docutils literal">find</tt> which is piped to <tt class="docutils literal">parallel</tt> which handles executing as many processes as there are cores (by default). For example:</p>
+<div class="highlight"><pre>find /var/data/osmm/ -type f -print0 | <span class="se">\</span>
+parallel -0 python loader.py loader.config <span class="s2">&quot;src_dir={}&quot;</span>
+</pre></div>
+<p>Using this approach on an 8 core EC2 server with SSD volumes national OS MasterMap Topography Layer can be loaded over a weekend.</p>
+<p>Another example of using <tt class="docutils literal">parallel</tt> would be to build on the bash one-liner that Tim Sutton posted a while back to <a class="reference external" href="http://linfiniti.com/2012/03/another-bash-one-liner-load-all-natural-earth-layers-into-postgis-in-one-go/">load all natural earth layers into PostGIS in one go</a>. Tim's original command used <tt class="docutils literal">find</tt> to build a list of files then loops over the list and runs <tt class="docutils literal">shp2pgsql</tt> for each piping the output to <tt class="docutils literal">psql</tt> to do the actual load. Here's the original command tweaked slightly to exclude the <tt class="docutils literal">tools</tt> directory and specify the encoding including timing:</p>
+<div class="highlight"><pre><span class="nb">time </span><span class="k">for </span>FILE in <span class="sb">`</span>find . -name <span class="s1">&#39;*.shp&#39;</span> -not -path <span class="s2">&quot;./tools/*&quot;</span><span class="sb">`</span>; <span class="k">do</span> <span class="se">\</span>
+<span class="nv">BASE</span><span class="o">=</span><span class="sb">`</span>basename <span class="nv">$FILE</span> .shp<span class="sb">`</span>; <span class="se">\</span>
+shp2pgsql -W LATIN1 -s 4326 -I <span class="nv">$FILE</span> world.<span class="nv">$BASE</span> <span class="se">\</span>
+| psql; <span class="k">done</span>
+
+real        6m14.569s
+</pre></div>
+<p>The example below is the equivalent using <cite>parallel</cite> which significantly reduces load time:</p>
+<div class="highlight"><pre><span class="nb">time </span>find . -name <span class="s1">&#39;*.shp&#39;</span> -not -path <span class="s2">&quot;./tools/*&quot;</span> <span class="se">\</span>
+| parallel <span class="s2">&quot;shp2pgsql -W LATIN1 -s 4326 -I {} world.{/.} | psql&quot;</span>
+
+real        3m11.030s
+</pre></div>
+<p>Again <tt class="docutils literal">find</tt> is used to build a list of input shapefiles which are piped to <tt class="docutils literal">parallel</tt> which builds and executes the <tt class="docutils literal">shp2pgsql</tt> and <tt class="docutils literal">psql</tt> combination. By default <tt class="docutils literal">parallel</tt> provides the <tt class="docutils literal">{}</tt> replacement string for the current argument (file path in this case) and <tt class="docutils literal"><span class="pre">{/.}</span></tt> which strips the path and extension from when the replacement string is a file path.</p>
+
+<footer class="post-info">
+    <abbr class="published" title="2014-07-17T19:45:00">Thu 17 July 2014</abbr>
+<p>Tags: <a href="http://longwayaround.org.uk/tag/command-line.html">command-line</a> <a href="http://longwayaround.org.uk/tag/postgis.html">postgis</a> <a href="http://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->                    <p><a href="http://longwayaround.org.uk/notes/gnu-parallel-all-the-things/#disqus_thread">comments</a>.</p>
+                </article>
+            </aside><!-- /#featured -->
+                <section id="content" class="body">
+                    <h1>Other posts</h1>
+                    <hr />
+                        <ol id="posts-list" class="hfeed">
+
+ 
+            <li><article class="hentry">
+                <header>
+                        <abbr class="published" title="2011-11-24T21:39:00">Thu 24 November 2011</abbr>
+                        <h1><a href="http://longwayaround.org.uk/notes/disaggregate-multilinestrings-using-st_dump-postgis/" rel="bookmark" title="Permalink to Disaggregate MultiLineStrings using ST_Dump PostGIS">Disaggregate MultiLineStrings using ST_Dump PostGIS</a></h1>
+                </header>
+                <div class="entry-content">
+                <div class="slug">
+                    <p>PostGIS the spatial extension to the PostgreSQL database provides a host of functions for querying, creating and manipulating geometries within the database. ST_Dump allows you to disaggregate collection and multi geometries such as MultiPolygon and MultiLineSting easily. The example below demonstrates starting with a table that contains one row with ...</p>
+                    <p>
+<a href="http://longwayaround.org.uk/notes/disaggregate-multilinestrings-using-st_dump-postgis/#disqus_thread">comments</a>.                        <a class="readmore" href="http://longwayaround.org.uk/notes/disaggregate-multilinestrings-using-st_dump-postgis/">read more</a>
+                    </p>
+                </div>
+                </div><!-- /.entry-content -->
+            </article></li>
+
+ 
+            <li><article class="hentry">
+                <header>
+                        <abbr class="published" title="2010-12-19T21:06:00">Sun 19 December 2010</abbr>
+                        <h1><a href="http://longwayaround.org.uk/notes/build-ogr-18-with-gml-wfs-and-postgis-support-on-ubuntu-1004/" rel="bookmark" title="Permalink to Build OGR 1.8 with GML, WFS and PostGIS support on Ubuntu 10.04">Build OGR 1.8 with GML, WFS and PostGIS support on Ubuntu 10.04</a></h1>
+                </header>
+                <div class="entry-content">
+                <div class="slug">
+                    <p>OGR 1.8 introduces support for reading GML with feature attributes expressed as nested elements as found in Ordnance Survey's OS MasterMap as well as support for accessing WFS. This is a brief script for building OGR (GDAL) 1.8 from source as it's not currently released: Download ...</p>
+                    <p>
+<a href="http://longwayaround.org.uk/notes/build-ogr-18-with-gml-wfs-and-postgis-support-on-ubuntu-1004/#disqus_thread">comments</a>.                        <a class="readmore" href="http://longwayaround.org.uk/notes/build-ogr-18-with-gml-wfs-and-postgis-support-on-ubuntu-1004/">read more</a>
+                    </p>
+                </div>
+                </div><!-- /.entry-content -->
+            </article></li>
+    </ol><!-- /#posts-list -->
+    </section><!-- /#content -->
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+        <footer id="contentinfo" class="body">
+                <address id="about" class="vcard body">
+                    Powered by <a href="http://alexis.notmyidea.org/pelican/">Pelican</a> and <a href="http://python.org">Python</a>, using a modified <a href="http://coding.smashingmagazine.com/2009/08/04/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a> theme, background from <a href="http://subtlepatterns.com">Subtle Patterns</a> and icons from <a href="https://www.gosquared.com/blog/archives/2925">GoSocial</a>.
+                </address><!-- /#about -->
+        </footer><!-- /#contentinfo -->
+
+<script type="text/javascript">
+    var disqus_shortname = 'longwayaroundorguk';
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
+</body>
+</html>

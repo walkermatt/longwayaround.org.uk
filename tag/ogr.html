@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <title>longwayaround.org.uk - ogr</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, target-densitydpi=device-dpi">
+        <link rel="stylesheet" href="http://longwayaround.org.uk/theme/css/main.css" type="text/css" />
+        <link href="http://longwayaround.org.uk/feeds/all.rss.xml" type="application/atom+xml" rel="alternate" title="longwayaround.org.uk RSS Feed" />
+
+        <!--[if IE]>
+                <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+        <!--[if lte IE 7]>
+                <link rel="stylesheet" type="text/css" media="all" href="http://longwayaround.org.uk/css/ie.css"/>
+                <script src="http://longwayaround.org.uk/js/IE8.js" type="text/javascript"></script><![endif]-->
+
+        <!--[if lt IE 7]>
+                <link rel="stylesheet" type="text/css" media="all" href="http://longwayaround.org.uk/css/ie6.css"/><![endif]-->
+
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">longwayaround.org.uk  <strong>taking the scenic route and enjoying the journey</strong></a></h1>
+                <nav>
+                <ul>
+                    <li ><a href="http://longwayaround.org.uk/notes/">notes</a></li>
+                    <li><a href="http://longwayaround.org.uk/pages/about/">about</a></li>
+                </ul>
+                </nav>
+                    <ul class="social">
+                        <li><a href="http://longwayaround.org.uk/feeds/all.rss.xml" rel="alternate"><img src="http://longwayaround.org.uk/theme/images/icons/gosquared/18/rss.png" title="rss" width="18" height="18" /></a></li>
+                    <li><a href="http://uk.linkedin.com/in/walkermatt"><img src="http://longwayaround.org.uk/theme/images/icons/gosquared/18/linkedin.png" title="linkedin" width="18" height="18" /></a></li>
+                    <li><a href="http://delicious.com/walkermatt"><img src="http://longwayaround.org.uk/theme/images/icons/gosquared/18/delicious.png" title="delicious" width="18" height="18" /></a></li>
+                    <li><a href="http://github.com/organizations/AstunTechnology"><img src="http://longwayaround.org.uk/theme/images/icons/gosquared/18/github.png" title="github" width="18" height="18" /></a></li>
+                    <li><a href="http://github.com/walkermatt"><img src="http://longwayaround.org.uk/theme/images/icons/gosquared/18/github.png" title="github" width="18" height="18" /></a></li>
+                    <li><a href="http://twitter.com/_walkermatt"><img src="http://longwayaround.org.uk/theme/images/icons/gosquared/18/twitter.png" title="twitter" width="18" height="18" /></a></li>
+                    </ul>
+        </header><!-- /#banner -->
+
+            <aside id="featured" class="body">
+                <article>
+                    <abbr class="published" title="2010-12-19T21:06:00">Sun 19 December 2010</abbr>
+                    <h1 class="entry-title"><a href="http://longwayaround.org.uk/notes/build-ogr-18-with-gml-wfs-and-postgis-support-on-ubuntu-1004/">Build OGR 1.8 with GML, WFS and PostGIS support on Ubuntu 10.04</a></h1> 
+                    <p>OGR 1.8 introduces support for reading GML with feature attributes expressed as nested elements as found in Ordnance Survey's OS MasterMap as well as support for accessing WFS. This is a brief script for building OGR (GDAL) 1.8 from source as it's not currently released: Download latest daily source export: <a class="reference external" href="http://www.gdal.org/daily/">http://www.gdal.org/daily/</a> and extract it's contents to a directory you have read, write and execute permissions in (I chose ~/Software/gdal-svn-trunk-2010.12.19) Ensure you have the tools required to build software using <tt class="docutils literal">make</tt>:</p>
+<div class="highlight"><pre>sudo apt-get install build-essential
+</pre></div>
+<p>Install the development package for Xerces-C:</p>
+<div class="highlight"><pre>sudo apt-get install libxerces-c-dev
+</pre></div>
+<p>Install the PostgreSQL development tools package:</p>
+<div class="highlight"><pre>sudo apt-get install libpq-dev
+</pre></div>
+<p>Install curl and the development package:</p>
+<div class="highlight"><pre>sudo apt-get install curl libcurl4-gnutls-dev
+</pre></div>
+<p>Change to the directory where you extracted the GDAL source (that's ~/Software/gdal-svn-trunk-2010.12.19 for me):</p>
+<div class="highlight"><pre><span class="nb">cd</span> ~/Software/gdal-svn-trunk-2010.12.19
+</pre></div>
+<p>Run the configure script which prepares the ground before we build GDAL with <tt class="docutils literal">make</tt>. Here we are specifying that we want to configure the build to include xerces support and PostgreSQL (/usr/bin/pg_config is a script provided with the PostgreSQL development tools package).</p>
+<div class="highlight"><pre>./configure --with-xerces<span class="o">=</span>yes --with-pg<span class="o">=</span>/usr/bin/pg_config --with-curl<span class="o">=</span>/usr/bin/curl-config &gt; configure-output.txt
+</pre></div>
+<p>Now we can actually build GDAL/OGR:</p>
+<div class="highlight"><pre>make &gt; make-output.txt
+</pre></div>
+<p>Providing make did not error GDAL should now be built and ready to use.  You can find the executable utilities such as gdalinfo, ogrinfo, ogr2ogr etc. in the apps directory within the directory that you extracted the GDAL source (~/Software/gdal-svn-trunk-2010.12.19/apps/ogr2ogr for me.); to make it easier to run these utilities it may be worthwhile setting a variable to this path:</p>
+<div class="highlight"><pre><span class="nv">GDAL_PATH</span><span class="o">=</span>~/Software/gdal-svn-trunk-2010.12.19/apps/
+</pre></div>
+<p>It's also worth setting the GDAL_DATA environment variable so that resources such as coordinate system definitions etc.</p>
+<div class="highlight"><pre><span class="nb">export </span><span class="nv">GDAL_DATA</span><span class="o">=</span><span class="nv">$GDAL_PATH</span>../data
+</pre></div>
+<p>You can then use the utilities like so: Translate from GML to ESRI Shape. To parse nested feature attributes you will need to modify the .gfs file generated the first time the GML file is opened. The .gfs file allows you to map GML properties to feature attributes.</p>
+<div class="highlight"><pre><span class="nv">$GDAL_PATH</span>/ogr2ogr -f <span class="s1">&#39;ESRI Shapefile&#39;</span> . test.gml
+</pre></div>
+<p>Translate GML to PostGIS</p>
+<div class="highlight"><pre><span class="nv">$GDAL_PATH</span>/ogr2ogr -f PostgreSQL PG:<span class="s2">&quot;dbname=&#39;postgis&#39; active_schema=mapbase host=&#39;localhost&#39; user=&#39;fred&#39; password=&#39;itscomplicated&#39;&quot;</span> test.gml
+</pre></div>
+<p>List available layers from a WFS</p>
+<div class="highlight"><pre><span class="nv">$GDAL_PATH</span>/ogrinfo -ro WFS:<span class="s2">&quot;http://www.tinyows.org/cgi-bin/tinyows&quot;</span>
+</pre></div>
+<p>Get info about all features in a given layer including coordinates</p>
+<div class="highlight"><pre><span class="nv">$GDAL_PATH</span>/ogrinfo WFS:<span class="s2">&quot;http://www.tinyows.org/cgi-bin/tinyows&quot;</span> tows:world -ro -al
+</pre></div>
+<p>Download all features from a layer and write to a good old ESRI Shape file</p>
+<div class="highlight"><pre><span class="nv">$GDAL_PATH</span>/ogr2ogr -f <span class="s1">&#39;ESRI Shapefile&#39;</span> . WFS:<span class="s2">&quot;http://www.tinyows.org/cgi-bin/tinyows&quot;</span> tows:world
+</pre></div>
+
+<footer class="post-info">
+    <abbr class="published" title="2010-12-19T21:06:00">Sun 19 December 2010</abbr>
+<p>Tags: <a href="http://longwayaround.org.uk/tag/gml.html">gml</a> <a href="http://longwayaround.org.uk/tag/ogr.html">ogr</a> <a href="http://longwayaround.org.uk/tag/postgis.html">postgis</a> <a href="http://longwayaround.org.uk/tag/wfs.html">wfs</a> </p></footer><!-- /.post-info -->                    <p><a href="http://longwayaround.org.uk/notes/build-ogr-18-with-gml-wfs-and-postgis-support-on-ubuntu-1004/#disqus_thread">comments</a>.</p>
+                </article>
+            </aside><!-- /#featured -->
+        <section id="extras" class="body">
+        </section><!-- /#extras -->
+
+        <footer id="contentinfo" class="body">
+                <address id="about" class="vcard body">
+                    Powered by <a href="http://alexis.notmyidea.org/pelican/">Pelican</a> and <a href="http://python.org">Python</a>, using a modified <a href="http://coding.smashingmagazine.com/2009/08/04/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a> theme, background from <a href="http://subtlepatterns.com">Subtle Patterns</a> and icons from <a href="https://www.gosquared.com/blog/archives/2925">GoSocial</a>.
+                </address><!-- /#about -->
+        </footer><!-- /#contentinfo -->
+
+<script type="text/javascript">
+    var disqus_shortname = 'longwayaroundorguk';
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
+</body>
+</html>
