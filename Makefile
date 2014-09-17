@@ -46,5 +46,11 @@ github: $(OUTPUTDIR)/index.html
 	ghp-import $(OUTPUTDIR)
 	git push origin gh-pages
 
+serve: html $(OUTPUTDIR)/index.html
+	(cd output && python -m SimpleHTTPServer)
+
+devserver:
+	nodemon --ignore ./output --ext rst,py,js,css --exec make serve
+
 .PHONY: html help clean ftp_upload ssh_upload dropbox_upload github
     
