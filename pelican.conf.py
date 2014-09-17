@@ -53,7 +53,7 @@ CATEGORY_SAVE_AS = '{name}/index.html'
 
 FEED_RSS = 'feeds/all.rss.xml'
 
-STATIC_PATHS = ['files', '.htaccess']
+STATIC_PATHS = ['files', '.htaccess', 'CNAME']
 
 EXTRA_PATH_METADATA = {
     'files': {'path': 'files/'},
