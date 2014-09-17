@@ -35,7 +35,7 @@ DEFAULT_PAGINATION = False
 
 DISPLAY_PAGES_ON_MENU = True
 
-THEME = '../longwayaround.org.uk_theme'
+THEME = './theme'
 
 AUTHORS_SAVE_AS = None
 TAGS_SAVE_AS = None
