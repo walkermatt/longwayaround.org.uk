@@ -111,52 +111,31 @@ notes here:
 &lt;a class="reference external" href="https://gist.github.com/3034742"&gt;https://gist.github.com/3034742&lt;/a&gt;&lt;/p&gt;
 </summary><category term="leaflet"></category><category term="mapproxy"></category></entry><entry><title>Greyscale maps with MapServer</title><link href="http://longwayaround.org.uk/notes/greyscale-maps-with-mapserver/" rel="alternate"></link><updated>2012-02-02T21:31:00+00:00</updated><author><name>walkermatt</name></author><id>tag:longwayaround.org.uk,2012-02-02:notes/greyscale-maps-with-mapserver/</id><summary type="html">&lt;p&gt;There have been a few times in the past (such as when I was preparing the base mapping for &lt;a class="reference external" href="http://mywycombe.wycombe.gov.uk/?tab=2"&gt;My Wycombe&lt;/a&gt;) when I've wanted to create greyscale base mapping using &lt;a class="reference external" href="http://mapserver.org"&gt;MapServer&lt;/a&gt;. Previously I've experimented with various processing options for raster images (with varying degrees of success), converting the source images using &lt;a class="reference external" href="www.imagemagick.org"&gt;ImageMagick&lt;/a&gt; and converting colour RGB values to their greyscale equivalent for vector features and it's generally been time consuming.  Today the requirement came up again and I discovered a far simpler option: specifying a greyscale palette as an OUTPUTFORMAT FORMATOPTION.  The palette simply contains grey values from 0,0,0 (black) to 255,255,255 (white) and all values in between. MapServer then does the job of converting the colours for your source data into their greyscale equivalents.&lt;/p&gt;
 &lt;p&gt;In the map file specify an &lt;a class="reference external" href="http://mapserver.org/mapfile/outputformat.html"&gt;OUTPUTFORMAT&lt;/a&gt; that used a specific palette:&lt;/p&gt;
-&lt;pre class="literal-block"&gt;
-# Specify a plain PNG output with a
-
+&lt;div class="highlight"&gt;&lt;pre&gt;# Specify a plain PNG output with a
 # greyscale palette
-
 IMAGETYPE &amp;quot;AGG_PNG&amp;quot;
-
 OUTPUTFORMAT
-
     NAME  &amp;quot;AGG_PNG&amp;quot;
-
     DRIVER  &amp;quot;AGG/PNG&amp;quot;
-
     MIMETYPE &amp;quot;image/png&amp;quot;
-
     IMAGEMODE &amp;quot;RGB&amp;quot;
-
     EXTENSION &amp;quot;png&amp;quot;
-
     FORMATOPTION &amp;quot;INTERLACE=OFF&amp;quot;
-
     FORMATOPTION &amp;quot;PALETTE_FORCE=ON&amp;quot;
-
     FORMATOPTION &amp;quot;PALETTE=grey.txt&amp;quot;
-
 END
-&lt;/pre&gt;
+&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Snippet from the palette file (&lt;a class="reference external" href="/files/grey.txt"&gt;download the full version&lt;/a&gt;):&lt;/p&gt;
-&lt;pre class="literal-block"&gt;
-0,0,0
-
+&lt;div class="highlight"&gt;&lt;pre&gt;0,0,0
 1,1,1
-
 2,2,2
-
 --- you get the idea ---
-
 253,253,253
-
 254,254,254
-
 255,255,255
-&lt;/pre&gt;
+&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;BTW I used the following Python to generate the values for the palette:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;256&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-
     &lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;&lt;/span&gt;&lt;span class="si"&gt;%i&lt;/span&gt;&lt;span class="s"&gt;,&lt;/span&gt;&lt;span class="si"&gt;%i&lt;/span&gt;&lt;span class="s"&gt;,&lt;/span&gt;&lt;span class="si"&gt;%i&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 </summary><category term="mapserver"></category></entry><entry><title>Disaggregate MultiLineStrings using ST_Dump PostGIS</title><link href="http://longwayaround.org.uk/notes/disaggregate-multilinestrings-using-st_dump-postgis/" rel="alternate"></link><updated>2011-11-24T21:39:00+00:00</updated><author><name>walkermatt</name></author><id>tag:longwayaround.org.uk,2011-11-24:notes/disaggregate-multilinestrings-using-st_dump-postgis/</id><summary type="html">&lt;p&gt;PostGIS the spatial extension to the PostgreSQL database provides a host of functions for querying, creating and manipulating geometries within the database. ST_Dump allows you to disaggregate collection and multi geometries such as MultiPolygon and MultiLineSting easily. The example below demonstrates starting with a table that contains one row with a MultiLineString geometry and another with a LineString and running a query to disaggregate returning three rows all with a LineString geometry.&lt;/p&gt;

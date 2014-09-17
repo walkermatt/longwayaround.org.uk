@@ -1,10 +1,7 @@
-/* Imports */
 @import url("reset.css");
 @import url("pygment.css");
 @import url(http://fonts.googleapis.com/css?family=Alegreya+Sans);
 
-/***** Global *****/
-/* Body */
 body {
     color: #000305;
     background-color: whitesmoke;
@@ -16,7 +13,6 @@ body {
     text-align: left;
 }
 
-/* Headings */
 h1 {font-size: 2em}
 h2 {font-size: 1.571em}
 h3 {font-size: 1.429em}
@@ -39,7 +35,6 @@ hr {
     border: 1px solid #4B8E49;
 }
 
-/* Anchors */
 a {
     outline: 0;
 }
@@ -64,7 +59,6 @@ h1 a:hover {
     background-color: inherit;
 }
 
-/* Paragraphs */
 p {
     margin-bottom: 1.143em;
 }
@@ -77,7 +71,6 @@ em, i {
     font-style: italic;
 }
 
-/* Lists */
 ul {
     list-style: outside disc;
     margin: 1em 0 1.5em 1.5em;
@@ -144,7 +137,6 @@ dd {
     margin-left: 1.5em;
 }
 
-/* Code blocks */
 .highlight pre {
     border: 1px solid #CCC;
     padding: 10px;
@@ -156,25 +148,21 @@ dd {
     border: none;
 }
 
-/* Quotes */
 blockquote {
     margin: 20px;
     font-style: italic;
 }
 
-/* Tables */
 table {
     width: 98%;
 }
 
-/* Thead */
 thead th {
     padding: .5em .4em;
     text-align: left;
 }
 thead td {}
 
-/* Tbody */
 tbody td {
     padding: .5em .4em;
 }
@@ -183,11 +171,9 @@ tbody th {}
 tbody .alt td {}
 tbody .alt th {}
 
-/* Tfoot */
 tfoot th {}
 tfoot td {}
 
-/* HTML5 tags */
 header, section, footer,
 aside, nav, article, figure {
     display: block;

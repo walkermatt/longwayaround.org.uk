@@ -45,52 +45,31 @@
         <div class="entry-content">
         <p>There have been a few times in the past (such as when I was preparing the base mapping for <a class="reference external" href="http://mywycombe.wycombe.gov.uk/?tab=2">My Wycombe</a>) when I've wanted to create greyscale base mapping using <a class="reference external" href="http://mapserver.org">MapServer</a>. Previously I've experimented with various processing options for raster images (with varying degrees of success), converting the source images using <a class="reference external" href="www.imagemagick.org">ImageMagick</a> and converting colour RGB values to their greyscale equivalent for vector features and it's generally been time consuming.  Today the requirement came up again and I discovered a far simpler option: specifying a greyscale palette as an OUTPUTFORMAT FORMATOPTION.  The palette simply contains grey values from 0,0,0 (black) to 255,255,255 (white) and all values in between. MapServer then does the job of converting the colours for your source data into their greyscale equivalents.</p>
 <p>In the map file specify an <a class="reference external" href="http://mapserver.org/mapfile/outputformat.html">OUTPUTFORMAT</a> that used a specific palette:</p>
-<pre class="literal-block">
-# Specify a plain PNG output with a
-
+<div class="highlight"><pre># Specify a plain PNG output with a
 # greyscale palette
-
 IMAGETYPE &quot;AGG_PNG&quot;
-
 OUTPUTFORMAT
-
     NAME  &quot;AGG_PNG&quot;
-
     DRIVER  &quot;AGG/PNG&quot;
-
     MIMETYPE &quot;image/png&quot;
-
     IMAGEMODE &quot;RGB&quot;
-
     EXTENSION &quot;png&quot;
-
     FORMATOPTION &quot;INTERLACE=OFF&quot;
-
     FORMATOPTION &quot;PALETTE_FORCE=ON&quot;
-
     FORMATOPTION &quot;PALETTE=grey.txt&quot;
-
 END
-</pre>
+</pre></div>
 <p>Snippet from the palette file (<a class="reference external" href="/files/grey.txt">download the full version</a>):</p>
-<pre class="literal-block">
-0,0,0
-
+<div class="highlight"><pre>0,0,0
 1,1,1
-
 2,2,2
-
 --- you get the idea ---
-
 253,253,253
-
 254,254,254
-
 255,255,255
-</pre>
+</pre></div>
 <p>BTW I used the following Python to generate the values for the palette:</p>
 <div class="highlight"><pre><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">256</span><span class="p">):</span>
-
     <span class="k">print</span> <span class="s">&#39;</span><span class="si">%i</span><span class="s">,</span><span class="si">%i</span><span class="s">,</span><span class="si">%i</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">)</span>
 </pre></div>
 
