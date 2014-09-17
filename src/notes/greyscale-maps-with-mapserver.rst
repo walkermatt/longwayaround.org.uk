@@ -8,52 +8,33 @@ There have been a few times in the past (such as when I was preparing the base m
 
 In the map file specify an `OUTPUTFORMAT`_ that used a specific palette:
 
-::
-
+.. code-block:: txt
 
         # Specify a plain PNG output with a
-
         # greyscale palette
-
         IMAGETYPE "AGG_PNG"
-
         OUTPUTFORMAT
-
             NAME  "AGG_PNG"
-
             DRIVER  "AGG/PNG"
-
             MIMETYPE "image/png"
-
             IMAGEMODE "RGB"
-
             EXTENSION "png"
-
             FORMATOPTION "INTERLACE=OFF"
-
             FORMATOPTION "PALETTE_FORCE=ON"
-
             FORMATOPTION "PALETTE=grey.txt"
-
         END
 
 Snippet from the palette file (`download the full version`_):
 
-::
+.. code-block:: txt
 
 
         0,0,0
-
         1,1,1
-
         2,2,2
-
         --- you get the idea ---
-
         253,253,253
-
         254,254,254
-
         255,255,255
 
 BTW I used the following Python to generate the values for the palette:
@@ -63,7 +44,6 @@ BTW I used the following Python to generate the values for the palette:
 
 
     for i in range(0,256):
-
         print '%i,%i,%i' % (i,i,i)
 
 .. _My Wycombe: http://mywycombe.wycombe.gov.uk/?tab=2
