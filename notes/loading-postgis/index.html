@@ -43,7 +43,8 @@
         <header> <h1 class="entry-title"><a href=""
         rel="bookmark" title="Permalink to Loading PostGIS">Loading PostGIS</a></h1>  </header>
         <div class="entry-content">
-        <div class="section" id="the-options">
+        <p><em>Notes from a talk at PostGIS Day, London 20th Nov 2014.</em></p>
+<div class="section" id="the-options">
 <h2>The options</h2>
 <p>All support basic options such as specifying table names, schema, SRS etc.</p>
 <div class="section" id="graphical">
@@ -56,7 +57,7 @@
 <dt><a class="reference external" href="http://docs.qgis.org/2.0/en/docs/training_manual/databases/db_manager.html">QGIS DB Manager</a></dt>
 <dd>Simple database management from QGIS, including creating schemas &amp; tables, moving tables and importing. Supports multiple import formats. Shipped with QGIS.</dd>
 <dt>Proprietary</dt>
-<dd>Support for PostGIS is now fairly broad within proprietary products including Safe Software's FME, MapInfo Easyloader, ESRI SDE etc. MapInfo and ESRI impose some constraints &amp; conventions including their own metadata tables.</dd>
+<dd>Support for PostGIS is now fairly broad within proprietary products including Safe Software's FME, Cadcorp, MapInfo Easyloader, ESRI SDE etc. MapInfo and ESRI impose some constraints &amp; conventions including their own metadata tables.</dd>
 </dl>
 </div>
 <div class="section" id="command-line">
@@ -75,6 +76,7 @@
 </div>
 <div class="section" id="examples">
 <h2>Examples</h2>
+<p>All examples use the <a class="reference external" href="http://www.naturalearthdata.com/">Natural Earth Vector data</a>, a <a class="reference external" href="http://kelso.it/x/nevector">full download</a> is available if you'd like to follow along. Assumes loading into a database called <code>postgis</code> with a <code>loader</code> login role with the password set via the <code>PGPASSWORD</code> environment variable: <code>PGPASSWORD=password</code>.</p>
 <div class="section" id="id1">
 <h3>shp2pgsql</h3>
 <p>Load a Shapefile using <code>shp2pgsql</code> and <code>psql</code>. <code>shp2pgsql</code> doesn't load into the database directly but instead outputs SQL which can then be loaded via <code>psql</code>. This example pipes the SQL output by <code>shp2pgsql</code> to stdout to <code>psql</code> which executes it against the specified database.</p>

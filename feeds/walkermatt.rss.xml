@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>longwayaround.org.uk</title><link>http://longwayaround.org.uk/</link><description>taking the scenic route and enjoying the journey</description><atom:link href="http://longwayaround.org.uk/feeds/walkermatt.rss.xml" rel="self"></atom:link><lastBuildDate>Thu, 20 Nov 2014 00:00:00 +0000</lastBuildDate><item><title>Loading PostGIS</title><link>http://longwayaround.org.uk/notes/loading-postgis/</link><description>&lt;div class="section" id="the-options"&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>longwayaround.org.uk</title><link>http://longwayaround.org.uk/</link><description>taking the scenic route and enjoying the journey</description><atom:link href="http://longwayaround.org.uk/feeds/walkermatt.rss.xml" rel="self"></atom:link><lastBuildDate>Thu, 20 Nov 2014 00:00:00 +0000</lastBuildDate><item><title>Loading PostGIS</title><link>http://longwayaround.org.uk/notes/loading-postgis/</link><description>&lt;p&gt;&lt;em&gt;Notes from a talk at PostGIS Day, London 20th Nov 2014.&lt;/em&gt;&lt;/p&gt;
+&lt;div class="section" id="the-options"&gt;
 &lt;h2&gt;The options&lt;/h2&gt;
 &lt;p&gt;All support basic options such as specifying table names, schema, SRS etc.&lt;/p&gt;
 &lt;div class="section" id="graphical"&gt;
@@ -12,7 +13,7 @@
 &lt;dt&gt;&lt;a class="reference external" href="http://docs.qgis.org/2.0/en/docs/training_manual/databases/db_manager.html"&gt;QGIS DB Manager&lt;/a&gt;&lt;/dt&gt;
 &lt;dd&gt;Simple database management from QGIS, including creating schemas &amp;amp; tables, moving tables and importing. Supports multiple import formats. Shipped with QGIS.&lt;/dd&gt;
 &lt;dt&gt;Proprietary&lt;/dt&gt;
-&lt;dd&gt;Support for PostGIS is now fairly broad within proprietary products including Safe Software's FME, MapInfo Easyloader, ESRI SDE etc. MapInfo and ESRI impose some constraints &amp;amp; conventions including their own metadata tables.&lt;/dd&gt;
+&lt;dd&gt;Support for PostGIS is now fairly broad within proprietary products including Safe Software's FME, Cadcorp, MapInfo Easyloader, ESRI SDE etc. MapInfo and ESRI impose some constraints &amp;amp; conventions including their own metadata tables.&lt;/dd&gt;
 &lt;/dl&gt;
 &lt;/div&gt;
 &lt;div class="section" id="command-line"&gt;
@@ -31,6 +32,7 @@
 &lt;/div&gt;
 &lt;div class="section" id="examples"&gt;
 &lt;h2&gt;Examples&lt;/h2&gt;
+&lt;p&gt;All examples use the &lt;a class="reference external" href="http://www.naturalearthdata.com/"&gt;Natural Earth Vector data&lt;/a&gt;, a &lt;a class="reference external" href="http://kelso.it/x/nevector"&gt;full download&lt;/a&gt; is available if you'd like to follow along. Assumes loading into a database called &lt;code&gt;postgis&lt;/code&gt; with a &lt;code&gt;loader&lt;/code&gt; login role with the password set via the &lt;code&gt;PGPASSWORD&lt;/code&gt; environment variable: &lt;code&gt;PGPASSWORD=password&lt;/code&gt;.&lt;/p&gt;
 &lt;div class="section" id="id1"&gt;
 &lt;h3&gt;shp2pgsql&lt;/h3&gt;
 &lt;p&gt;Load a Shapefile using &lt;code&gt;shp2pgsql&lt;/code&gt; and &lt;code&gt;psql&lt;/code&gt;. &lt;code&gt;shp2pgsql&lt;/code&gt; doesn't load into the database directly but instead outputs SQL which can then be loaded via &lt;code&gt;psql&lt;/code&gt;. This example pipes the SQL output by &lt;code&gt;shp2pgsql&lt;/code&gt; to stdout to &lt;code&gt;psql&lt;/code&gt; which executes it against the specified database.&lt;/p&gt;
