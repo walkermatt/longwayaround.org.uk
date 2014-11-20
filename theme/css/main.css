@@ -82,7 +82,6 @@ ol {
 }
 
 li {
-    list-style: none;
     padding-bottom: 0.5em;
 }
 
@@ -135,6 +134,7 @@ dt {
 }
 dd {
     margin-left: 1.5em;
+    margin-bottom: 1em;
 }
 
 .highlight pre {
@@ -468,6 +468,10 @@ li:last-child .hentry, #content > .hentry {
 
 .hentry footer address {
     display: inline;
+}
+
+ul.posts li {
+    list-style: none;
 }
 
 #posts-list footer address {

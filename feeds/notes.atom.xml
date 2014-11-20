@@ -1,5 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>longwayaround.org.uk</title><link href="http://longwayaround.org.uk/" rel="alternate"></link><link href="http://longwayaround.org.uk/feeds/notes.atom.xml" rel="self"></link><id>http://longwayaround.org.uk/</id><updated>2014-09-07T21:30:00+01:00</updated><entry><title>Practical OpenLayers 3 &amp; Leaflet</title><link href="http://longwayaround.org.uk/notes/practical-openlayers-3-leaflet/" rel="alternate"></link><updated>2014-09-07T21:30:00+01:00</updated><author><name>walkermatt</name></author><id>tag:longwayaround.org.uk,2014-09-07:notes/practical-openlayers-3-leaflet/</id><summary type="html">&lt;p&gt;I ran a 2 hour workshop at &lt;a class="reference external" href="http://www.nottingham.ac.uk/osgis/home.aspx"&gt;OSGIS 2014&lt;/a&gt; introducing OpenLayers 3 and
+<feed xmlns="http://www.w3.org/2005/Atom"><title>longwayaround.org.uk</title><link href="http://longwayaround.org.uk/" rel="alternate"></link><link href="http://longwayaround.org.uk/feeds/notes.atom.xml" rel="self"></link><id>http://longwayaround.org.uk/</id><updated>2014-11-20T00:00:00+00:00</updated><entry><title>Loading PostGIS</title><link href="http://longwayaround.org.uk/notes/loading-postgis/" rel="alternate"></link><updated>2014-11-20T00:00:00+00:00</updated><author><name>walkermatt</name></author><id>tag:longwayaround.org.uk,2014-11-20:notes/loading-postgis/</id><summary type="html">&lt;div class="section" id="the-options"&gt;
+&lt;h2&gt;The options&lt;/h2&gt;
+&lt;p&gt;All support basic options such as specifying table names, schema, SRS etc.&lt;/p&gt;
+&lt;div class="section" id="graphical"&gt;
+&lt;h3&gt;Graphical&lt;/h3&gt;
+&lt;dl class="docutils"&gt;
+&lt;dt&gt;&lt;a class="reference external" href="http://gothos.info/2014/03/loading-data-into-postgis-shapefiles/"&gt;shp2pgsql-gui&lt;/a&gt;&lt;/dt&gt;
+&lt;dd&gt;Graphical interface to shp2pgsql tool shipped with PostGIS to load ESRI Shapefiles via pgAdmin III.&lt;/dd&gt;
+&lt;dt&gt;&lt;a class="reference external" href="https://github.com/zer0infinity/OGR2GUI"&gt;ogr2gui&lt;/a&gt;&lt;/dt&gt;
+&lt;dd&gt;Graphical interface to &lt;code&gt;ogr2ogr&lt;/code&gt; command line utility. Windows only.&lt;/dd&gt;
+&lt;dt&gt;&lt;a class="reference external" href="http://docs.qgis.org/2.0/en/docs/training_manual/databases/db_manager.html"&gt;QGIS DB Manager&lt;/a&gt;&lt;/dt&gt;
+&lt;dd&gt;Simple database management from QGIS, including creating schemas &amp;amp; tables, moving tables and importing. Supports multiple import formats. Shipped with QGIS.&lt;/dd&gt;
+&lt;dt&gt;Proprietary&lt;/dt&gt;
+&lt;dd&gt;Support for PostGIS is now fairly broad within proprietary products including Safe Software's FME, MapInfo Easyloader, ESRI SDE etc. MapInfo and ESRI impose some constraints &amp;amp; conventions including their own metadata tables.&lt;/dd&gt;
+&lt;/dl&gt;
+&lt;/div&gt;
+&lt;div class="section" id="command-line"&gt;
+&lt;h3&gt;Command Line&lt;/h3&gt;
+&lt;dl class="docutils"&gt;
+&lt;dt&gt;&lt;a class="reference external" href="http://postgis.refractions.net/documentation/manual-2.0/using_postgis_dbmanagement.html#shp2pgsql_usage"&gt;shp2pgsql&lt;/a&gt;&lt;/dt&gt;
+&lt;dd&gt;Fully featured ESRI Shapefile loader, supports specifying tablespace, null geometry handling, encoding etc. Shipped with PostGIS.&lt;/dd&gt;
+&lt;dt&gt;&lt;a class="reference external" href="http://www.gdal.org/ogr2ogr.html"&gt;ogr2ogr&lt;/a&gt;&lt;/dt&gt;
+&lt;dd&gt;Swiss Army Knife of vector translation, supports many input formats and has good support for PostGIS. &lt;a class="reference external" href="http://www.gdal.org/drv_pg.html"&gt;PostGIS docs here&lt;/a&gt; and &lt;a class="reference external" href="http://www.gdal.org/drv_pg_advanced.html"&gt;here&lt;/a&gt;.&lt;/dd&gt;
+&lt;dt&gt;&lt;a class="reference external" href="https://github.com/AstunTechnology/Loader"&gt;Loader&lt;/a&gt;&lt;/dt&gt;
+&lt;dd&gt;Loads GML such as Ordnance Survey data, uses &lt;code&gt;ogr2ogr&lt;/code&gt; under the hood.&lt;/dd&gt;
+&lt;dt&gt;&lt;a class="reference external" href="http://www.postgresql.org/docs/9.3/static/app-psql.html"&gt;psql&lt;/a&gt;&lt;/dt&gt;
+&lt;dd&gt;Standard command line interface to PostgreSQL used to import from textual formats such as CSV via &lt;code&gt;COPY&lt;/code&gt;.&lt;/dd&gt;
+&lt;/dl&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="examples"&gt;
+&lt;h2&gt;Examples&lt;/h2&gt;
+&lt;div class="section" id="id1"&gt;
+&lt;h3&gt;shp2pgsql&lt;/h3&gt;
+&lt;p&gt;Load a Shapefile using &lt;code&gt;shp2pgsql&lt;/code&gt; and &lt;code&gt;psql&lt;/code&gt;. &lt;code&gt;shp2pgsql&lt;/code&gt; doesn't load into the database directly but instead outputs SQL which can then be loaded via &lt;code&gt;psql&lt;/code&gt;. This example pipes the SQL output by &lt;code&gt;shp2pgsql&lt;/code&gt; to stdout to &lt;code&gt;psql&lt;/code&gt; which executes it against the specified database.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;shp2pgsql -W LATIN1 &lt;span class="se"&gt;\&lt;/span&gt;
+            -s 4326 &lt;span class="se"&gt;\&lt;/span&gt;
+            -I natural_earth_vector/10m_cultural/ne_10m_admin_0_countries.shp &lt;span class="se"&gt;\&lt;/span&gt;
+            ne.ne_10m_admin_0_countries &lt;span class="se"&gt;\&lt;/span&gt;
+        | psql -U loader -d postgis
+&lt;/pre&gt;&lt;/div&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;&lt;a class="reference external" href="http://prj2epsg.org/search"&gt;http://prj2epsg.org/search&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class="section" id="ogr2ogr-f-postgresql"&gt;
+&lt;h3&gt;ogr2ogr -f PostgreSQL&lt;/h3&gt;
+&lt;p&gt;Load an equivalent Shapefile into PostGIS using &lt;code&gt;ogr2ogr&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;ogr2ogr -f PostgreSQL &lt;span class="se"&gt;\&lt;/span&gt;
+        PG:&lt;span class="s1"&gt;&amp;#39;dbname=postgis user=loader active_schema=ne&amp;#39;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+        natural_earth_vector/10m_cultural/ne_10m_time_zones.shp &lt;span class="se"&gt;\&lt;/span&gt;
+        -nlt PROMOTE_TO_MULTI
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="tips"&gt;
+&lt;h2&gt;Tips&lt;/h2&gt;
+&lt;div class="section" id="use-copy-for-speed"&gt;
+&lt;h3&gt;Use COPY for Speed&lt;/h3&gt;
+&lt;p&gt;When loading large quantities of data both &lt;code&gt;shp2pgsql&lt;/code&gt; and &lt;code&gt;ogr2ogr&lt;/code&gt; support loading via PostgreSQL Dump format. This involves bulk loading of rows in a textual CSV like format using the &lt;code&gt;COPY&lt;/code&gt; command which can be much quicker than &lt;code&gt;INSERT&lt;/code&gt; statement.&lt;/p&gt;
+&lt;p&gt;Enabling Dump format with &lt;code&gt;shp2pgsql&lt;/code&gt; is as simple as specifying the &lt;code&gt;-D&lt;/code&gt; flag (&lt;code&gt;shp2pgsql -D ...&lt;/code&gt;).&lt;/p&gt;
+&lt;p&gt;For &lt;code&gt;ogr2ogr&lt;/code&gt; use the &lt;code&gt;PGDump&lt;/code&gt; output format with the &lt;code&gt;PG_USE_COPY&lt;/code&gt; config set to &lt;code&gt;YES&lt;/code&gt;. The are a number of layer creation (&lt;code&gt;-lco&lt;/code&gt;) and config options detailed on the &lt;a class="reference external" href="http://www.gdal.org/drv_pgdump.html"&gt;PGDump driver page&lt;/a&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;ogr2ogr -f PGDump &lt;span class="se"&gt;\&lt;/span&gt;
+        --config PG_USE_COPY YES &lt;span class="se"&gt;\&lt;/span&gt;
+        -lco &lt;span class="nv"&gt;schema&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;ne &lt;span class="se"&gt;\&lt;/span&gt;
+        -lco &lt;span class="nv"&gt;create_schema&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;off &lt;span class="se"&gt;\&lt;/span&gt;
+        /vsistdout/ &lt;span class="se"&gt;\&lt;/span&gt;
+        natural_earth_vector/10m_cultural/ne_10m_admin_1_states_provinces_shp.shp &lt;span class="se"&gt;\&lt;/span&gt;
+        -nlt PROMOTE_TO_MULTI &lt;span class="se"&gt;\&lt;/span&gt;
+        | psql -U loader -d postgis
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;When loading multi file datasets such as Ordnance Survey &lt;a class="reference external" href="http://www.ordnancesurvey.co.uk/business-and-government/products/topography-layer.html"&gt;OSMM Topography Layer&lt;/a&gt; or &lt;a class="reference external" href="http://www.ordnancesurvey.co.uk/business-and-government/products/vectormap-local.html"&gt;VectorMap Local&lt;/a&gt; the general approach is:&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;Create schema and empty tables&lt;/li&gt;
+&lt;li&gt;Load each source file via COPY&lt;/li&gt;
+&lt;li&gt;Create indexes, vacuum etc.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;An example of this workflow for VectorMap Local can be found in the &lt;a class="reference external" href="https://github.com/AstunTechnology/Loader/tree/master/extras/ordnancesurvey/vml/pgdump"&gt;Loader repository&lt;/a&gt;. Deferring the creation of indexes can also improve performance significantly as it avoids the database continually rebuilding the indexes during load. In this instance the &lt;code&gt;ogr2ogr&lt;/code&gt; command might look like:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;ogr2ogr --config PG_USE_COPY YES &lt;span class="se"&gt;\&lt;/span&gt;
+        -lco &lt;span class="nv"&gt;schema&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;ne &lt;span class="se"&gt;\&lt;/span&gt;
+        -lco &lt;span class="nv"&gt;create_schema&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;off &lt;span class="se"&gt;\&lt;/span&gt;
+        -lco &lt;span class="nv"&gt;create_table&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;off &lt;span class="se"&gt;\&lt;/span&gt;
+        -lco &lt;span class="nv"&gt;spatial_index&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;off &lt;span class="se"&gt;\&lt;/span&gt;
+        -f PGDump &lt;span class="se"&gt;\&lt;/span&gt;
+        /vsistdout/ &lt;span class="se"&gt;\&lt;/span&gt;
+        /path/to/source.gml
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;A benefit of this approach is that you can also fine tune the column types and provide support for date fields which &lt;code&gt;ogr2ogr&lt;/code&gt; doesn't natively understand.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="parallel-processing"&gt;
+&lt;h3&gt;Parallel Processing&lt;/h3&gt;
+&lt;p&gt;Databases are designed to handle lots of concurrent activity and can easily handle more than one process loading data at the same time. Often load performance can be improved by running several &lt;code&gt;shp2pgsql&lt;/code&gt; or &lt;code&gt;ogr2ogr&lt;/code&gt; processes at a time. This can be done manually but for large datasets this becomes a pain, lucky on *unix systems we have &lt;a class="reference external" href="http://www.gnu.org/software/parallel/"&gt;GNU Parallel&lt;/a&gt; which can automate it for use. A &lt;a class="reference external" href="../gnu-parallel-all-the-things/"&gt;previous post&lt;/a&gt; has covered loading with GNU Parallel in more detail but it fits well with this discussion.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;parallel&lt;/code&gt; command is very flexible and can take some time to understand but a simple&lt;/p&gt;
+&lt;p&gt;In a previous post I provided an example of loading all Natural Earth vectors using &lt;code&gt;shp2pgsql&lt;/code&gt; so this time lets do the same with &lt;code&gt;ogr2ogr&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nb"&gt;time &lt;/span&gt;find natural_earth_vector/10m_physical/ -name &lt;span class="s1"&gt;&amp;#39;*.shp&amp;#39;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+    | parallel &lt;span class="s2"&gt;&amp;quot;ogr2ogr -f PGDump \&lt;/span&gt;
+&lt;span class="s2"&gt;                    --config PG_USE_COPY YES \&lt;/span&gt;
+&lt;span class="s2"&gt;                    -lco schema=ne \&lt;/span&gt;
+&lt;span class="s2"&gt;                    -lco create_schema=off \&lt;/span&gt;
+&lt;span class="s2"&gt;                    /vsistdout/ {} \&lt;/span&gt;
+&lt;span class="s2"&gt;                    -nlt PROMOTE_TO_MULTI | psql -U loader -d postgis&amp;quot;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="load-geometry-with-copy"&gt;
+&lt;h3&gt;Load Geometry with COPY&lt;/h3&gt;
+&lt;p&gt;If you have data in a delimited format such as CSV or TSV you can load it via COPY and have PostgreSQL create geometries on the fly by expressing the geometry as WKT or EWKT in your text file. The steps are very similar to those outlined above when using COPY:&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;Create table with a geometry column&lt;/li&gt;
+&lt;li&gt;Load source file via COPY&lt;/li&gt;
+&lt;li&gt;Create indexes, vacuum etc.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;As an example lets load a CSV with details of WMS requests with the bounding box expressed as EWKT:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;cat requests1.csv
+2014-10-20 06:33:24,elmbridge,wms,&lt;span class="s2"&gt;&amp;quot;SRID=27700;POLYGON((516601 163293, 516729 163293, 516729 163421, 516601 163421, 516601 163293))&amp;quot;&lt;/span&gt;
+2014-10-20 06:33:32,surrey,wms,&lt;span class="s2"&gt;&amp;quot;SRID=27700;POLYGON((492801 166401, 499201 166401, 499201 172801, 492801 172801, 492801 166401))&amp;quot;&lt;/span&gt;
+2014-10-20 06:38:09,exactrak,wms,&lt;span class="s2"&gt;&amp;quot;SRID=27700;POLYGON((206848 67200, 206976 67200, 206976 67328, 206848 67328, 206848 67200))&amp;quot;&lt;/span&gt;
+...
+
+psql -U loader -d postgis
+drop table &lt;span class="k"&gt;if &lt;/span&gt;exists requests;
+create table requests&lt;span class="o"&gt;(&lt;/span&gt;reqtime timestamp, org text, service text, bbox geometry&lt;span class="o"&gt;)&lt;/span&gt;;
+&lt;span class="se"&gt;\c&lt;/span&gt;opy requests FROM &lt;span class="s1"&gt;&amp;#39;requests1.csv&amp;#39;&lt;/span&gt; DELIMITER &lt;span class="s1"&gt;&amp;#39;,&amp;#39;&lt;/span&gt; CSV;
+&lt;span class="k"&gt;select &lt;/span&gt;populate_geometry_columns&lt;span class="o"&gt;()&lt;/span&gt;;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</summary><category term="command-line"></category><category term="postgis"></category><category term="notes"></category></entry><entry><title>Practical OpenLayers 3 &amp; Leaflet</title><link href="http://longwayaround.org.uk/notes/practical-openlayers-3-leaflet/" rel="alternate"></link><updated>2014-09-07T21:30:00+01:00</updated><author><name>walkermatt</name></author><id>tag:longwayaround.org.uk,2014-09-07:notes/practical-openlayers-3-leaflet/</id><summary type="html">&lt;p&gt;I ran a 2 hour workshop at &lt;a class="reference external" href="http://www.nottingham.ac.uk/osgis/home.aspx"&gt;OSGIS 2014&lt;/a&gt; introducing OpenLayers 3 and
 Leaflet.&lt;/p&gt;
 &lt;blockquote&gt;
 A hands on introduction to using OpenLayer 3 (OL3) and Leaflet to display

@@ -40,27 +40,165 @@
 
             <aside id="featured" class="body">
                 <article>
-                    <abbr class="published" title="2014-09-07T21:30:00">Sun 07 September 2014</abbr>
-                    <h1 class="entry-title"><a href="http://longwayaround.org.uk/notes/practical-openlayers-3-leaflet/">Practical OpenLayers 3 &amp; Leaflet</a></h1> 
-                    <p>I ran a 2 hour workshop at <a class="reference external" href="http://www.nottingham.ac.uk/osgis/home.aspx">OSGIS 2014</a> introducing OpenLayers 3 and
-Leaflet.</p>
-<blockquote>
-A hands on introduction to using OpenLayer 3 (OL3) and Leaflet to display
-spatial data on the web. The workshop will introduce the two libraries, the
-underpinning concepts and strengths of each, and take delegates through
-creating a series of examples.</blockquote>
-<p>The <a class="reference external" href="http://astuntechnology.github.io/osgis-ol3-leaflet/">full workshop documentation is available</a> if you'd like to follow
-along at home.</p>
+                    <abbr class="published" title="2014-11-20T00:00:00">Thu 20 November 2014</abbr>
+                    <h1 class="entry-title"><a href="http://longwayaround.org.uk/notes/loading-postgis/">Loading PostGIS</a></h1> 
+                    <div class="section" id="the-options">
+<h2>The options</h2>
+<p>All support basic options such as specifying table names, schema, SRS etc.</p>
+<div class="section" id="graphical">
+<h3>Graphical</h3>
+<dl class="docutils">
+<dt><a class="reference external" href="http://gothos.info/2014/03/loading-data-into-postgis-shapefiles/">shp2pgsql-gui</a></dt>
+<dd>Graphical interface to shp2pgsql tool shipped with PostGIS to load ESRI Shapefiles via pgAdmin III.</dd>
+<dt><a class="reference external" href="https://github.com/zer0infinity/OGR2GUI">ogr2gui</a></dt>
+<dd>Graphical interface to <code>ogr2ogr</code> command line utility. Windows only.</dd>
+<dt><a class="reference external" href="http://docs.qgis.org/2.0/en/docs/training_manual/databases/db_manager.html">QGIS DB Manager</a></dt>
+<dd>Simple database management from QGIS, including creating schemas &amp; tables, moving tables and importing. Supports multiple import formats. Shipped with QGIS.</dd>
+<dt>Proprietary</dt>
+<dd>Support for PostGIS is now fairly broad within proprietary products including Safe Software's FME, MapInfo Easyloader, ESRI SDE etc. MapInfo and ESRI impose some constraints &amp; conventions including their own metadata tables.</dd>
+</dl>
+</div>
+<div class="section" id="command-line">
+<h3>Command Line</h3>
+<dl class="docutils">
+<dt><a class="reference external" href="http://postgis.refractions.net/documentation/manual-2.0/using_postgis_dbmanagement.html#shp2pgsql_usage">shp2pgsql</a></dt>
+<dd>Fully featured ESRI Shapefile loader, supports specifying tablespace, null geometry handling, encoding etc. Shipped with PostGIS.</dd>
+<dt><a class="reference external" href="http://www.gdal.org/ogr2ogr.html">ogr2ogr</a></dt>
+<dd>Swiss Army Knife of vector translation, supports many input formats and has good support for PostGIS. <a class="reference external" href="http://www.gdal.org/drv_pg.html">PostGIS docs here</a> and <a class="reference external" href="http://www.gdal.org/drv_pg_advanced.html">here</a>.</dd>
+<dt><a class="reference external" href="https://github.com/AstunTechnology/Loader">Loader</a></dt>
+<dd>Loads GML such as Ordnance Survey data, uses <code>ogr2ogr</code> under the hood.</dd>
+<dt><a class="reference external" href="http://www.postgresql.org/docs/9.3/static/app-psql.html">psql</a></dt>
+<dd>Standard command line interface to PostgreSQL used to import from textual formats such as CSV via <code>COPY</code>.</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="examples">
+<h2>Examples</h2>
+<div class="section" id="id1">
+<h3>shp2pgsql</h3>
+<p>Load a Shapefile using <code>shp2pgsql</code> and <code>psql</code>. <code>shp2pgsql</code> doesn't load into the database directly but instead outputs SQL which can then be loaded via <code>psql</code>. This example pipes the SQL output by <code>shp2pgsql</code> to stdout to <code>psql</code> which executes it against the specified database.</p>
+<div class="highlight"><pre>shp2pgsql -W LATIN1 <span class="se">\</span>
+            -s 4326 <span class="se">\</span>
+            -I natural_earth_vector/10m_cultural/ne_10m_admin_0_countries.shp <span class="se">\</span>
+            ne.ne_10m_admin_0_countries <span class="se">\</span>
+        | psql -U loader -d postgis
+</pre></div>
+<ul class="simple">
+<li><a class="reference external" href="http://prj2epsg.org/search">http://prj2epsg.org/search</a></li>
+</ul>
+</div>
+<div class="section" id="ogr2ogr-f-postgresql">
+<h3>ogr2ogr -f PostgreSQL</h3>
+<p>Load an equivalent Shapefile into PostGIS using <code>ogr2ogr</code>.</p>
+<div class="highlight"><pre>ogr2ogr -f PostgreSQL <span class="se">\</span>
+        PG:<span class="s1">&#39;dbname=postgis user=loader active_schema=ne&#39;</span> <span class="se">\</span>
+        natural_earth_vector/10m_cultural/ne_10m_time_zones.shp <span class="se">\</span>
+        -nlt PROMOTE_TO_MULTI
+</pre></div>
+</div>
+</div>
+<div class="section" id="tips">
+<h2>Tips</h2>
+<div class="section" id="use-copy-for-speed">
+<h3>Use COPY for Speed</h3>
+<p>When loading large quantities of data both <code>shp2pgsql</code> and <code>ogr2ogr</code> support loading via PostgreSQL Dump format. This involves bulk loading of rows in a textual CSV like format using the <code>COPY</code> command which can be much quicker than <code>INSERT</code> statement.</p>
+<p>Enabling Dump format with <code>shp2pgsql</code> is as simple as specifying the <code>-D</code> flag (<code>shp2pgsql -D ...</code>).</p>
+<p>For <code>ogr2ogr</code> use the <code>PGDump</code> output format with the <code>PG_USE_COPY</code> config set to <code>YES</code>. The are a number of layer creation (<code>-lco</code>) and config options detailed on the <a class="reference external" href="http://www.gdal.org/drv_pgdump.html">PGDump driver page</a>.</p>
+<div class="highlight"><pre>ogr2ogr -f PGDump <span class="se">\</span>
+        --config PG_USE_COPY YES <span class="se">\</span>
+        -lco <span class="nv">schema</span><span class="o">=</span>ne <span class="se">\</span>
+        -lco <span class="nv">create_schema</span><span class="o">=</span>off <span class="se">\</span>
+        /vsistdout/ <span class="se">\</span>
+        natural_earth_vector/10m_cultural/ne_10m_admin_1_states_provinces_shp.shp <span class="se">\</span>
+        -nlt PROMOTE_TO_MULTI <span class="se">\</span>
+        | psql -U loader -d postgis
+</pre></div>
+<p>When loading multi file datasets such as Ordnance Survey <a class="reference external" href="http://www.ordnancesurvey.co.uk/business-and-government/products/topography-layer.html">OSMM Topography Layer</a> or <a class="reference external" href="http://www.ordnancesurvey.co.uk/business-and-government/products/vectormap-local.html">VectorMap Local</a> the general approach is:</p>
+<ul class="simple">
+<li>Create schema and empty tables</li>
+<li>Load each source file via COPY</li>
+<li>Create indexes, vacuum etc.</li>
+</ul>
+<p>An example of this workflow for VectorMap Local can be found in the <a class="reference external" href="https://github.com/AstunTechnology/Loader/tree/master/extras/ordnancesurvey/vml/pgdump">Loader repository</a>. Deferring the creation of indexes can also improve performance significantly as it avoids the database continually rebuilding the indexes during load. In this instance the <code>ogr2ogr</code> command might look like:</p>
+<div class="highlight"><pre>ogr2ogr --config PG_USE_COPY YES <span class="se">\</span>
+        -lco <span class="nv">schema</span><span class="o">=</span>ne <span class="se">\</span>
+        -lco <span class="nv">create_schema</span><span class="o">=</span>off <span class="se">\</span>
+        -lco <span class="nv">create_table</span><span class="o">=</span>off <span class="se">\</span>
+        -lco <span class="nv">spatial_index</span><span class="o">=</span>off <span class="se">\</span>
+        -f PGDump <span class="se">\</span>
+        /vsistdout/ <span class="se">\</span>
+        /path/to/source.gml
+</pre></div>
+<p>A benefit of this approach is that you can also fine tune the column types and provide support for date fields which <code>ogr2ogr</code> doesn't natively understand.</p>
+</div>
+<div class="section" id="parallel-processing">
+<h3>Parallel Processing</h3>
+<p>Databases are designed to handle lots of concurrent activity and can easily handle more than one process loading data at the same time. Often load performance can be improved by running several <code>shp2pgsql</code> or <code>ogr2ogr</code> processes at a time. This can be done manually but for large datasets this becomes a pain, lucky on *unix systems we have <a class="reference external" href="http://www.gnu.org/software/parallel/">GNU Parallel</a> which can automate it for use. A <a class="reference external" href="../gnu-parallel-all-the-things/">previous post</a> has covered loading with GNU Parallel in more detail but it fits well with this discussion.</p>
+<p>The <code>parallel</code> command is very flexible and can take some time to understand but a simple</p>
+<p>In a previous post I provided an example of loading all Natural Earth vectors using <code>shp2pgsql</code> so this time lets do the same with <code>ogr2ogr</code>:</p>
+<div class="highlight"><pre><span class="nb">time </span>find natural_earth_vector/10m_physical/ -name <span class="s1">&#39;*.shp&#39;</span> <span class="se">\</span>
+    | parallel <span class="s2">&quot;ogr2ogr -f PGDump \</span>
+<span class="s2">                    --config PG_USE_COPY YES \</span>
+<span class="s2">                    -lco schema=ne \</span>
+<span class="s2">                    -lco create_schema=off \</span>
+<span class="s2">                    /vsistdout/ {} \</span>
+<span class="s2">                    -nlt PROMOTE_TO_MULTI | psql -U loader -d postgis&quot;</span>
+</pre></div>
+</div>
+<div class="section" id="load-geometry-with-copy">
+<h3>Load Geometry with COPY</h3>
+<p>If you have data in a delimited format such as CSV or TSV you can load it via COPY and have PostgreSQL create geometries on the fly by expressing the geometry as WKT or EWKT in your text file. The steps are very similar to those outlined above when using COPY:</p>
+<ul class="simple">
+<li>Create table with a geometry column</li>
+<li>Load source file via COPY</li>
+<li>Create indexes, vacuum etc.</li>
+</ul>
+<p>As an example lets load a CSV with details of WMS requests with the bounding box expressed as EWKT:</p>
+<div class="highlight"><pre>cat requests1.csv
+2014-10-20 06:33:24,elmbridge,wms,<span class="s2">&quot;SRID=27700;POLYGON((516601 163293, 516729 163293, 516729 163421, 516601 163421, 516601 163293))&quot;</span>
+2014-10-20 06:33:32,surrey,wms,<span class="s2">&quot;SRID=27700;POLYGON((492801 166401, 499201 166401, 499201 172801, 492801 172801, 492801 166401))&quot;</span>
+2014-10-20 06:38:09,exactrak,wms,<span class="s2">&quot;SRID=27700;POLYGON((206848 67200, 206976 67200, 206976 67328, 206848 67328, 206848 67200))&quot;</span>
+...
+
+psql -U loader -d postgis
+drop table <span class="k">if </span>exists requests;
+create table requests<span class="o">(</span>reqtime timestamp, org text, service text, bbox geometry<span class="o">)</span>;
+<span class="se">\c</span>opy requests FROM <span class="s1">&#39;requests1.csv&#39;</span> DELIMITER <span class="s1">&#39;,&#39;</span> CSV;
+<span class="k">select </span>populate_geometry_columns<span class="o">()</span>;
+</pre></div>
+</div>
+</div>
 
 <footer class="post-info">
-    <abbr class="published" title="2014-09-07T21:30:00">Sun 07 September 2014</abbr>
-<p>Tags: <a href="http://longwayaround.org.uk/tag/workshop.html">workshop</a> <a href="http://longwayaround.org.uk/tag/ol3.html">ol3</a> <a href="http://longwayaround.org.uk/tag/leaflet.html">leaflet</a> <a href="http://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->                    <p><a href="http://longwayaround.org.uk/notes/practical-openlayers-3-leaflet/#disqus_thread">comments</a>.</p>
+    <abbr class="published" title="2014-11-20T00:00:00">Thu 20 November 2014</abbr>
+<p>Tags: <a href="http://longwayaround.org.uk/tag/command-line.html">command-line</a> <a href="http://longwayaround.org.uk/tag/postgis.html">postgis</a> <a href="http://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->                    <p><a href="http://longwayaround.org.uk/notes/loading-postgis/#disqus_thread">comments</a>.</p>
                 </article>
             </aside><!-- /#featured -->
                 <section id="content" class="body">
                     <h1>Other posts</h1>
                     <hr />
                         <ol id="posts-list" class="hfeed">
+
+ 
+            <li><article class="hentry">
+                <header>
+                        <abbr class="published" title="2014-09-07T21:30:00">Sun 07 September 2014</abbr>
+                        <h1><a href="http://longwayaround.org.uk/notes/practical-openlayers-3-leaflet/" rel="bookmark" title="Permalink to Practical OpenLayers 3 &amp; Leaflet">Practical OpenLayers 3 &amp; Leaflet</a></h1>
+                </header>
+                <div class="entry-content">
+                <div class="slug">
+                    <p>I ran a 2 hour workshop at <a class="reference external" href="http://www.nottingham.ac.uk/osgis/home.aspx">OSGIS 2014</a> introducing OpenLayers 3 and
+Leaflet.</p>
+<blockquote>
+A hands on introduction to using OpenLayer 3 (OL3) and Leaflet to display
+spatial data on the web. The workshop will introduce the two libraries, the
+underpinning concepts and strengths of each, and take delegates through ...</blockquote>
+                    <p>
+<a href="http://longwayaround.org.uk/notes/practical-openlayers-3-leaflet/#disqus_thread">comments</a>.                        <a class="readmore" href="http://longwayaround.org.uk/notes/practical-openlayers-3-leaflet/">read more</a>
+                    </p>
+                </div>
+                </div><!-- /.entry-content -->
+            </article></li>
 
  
             <li><article class="hentry">
