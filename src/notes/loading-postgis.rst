@@ -126,7 +126,12 @@ In a previous post I provided an example of loading all Natural Earth vectors us
 .. code-block:: bash
 
     time find natural_earth_vector/10m_physical/ -name '*.shp' \
-        | parallel "ogr2ogr -lco PRECISION=NO -f PostgreSQL PG:'dbname=postgis user=loader active_schema=ne' {} -nlt PROMOTE_TO_MULTI"
+        | parallel "ogr2ogr -f PGDump \
+                        --config PG_USE_COPY YES \
+                        -lco schema=ne \
+                        -lco create_schema=off \
+                        /vsistdout/ {} \
+                        -nlt PROMOTE_TO_MULTI | psql -U loader -d postgis"
 
 Load Geometry with COPY
 -----------------------
@@ -141,20 +146,15 @@ As an example lets load a CSV with details of WMS requests with the bounding box
 
 .. code-block:: bash
 
-    cat requests.csv
-    "2014-10-20 06:32:32","/surrey/ospremium/service","SRID=27700;POLYGON((575361 215681, 576001 215681, 576001 216321, 575361 216321, 575361 215681))"
-    "2014-10-20 06:33:32","/surrey/ospremium/service","SRID=27700;POLYGON((505601 153601, 512001 153601, 512001 160001, 505601 160001, 505601 153601))"
+    cat requests1.csv
+    2014-10-20 06:33:24,elmbridge,wms,"SRID=27700;POLYGON((516601 163293, 516729 163293, 516729 163421, 516601 163421, 516601 163293))"
+    2014-10-20 06:33:32,surrey,wms,"SRID=27700;POLYGON((492801 166401, 499201 166401, 499201 172801, 492801 172801, 492801 166401))"
+    2014-10-20 06:38:09,exactrak,wms,"SRID=27700;POLYGON((206848 67200, 206976 67200, 206976 67328, 206848 67328, 206848 67200))"
     ...
 
     psql -U loader -d postgis
     drop table if exists requests;
-    create table requests(reqtime timestamp, path text, bbox geometry);
-    \copy requests FROM 'requests.csv' DELIMITER ',' CSV;
+    create table requests(reqtime timestamp, org text, service text, bbox geometry);
+    \copy requests FROM 'requests1.csv' DELIMITER ',' CSV;
     select populate_geometry_columns();
-
-TODO
-====
-
-* add request time parsing to logparse and extend example
-* use PGDump with parallel example
 
