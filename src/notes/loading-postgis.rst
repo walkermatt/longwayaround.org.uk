@@ -4,6 +4,8 @@ Loading PostGIS
 :category: notes
 :tags: command-line, postgis, notes
 
+*Notes from a talk at PostGIS Day, London 20th Nov 2014.*
+
 The options
 ===========
 
@@ -22,7 +24,7 @@ Graphical
   Simple database management from QGIS, including creating schemas & tables, moving tables and importing. Supports multiple import formats. Shipped with QGIS.
 
 Proprietary
-  Support for PostGIS is now fairly broad within proprietary products including Safe Software's FME, MapInfo Easyloader, ESRI SDE etc. MapInfo and ESRI impose some constraints & conventions including their own metadata tables.
+  Support for PostGIS is now fairly broad within proprietary products including Safe Software's FME, Cadcorp, MapInfo Easyloader, ESRI SDE etc. MapInfo and ESRI impose some constraints & conventions including their own metadata tables.
 
 Command Line
 ------------
@@ -41,6 +43,8 @@ Command Line
 
 Examples
 ========
+
+All examples use the `Natural Earth Vector data <http://www.naturalearthdata.com/>`_, a `full download <http://kelso.it/x/nevector>`_ is available if you'd like to follow along. Assumes loading into a database called :code:`postgis` with a :code:`loader` login role with the password set via the :code:`PGPASSWORD` environment variable: :code:`PGPASSWORD=password`.
 
 shp2pgsql
 ---------
