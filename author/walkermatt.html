@@ -40,23 +40,43 @@
 
             <aside id="featured" class="body">
                 <article>
-                    <abbr class="published" title="2015-09-08T13:00:00">Tue 08 September 2015</abbr>
-                    <h1 class="entry-title"><a href="http://longwayaround.org.uk/notes/read-only-postgres-database/">Read-only Postgres database</a></h1> 
-                    <p>There are times when I've needed to effectively make a Postgres database read-only, for example after loading or updating reference data. In the past I've revoked permissions from database roles to achieve this but as <a class="reference external" href="http://www.postgresql.org/message-id/5fe0d78bda51d7176940fb8e78739b54&#64;biglumber.com">this post on the PostgreSQL list states, it's possible to do so by making all transactions against the database read-only by default</a>.</p>
-<p>For example assuming I have an <code>osdata</code> database, I can alter it to set <code>default_transaction_read_only</code> (<a class="reference external" href="http://www.postgresql.org/docs/9.4/static/runtime-config-client.html#GUC-DEFAULT-TRANSACTION-READ-ONLY">docs</a>) to <code>true</code> which will make future transitions read-only regardless of which login role connects:</p>
-<div class="highlight"><pre>ALTER DATABASE osdata SET <span class="nv">default_transaction_read_only</span> <span class="o">=</span> <span class="nb">true</span>;
-</pre></div>
-<p>As the name implies setting <code>default_transaction_read_only</code> to <code>true</code> only sets transactions to be read-only by default, a user can override or unset the setting on a per-session basis e.g. <code>set default_transaction_read_only = false;</code>.</p>
+                    <abbr class="published" title="2015-10-12T21:00:00">Mon 12 October 2015</abbr>
+                    <h1 class="entry-title"><a href="http://longwayaround.org.uk/notes/testing-python-postgres/">Testing Python &amp; Postgres</a></h1> 
+                    <p>I recently pulled together <a class="reference external" href="https://github.com/walkermatt/python-postgres-testing-demo/">a project to demonstrate testing Python functions that interact with a Postgres database</a>. I find that this sort of thing crops up occasionally and the project is an attempt to distil the approach. The main points include:</p>
+<ul class="simple">
+<li>Creating a fresh temporary database via testing.postgresql prior to running tests</li>
+<li>Setting up the temporary database via a script with required structure (schemas, tables, roles, functions etc.)</li>
+<li>Putting the database into a known state prior to running each individual test (populating tables with known data)</li>
+<li>Inspecting and making assertions about the state of the database once the function being tested has been executed</li>
+<li>Pausing tests using the debugger (<code>pdb</code>) to connect to the temporary database (using <code>db.url()</code> and <code>psql &lt;url&gt;</code>) to inspect it's current state while testing</li>
+</ul>
+<p>View the project on GitHub: <a class="reference external" href="https://github.com/walkermatt/python-postgres-testing-demo/">walkermatt/python-postgres-testing-demo</a>.</p>
 
 <footer class="post-info">
-    <abbr class="published" title="2015-09-08T13:00:00">Tue 08 September 2015</abbr>
-<p>Tags: <a href="http://longwayaround.org.uk/tag/postgres.html">postgres</a> <a href="http://longwayaround.org.uk/tag/postgis.html">postgis</a> <a href="http://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->                    <p><a href="http://longwayaround.org.uk/notes/read-only-postgres-database/#disqus_thread">comments</a>.</p>
+    <abbr class="published" title="2015-10-12T21:00:00">Mon 12 October 2015</abbr>
+<p>Tags: <a href="http://longwayaround.org.uk/tag/testing.html">testing</a> <a href="http://longwayaround.org.uk/tag/python.html">python</a> <a href="http://longwayaround.org.uk/tag/postgres.html">postgres</a> <a href="http://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->                    <p><a href="http://longwayaround.org.uk/notes/testing-python-postgres/#disqus_thread">comments</a>.</p>
                 </article>
             </aside><!-- /#featured -->
                 <section id="content" class="body">
                     <h1>Other posts</h1>
                     <hr />
                         <ol id="posts-list" class="hfeed">
+
+ 
+            <li><article class="hentry">
+                <header>
+                        <abbr class="published" title="2015-09-08T13:00:00">Tue 08 September 2015</abbr>
+                        <h1><a href="http://longwayaround.org.uk/notes/read-only-postgres-database/" rel="bookmark" title="Permalink to Read-only Postgres database">Read-only Postgres database</a></h1>
+                </header>
+                <div class="entry-content">
+                <div class="slug">
+                    <p>There are times when I've needed to effectively make a Postgres database read-only, for example after loading or updating reference data. In the past I've revoked permissions from database roles to achieve this but as <a class="reference external" href="http://www.postgresql.org/message-id/5fe0d78bda51d7176940fb8e78739b54&#64;biglumber.com">this post on the PostgreSQL list states, it's possible to do so ...</a></p>
+                    <p>
+<a href="http://longwayaround.org.uk/notes/read-only-postgres-database/#disqus_thread">comments</a>.                        <a class="readmore" href="http://longwayaround.org.uk/notes/read-only-postgres-database/">read more</a>
+                    </p>
+                </div>
+                </div><!-- /.entry-content -->
+            </article></li>
 
  
             <li><article class="hentry">
