@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-        <title>longwayaround.org.uk - testing</title>
+        <title>longwayaround.org.uk - openlayer2</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, target-densitydpi=device-dpi">
         <link rel="stylesheet" href="http://longwayaround.org.uk/theme/css/main.css" type="text/css" />
@@ -40,21 +40,44 @@
 
             <aside id="featured" class="body">
                 <article>
-                    <abbr class="published" title="2015-10-12T21:00:00+01:00">Mon 12 October 2015</abbr>
-                    <h1 class="entry-title"><a href="http://longwayaround.org.uk/notes/testing-python-postgres/">Testing Python &amp; Postgres</a></h1> 
-                    <p>I recently pulled together <a class="reference external" href="https://github.com/walkermatt/python-postgres-testing-demo/">a project to demonstrate testing Python functions that interact with a Postgres database</a>. I find that this sort of thing crops up occasionally and the project is an attempt to distil the approach. The main points include:</p>
+                    <abbr class="published" title="2016-04-26T14:00:00+01:00">Tue 26 April 2016</abbr>
+                    <h1 class="entry-title"><a href="http://longwayaround.org.uk/notes/openlayers-2-custom-build/">OpenLayers 2 Custom Build</a></h1> 
+                    <p>A bit of a blast from the past now that OpenLayers 3 has been released but it may be useful for someone who is working on or maintaining an OpenLayer 2 project.</p>
+<p>Create a list of OpenLayers 2 classes used within a code base suitable for including in a <a class="reference external" href="http://docs.openlayers.org/library/deploying.html#custom-build-profiles">custom build profile</a>.</p>
+<div class="highlight"><pre><span></span><span class="nb">cd</span> /path/to/your/js/
+grep --ignore-case --recursive --no-filename --only-matching <span class="s1">&#39;new OpenLayers\.[a-z0-9\.]*&#39;</span> <span class="p">|</span> <span class="se">\</span>
+sed -e <span class="s1">&#39;s/new //&#39;</span> -e <span class="s1">&#39;s/\./\//g&#39;</span> -e <span class="s1">&#39;s/$/\.js/&#39;</span> <span class="p">|</span> <span class="se">\</span>
+sort <span class="p">|</span> <span class="se">\</span>
+uniq
+</pre></div>
+<div class="section" id="explanation">
+<h2>Explanation</h2>
 <ul class="simple">
-<li>Creating a fresh temporary database via testing.postgresql prior to running tests</li>
-<li>Setting up the temporary database via a script with required structure (schemas, tables, roles, functions etc.)</li>
-<li>Putting the database into a known state prior to running each individual test (populating tables with known data)</li>
-<li>Inspecting and making assertions about the state of the database once the function being tested has been executed</li>
-<li>Pausing tests using the debugger (<code>pdb</code>) to connect to the temporary database (using <code>db.url()</code> and <code>psql &lt;url&gt;</code>) to inspect it's current state while testing</li>
+<li>Find instances of <code>new OpenLayers.FOO</code> in all source files below the current directory using <code>grep</code></li>
+<li>Remove <code>&quot;new &quot;</code> from each matching line, replace the dots which separate the parts of the class name with forward slashes and add <code>.js</code> to the end to complete the path all using <code>sed</code> (each <code>-e</code> applies an expression to each line)</li>
+<li>Sort the list with <code>sort</code></li>
+<li>Remove duplicates with <code>uniq</code></li>
 </ul>
-<p>View the project on GitHub: <a class="reference external" href="https://github.com/walkermatt/python-postgres-testing-demo/">walkermatt/python-postgres-testing-demo</a>.</p>
+</div>
+<div class="section" id="caveats">
+<h2>Caveats</h2>
+<div class="section" id="vector-renderers">
+<h3>Vector Renderers</h3>
+<p>If you find <code>OpenLayers/Layer/Vector.js</code> in the list then the vector rendering classes will need to be included manually:</p>
+<div class="highlight"><pre><span></span><span class="err">OpenLayers/Renderer/Canvas.js</span>
+<span class="err">OpenLayers/Renderer/SVG.js</span>
+<span class="err">OpenLayers/Renderer/VML.js</span>
+</pre></div>
+</div>
+<div class="section" id="utility-classes">
+<h3>Utility Classes</h3>
+<p>If you are using classes such as <code>OpenLayers.Pixel</code>, <code>OpenLayers.LonLat</code>. You will find that when using the build script you get an error as the source files can not be found as the class names do not match the location in the OpenLayers source. In most cases for these base classes you can simply remove them from the build config file as they will be automatically included as they are referenced by the other classes such as <code>OpenLayers.Map</code>.</p>
+</div>
+</div>
 
 <footer class="post-info">
-    <abbr class="published" title="2015-10-12T21:00:00+01:00">Mon 12 October 2015</abbr>
-<p>Tags: <a href="http://longwayaround.org.uk/tag/testing.html">testing</a> <a href="http://longwayaround.org.uk/tag/python.html">python</a> <a href="http://longwayaround.org.uk/tag/postgres.html">postgres</a> <a href="http://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->                    <p><a href="http://longwayaround.org.uk/notes/testing-python-postgres/#disqus_thread">comments</a>.</p>
+    <abbr class="published" title="2016-04-26T14:00:00+01:00">Tue 26 April 2016</abbr>
+<p>Tags: <a href="http://longwayaround.org.uk/tag/openlayer2.html">openlayer2</a> <a href="http://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->                    <p><a href="http://longwayaround.org.uk/notes/openlayers-2-custom-build/#disqus_thread">comments</a>.</p>
                 </article>
             </aside><!-- /#featured -->
         <section id="extras" class="body">

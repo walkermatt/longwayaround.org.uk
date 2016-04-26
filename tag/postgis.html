@@ -40,16 +40,16 @@
 
             <aside id="featured" class="body">
                 <article>
-                    <abbr class="published" title="2015-09-08T13:00:00">Tue 08 September 2015</abbr>
+                    <abbr class="published" title="2015-09-08T13:00:00+01:00">Tue 08 September 2015</abbr>
                     <h1 class="entry-title"><a href="http://longwayaround.org.uk/notes/read-only-postgres-database/">Read-only Postgres database</a></h1> 
                     <p>There are times when I've needed to effectively make a Postgres database read-only, for example after loading or updating reference data. In the past I've revoked permissions from database roles to achieve this but as <a class="reference external" href="http://www.postgresql.org/message-id/5fe0d78bda51d7176940fb8e78739b54&#64;biglumber.com">this post on the PostgreSQL list states, it's possible to do so by making all transactions against the database read-only by default</a>.</p>
 <p>For example assuming I have an <code>osdata</code> database, I can alter it to set <code>default_transaction_read_only</code> (<a class="reference external" href="http://www.postgresql.org/docs/9.4/static/runtime-config-client.html#GUC-DEFAULT-TRANSACTION-READ-ONLY">docs</a>) to <code>true</code> which will make future transitions read-only regardless of which login role connects:</p>
-<div class="highlight"><pre>ALTER DATABASE osdata SET <span class="nv">default_transaction_read_only</span> <span class="o">=</span> <span class="nb">true</span>;
+<div class="highlight"><pre><span></span>ALTER DATABASE osdata SET <span class="nv">default_transaction_read_only</span> <span class="o">=</span> true<span class="p">;</span>
 </pre></div>
 <p>As the name implies setting <code>default_transaction_read_only</code> to <code>true</code> only sets transactions to be read-only by default, a user can override or unset the setting on a per-session basis e.g. <code>set default_transaction_read_only = false;</code>.</p>
 
 <footer class="post-info">
-    <abbr class="published" title="2015-09-08T13:00:00">Tue 08 September 2015</abbr>
+    <abbr class="published" title="2015-09-08T13:00:00+01:00">Tue 08 September 2015</abbr>
 <p>Tags: <a href="http://longwayaround.org.uk/tag/postgres.html">postgres</a> <a href="http://longwayaround.org.uk/tag/postgis.html">postgis</a> <a href="http://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->                    <p><a href="http://longwayaround.org.uk/notes/read-only-postgres-database/#disqus_thread">comments</a>.</p>
                 </article>
             </aside><!-- /#featured -->
@@ -61,7 +61,7 @@
  
             <li><article class="hentry">
                 <header>
-                        <abbr class="published" title="2014-11-20T00:00:00">Thu 20 November 2014</abbr>
+                        <abbr class="published" title="2014-11-20T00:00:00+00:00">Thu 20 November 2014</abbr>
                         <h1><a href="http://longwayaround.org.uk/notes/loading-postgis/" rel="bookmark" title="Permalink to Loading PostGIS">Loading PostGIS</a></h1>
                 </header>
                 <div class="entry-content">
@@ -87,7 +87,7 @@
  
             <li><article class="hentry">
                 <header>
-                        <abbr class="published" title="2014-07-17T19:45:00">Thu 17 July 2014</abbr>
+                        <abbr class="published" title="2014-07-17T19:45:00+01:00">Thu 17 July 2014</abbr>
                         <h1><a href="http://longwayaround.org.uk/notes/gnu-parallel-all-the-things/" rel="bookmark" title="Permalink to GNU Parallel all the things!">GNU Parallel all the things!</a></h1>
                 </header>
                 <div class="entry-content">
@@ -103,7 +103,7 @@
  
             <li><article class="hentry">
                 <header>
-                        <abbr class="published" title="2011-11-24T21:39:00">Thu 24 November 2011</abbr>
+                        <abbr class="published" title="2011-11-24T21:39:00+00:00">Thu 24 November 2011</abbr>
                         <h1><a href="http://longwayaround.org.uk/notes/disaggregate-multilinestrings-using-st_dump-postgis/" rel="bookmark" title="Permalink to Disaggregate MultiLineStrings using ST_Dump PostGIS">Disaggregate MultiLineStrings using ST_Dump PostGIS</a></h1>
                 </header>
                 <div class="entry-content">
@@ -119,7 +119,7 @@
  
             <li><article class="hentry">
                 <header>
-                        <abbr class="published" title="2010-12-19T21:06:00">Sun 19 December 2010</abbr>
+                        <abbr class="published" title="2010-12-19T21:06:00+00:00">Sun 19 December 2010</abbr>
                         <h1><a href="http://longwayaround.org.uk/notes/build-ogr-18-with-gml-wfs-and-postgis-support-on-ubuntu-1004/" rel="bookmark" title="Permalink to Build OGR 1.8 with GML, WFS and PostGIS support on Ubuntu 10.04">Build OGR 1.8 with GML, WFS and PostGIS support on Ubuntu 10.04</a></h1>
                 </header>
                 <div class="entry-content">
@@ -138,7 +138,7 @@
 
         <footer id="contentinfo" class="body">
                 <address id="about" class="vcard body">
-                    Powered by <a href="http://alexis.notmyidea.org/pelican/">Pelican</a> and <a href="http://python.org">Python</a>, icons from <a href="https://www.gosquared.com/blog/archives/2925">GoSocial</a>. Feel free to <a href="https://github.com/walkermatt/longwayaround.org.uk/issues">open an issue</a> if you spot anything</a>.
+                    Powered by <a href="http://alexis.notmyidea.org/pelican/">Pelican</a> and <a href="http://python.org">Python</a>, using a modified <a href="http://coding.smashingmagazine.com/2009/08/04/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a> theme, background from <a href="http://subtlepatterns.com">Subtle Patterns</a> and icons from <a href="https://www.gosquared.com/blog/archives/2925">GoSocial</a>.
                 </address><!-- /#about -->
         </footer><!-- /#contentinfo -->
 

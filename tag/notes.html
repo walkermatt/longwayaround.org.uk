@@ -40,21 +40,44 @@
 
             <aside id="featured" class="body">
                 <article>
-                    <abbr class="published" title="2015-10-12T21:00:00">Mon 12 October 2015</abbr>
-                    <h1 class="entry-title"><a href="http://longwayaround.org.uk/notes/testing-python-postgres/">Testing Python &amp; Postgres</a></h1> 
-                    <p>I recently pulled together <a class="reference external" href="https://github.com/walkermatt/python-postgres-testing-demo/">a project to demonstrate testing Python functions that interact with a Postgres database</a>. I find that this sort of thing crops up occasionally and the project is an attempt to distil the approach. The main points include:</p>
+                    <abbr class="published" title="2016-04-26T14:00:00+01:00">Tue 26 April 2016</abbr>
+                    <h1 class="entry-title"><a href="http://longwayaround.org.uk/notes/openlayers-2-custom-build/">OpenLayers 2 Custom Build</a></h1> 
+                    <p>A bit of a blast from the past now that OpenLayers 3 has been released but it may be useful for someone who is working on or maintaining an OpenLayer 2 project.</p>
+<p>Create a list of OpenLayers 2 classes used within a code base suitable for including in a <a class="reference external" href="http://docs.openlayers.org/library/deploying.html#custom-build-profiles">custom build profile</a>.</p>
+<div class="highlight"><pre><span></span><span class="nb">cd</span> /path/to/your/js/
+grep --ignore-case --recursive --no-filename --only-matching <span class="s1">&#39;new OpenLayers\.[a-z0-9\.]*&#39;</span> <span class="p">|</span> <span class="se">\</span>
+sed -e <span class="s1">&#39;s/new //&#39;</span> -e <span class="s1">&#39;s/\./\//g&#39;</span> -e <span class="s1">&#39;s/$/\.js/&#39;</span> <span class="p">|</span> <span class="se">\</span>
+sort <span class="p">|</span> <span class="se">\</span>
+uniq
+</pre></div>
+<div class="section" id="explanation">
+<h2>Explanation</h2>
 <ul class="simple">
-<li>Creating a fresh temporary database via testing.postgresql prior to running tests</li>
-<li>Setting up the temporary database via a script with required structure (schemas, tables, roles, functions etc.)</li>
-<li>Putting the database into a known state prior to running each individual test (populating tables with known data)</li>
-<li>Inspecting and making assertions about the state of the database once the function being tested has been executed</li>
-<li>Pausing tests using the debugger (<code>pdb</code>) to connect to the temporary database (using <code>db.url()</code> and <code>psql &lt;url&gt;</code>) to inspect it's current state while testing</li>
+<li>Find instances of <code>new OpenLayers.FOO</code> in all source files below the current directory using <code>grep</code></li>
+<li>Remove <code>&quot;new &quot;</code> from each matching line, replace the dots which separate the parts of the class name with forward slashes and add <code>.js</code> to the end to complete the path all using <code>sed</code> (each <code>-e</code> applies an expression to each line)</li>
+<li>Sort the list with <code>sort</code></li>
+<li>Remove duplicates with <code>uniq</code></li>
 </ul>
-<p>View the project on GitHub: <a class="reference external" href="https://github.com/walkermatt/python-postgres-testing-demo/">walkermatt/python-postgres-testing-demo</a>.</p>
+</div>
+<div class="section" id="caveats">
+<h2>Caveats</h2>
+<div class="section" id="vector-renderers">
+<h3>Vector Renderers</h3>
+<p>If you find <code>OpenLayers/Layer/Vector.js</code> in the list then the vector rendering classes will need to be included manually:</p>
+<div class="highlight"><pre><span></span><span class="err">OpenLayers/Renderer/Canvas.js</span>
+<span class="err">OpenLayers/Renderer/SVG.js</span>
+<span class="err">OpenLayers/Renderer/VML.js</span>
+</pre></div>
+</div>
+<div class="section" id="utility-classes">
+<h3>Utility Classes</h3>
+<p>If you are using classes such as <code>OpenLayers.Pixel</code>, <code>OpenLayers.LonLat</code>. You will find that when using the build script you get an error as the source files can not be found as the class names do not match the location in the OpenLayers source. In most cases for these base classes you can simply remove them from the build config file as they will be automatically included as they are referenced by the other classes such as <code>OpenLayers.Map</code>.</p>
+</div>
+</div>
 
 <footer class="post-info">
-    <abbr class="published" title="2015-10-12T21:00:00">Mon 12 October 2015</abbr>
-<p>Tags: <a href="http://longwayaround.org.uk/tag/testing.html">testing</a> <a href="http://longwayaround.org.uk/tag/python.html">python</a> <a href="http://longwayaround.org.uk/tag/postgres.html">postgres</a> <a href="http://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->                    <p><a href="http://longwayaround.org.uk/notes/testing-python-postgres/#disqus_thread">comments</a>.</p>
+    <abbr class="published" title="2016-04-26T14:00:00+01:00">Tue 26 April 2016</abbr>
+<p>Tags: <a href="http://longwayaround.org.uk/tag/openlayer2.html">openlayer2</a> <a href="http://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->                    <p><a href="http://longwayaround.org.uk/notes/openlayers-2-custom-build/#disqus_thread">comments</a>.</p>
                 </article>
             </aside><!-- /#featured -->
                 <section id="content" class="body">
@@ -65,7 +88,25 @@
  
             <li><article class="hentry">
                 <header>
-                        <abbr class="published" title="2015-09-08T13:00:00">Tue 08 September 2015</abbr>
+                        <abbr class="published" title="2015-10-12T21:00:00+01:00">Mon 12 October 2015</abbr>
+                        <h1><a href="http://longwayaround.org.uk/notes/testing-python-postgres/" rel="bookmark" title="Permalink to Testing Python &amp; Postgres">Testing Python &amp; Postgres</a></h1>
+                </header>
+                <div class="entry-content">
+                <div class="slug">
+                    <p>I recently pulled together <a class="reference external" href="https://github.com/walkermatt/python-postgres-testing-demo/">a project to demonstrate testing Python functions that interact with a Postgres database</a>. I find that this sort of thing crops up occasionally and the project is an attempt to distil the approach. The main points include:</p>
+<ul class="simple">
+<li>Creating a fresh temporary database via testing.postgresql prior ...</li></ul>
+                    <p>
+<a href="http://longwayaround.org.uk/notes/testing-python-postgres/#disqus_thread">comments</a>.                        <a class="readmore" href="http://longwayaround.org.uk/notes/testing-python-postgres/">read more</a>
+                    </p>
+                </div>
+                </div><!-- /.entry-content -->
+            </article></li>
+
+ 
+            <li><article class="hentry">
+                <header>
+                        <abbr class="published" title="2015-09-08T13:00:00+01:00">Tue 08 September 2015</abbr>
                         <h1><a href="http://longwayaround.org.uk/notes/read-only-postgres-database/" rel="bookmark" title="Permalink to Read-only Postgres database">Read-only Postgres database</a></h1>
                 </header>
                 <div class="entry-content">
@@ -81,7 +122,7 @@
  
             <li><article class="hentry">
                 <header>
-                        <abbr class="published" title="2014-11-20T00:00:00">Thu 20 November 2014</abbr>
+                        <abbr class="published" title="2014-11-20T00:00:00+00:00">Thu 20 November 2014</abbr>
                         <h1><a href="http://longwayaround.org.uk/notes/loading-postgis/" rel="bookmark" title="Permalink to Loading PostGIS">Loading PostGIS</a></h1>
                 </header>
                 <div class="entry-content">
@@ -107,7 +148,7 @@
  
             <li><article class="hentry">
                 <header>
-                        <abbr class="published" title="2014-09-07T21:30:00">Sun 07 September 2014</abbr>
+                        <abbr class="published" title="2014-09-07T21:30:00+01:00">Sun 07 September 2014</abbr>
                         <h1><a href="http://longwayaround.org.uk/notes/practical-openlayers-3-leaflet/" rel="bookmark" title="Permalink to Practical OpenLayers 3 &amp; Leaflet">Practical OpenLayers 3 &amp; Leaflet</a></h1>
                 </header>
                 <div class="entry-content">
@@ -128,7 +169,7 @@ underpinning concepts and strengths of each, and take delegates through ...</blo
  
             <li><article class="hentry">
                 <header>
-                        <abbr class="published" title="2014-07-17T19:45:00">Thu 17 July 2014</abbr>
+                        <abbr class="published" title="2014-07-17T19:45:00+01:00">Thu 17 July 2014</abbr>
                         <h1><a href="http://longwayaround.org.uk/notes/gnu-parallel-all-the-things/" rel="bookmark" title="Permalink to GNU Parallel all the things!">GNU Parallel all the things!</a></h1>
                 </header>
                 <div class="entry-content">
@@ -144,7 +185,7 @@ underpinning concepts and strengths of each, and take delegates through ...</blo
  
             <li><article class="hentry">
                 <header>
-                        <abbr class="published" title="2014-02-18T19:42:00">Tue 18 February 2014</abbr>
+                        <abbr class="published" title="2014-02-18T19:42:00+00:00">Tue 18 February 2014</abbr>
                         <h1><a href="http://longwayaround.org.uk/notes/first-few-months-of-clojure/" rel="bookmark" title="Permalink to First few months of Clojure">First few months of Clojure</a></h1>
                 </header>
                 <div class="entry-content">
@@ -160,7 +201,7 @@ underpinning concepts and strengths of each, and take delegates through ...</blo
  
             <li><article class="hentry">
                 <header>
-                        <abbr class="published" title="2013-10-18T17:24:00">Fri 18 October 2013</abbr>
+                        <abbr class="published" title="2013-10-18T17:24:00+01:00">Fri 18 October 2013</abbr>
                         <h1><a href="http://longwayaround.org.uk/notes/custom-geoserver-getfeatureinfo-template/" rel="bookmark" title="Permalink to Custom GeoServer GetFeatureInfo Template">Custom GeoServer GetFeatureInfo Template</a></h1>
                 </header>
                 <div class="entry-content">
@@ -176,13 +217,13 @@ underpinning concepts and strengths of each, and take delegates through ...</blo
  
             <li><article class="hentry">
                 <header>
-                        <abbr class="published" title="2011-03-28T10:31:00">Mon 28 March 2011</abbr>
+                        <abbr class="published" title="2011-03-28T10:31:00+01:00">Mon 28 March 2011</abbr>
                         <h1><a href="http://longwayaround.org.uk/notes/recursively-delete-empty-directories/" rel="bookmark" title="Permalink to Recursively delete empty directories">Recursively delete empty directories</a></h1>
                 </header>
                 <div class="entry-content">
                 <div class="slug">
                     <p>To recursively delete all empty directories from the command prompt in Windows. Open command prompt and change to the desired directory then enter the following:</p>
-<div class="highlight"><pre><span class="k">for</span> /F <span class="s2">&quot;tokens=*&quot;</span> %f in <span class="o">(</span><span class="s1">&#39;dir /AD /S /B ^| sort /R&#39;</span><span class="o">)</span> <span class="k">do </span><span class="nb">echo </span>rd <span class="s2">&quot;%f&quot;</span>
+<div class="highlight"><pre><span></span><span class="k">for</span> /F <span class="s2">&quot;tokens=*&quot;</span> %f in <span class="o">(</span><span class="s1">&#39;dir /AD /S /B ^| sort /R&#39;</span><span class="o">)</span> <span class="k">do</span> <span class="nb">echo</span> rd <span class="s2">&quot;%f&quot;</span>
 </pre></div>
 <p>This command generates a list of all directories and sub ...</p>
                     <p>
@@ -195,13 +236,13 @@ underpinning concepts and strengths of each, and take delegates through ...</blo
  
             <li><article class="hentry">
                 <header>
-                        <abbr class="published" title="2011-01-07T17:53:00">Fri 07 January 2011</abbr>
+                        <abbr class="published" title="2011-01-07T17:53:00+00:00">Fri 07 January 2011</abbr>
                         <h1><a href="http://longwayaround.org.uk/notes/convert-a-directory-of-tiffs-to-greyscale-using-imagemagick/" rel="bookmark" title="Permalink to Convert a directory of TIFFs to greyscale using ImageMagick">Convert a directory of TIFFs to greyscale using ImageMagick</a></h1>
                 </header>
                 <div class="entry-content">
                 <div class="slug">
                     <p>Change to the directory then run the command:</p>
-<div class="highlight"><pre>mogrify -colorspace Gray *.tif
+<div class="highlight"><pre><span></span>mogrify -colorspace Gray *.tif
 </pre></div>
 
                     <p>
@@ -217,7 +258,7 @@ underpinning concepts and strengths of each, and take delegates through ...</blo
 
         <footer id="contentinfo" class="body">
                 <address id="about" class="vcard body">
-                    Powered by <a href="http://alexis.notmyidea.org/pelican/">Pelican</a> and <a href="http://python.org">Python</a>, icons from <a href="https://www.gosquared.com/blog/archives/2925">GoSocial</a>. Feel free to <a href="https://github.com/walkermatt/longwayaround.org.uk/issues">open an issue</a> if you spot anything</a>.
+                    Powered by <a href="http://alexis.notmyidea.org/pelican/">Pelican</a> and <a href="http://python.org">Python</a>, using a modified <a href="http://coding.smashingmagazine.com/2009/08/04/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a> theme, background from <a href="http://subtlepatterns.com">Subtle Patterns</a> and icons from <a href="https://www.gosquared.com/blog/archives/2925">GoSocial</a>.
                 </address><!-- /#about -->
         </footer><!-- /#contentinfo -->
 

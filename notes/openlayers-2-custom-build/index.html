@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-        <title>Practical OpenLayers 3 &amp; Leaflet</title>
+        <title>OpenLayers 2 Custom Build</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, target-densitydpi=device-dpi">
         <link rel="stylesheet" href="http://longwayaround.org.uk/theme/css/main.css" type="text/css" />
@@ -39,29 +39,52 @@
         </header><!-- /#banner -->
 <section id="content" class="body">
 <article>
-        <abbr class="published" title="2014-09-07T21:30:00+01:00">Sun 07 September 2014</abbr>
+        <abbr class="published" title="2016-04-26T14:00:00+01:00">Tue 26 April 2016</abbr>
         <header> <h1 class="entry-title"><a href=""
-        rel="bookmark" title="Permalink to Practical OpenLayers 3 &amp; Leaflet">Practical OpenLayers 3 &amp; Leaflet</a></h1>  </header>
+        rel="bookmark" title="Permalink to OpenLayers 2 Custom Build">OpenLayers 2 Custom Build</a></h1>  </header>
         <div class="entry-content">
-        <p>I ran a 2 hour workshop at <a class="reference external" href="http://www.nottingham.ac.uk/osgis/home.aspx">OSGIS 2014</a> introducing OpenLayers 3 and
-Leaflet.</p>
-<blockquote>
-A hands on introduction to using OpenLayer 3 (OL3) and Leaflet to display
-spatial data on the web. The workshop will introduce the two libraries, the
-underpinning concepts and strengths of each, and take delegates through
-creating a series of examples.</blockquote>
-<p>The <a class="reference external" href="http://astuntechnology.github.io/osgis-ol3-leaflet/">full workshop documentation is available</a> if you'd like to follow
-along at home.</p>
+        <p>A bit of a blast from the past now that OpenLayers 3 has been released but it may be useful for someone who is working on or maintaining an OpenLayer 2 project.</p>
+<p>Create a list of OpenLayers 2 classes used within a code base suitable for including in a <a class="reference external" href="http://docs.openlayers.org/library/deploying.html#custom-build-profiles">custom build profile</a>.</p>
+<div class="highlight"><pre><span></span><span class="nb">cd</span> /path/to/your/js/
+grep --ignore-case --recursive --no-filename --only-matching <span class="s1">&#39;new OpenLayers\.[a-z0-9\.]*&#39;</span> <span class="p">|</span> <span class="se">\</span>
+sed -e <span class="s1">&#39;s/new //&#39;</span> -e <span class="s1">&#39;s/\./\//g&#39;</span> -e <span class="s1">&#39;s/$/\.js/&#39;</span> <span class="p">|</span> <span class="se">\</span>
+sort <span class="p">|</span> <span class="se">\</span>
+uniq
+</pre></div>
+<div class="section" id="explanation">
+<h2>Explanation</h2>
+<ul class="simple">
+<li>Find instances of <code>new OpenLayers.FOO</code> in all source files below the current directory using <code>grep</code></li>
+<li>Remove <code>&quot;new &quot;</code> from each matching line, replace the dots which separate the parts of the class name with forward slashes and add <code>.js</code> to the end to complete the path all using <code>sed</code> (each <code>-e</code> applies an expression to each line)</li>
+<li>Sort the list with <code>sort</code></li>
+<li>Remove duplicates with <code>uniq</code></li>
+</ul>
+</div>
+<div class="section" id="caveats">
+<h2>Caveats</h2>
+<div class="section" id="vector-renderers">
+<h3>Vector Renderers</h3>
+<p>If you find <code>OpenLayers/Layer/Vector.js</code> in the list then the vector rendering classes will need to be included manually:</p>
+<div class="highlight"><pre><span></span><span class="err">OpenLayers/Renderer/Canvas.js</span>
+<span class="err">OpenLayers/Renderer/SVG.js</span>
+<span class="err">OpenLayers/Renderer/VML.js</span>
+</pre></div>
+</div>
+<div class="section" id="utility-classes">
+<h3>Utility Classes</h3>
+<p>If you are using classes such as <code>OpenLayers.Pixel</code>, <code>OpenLayers.LonLat</code>. You will find that when using the build script you get an error as the source files can not be found as the class names do not match the location in the OpenLayers source. In most cases for these base classes you can simply remove them from the build config file as they will be automatically included as they are referenced by the other classes such as <code>OpenLayers.Map</code>.</p>
+</div>
+</div>
 
 <footer class="post-info">
-    <abbr class="published" title="2014-09-07T21:30:00+01:00">Sun 07 September 2014</abbr>
-<p>Tags: <a href="http://longwayaround.org.uk/tag/workshop.html">workshop</a> <a href="http://longwayaround.org.uk/tag/ol3.html">ol3</a> <a href="http://longwayaround.org.uk/tag/leaflet.html">leaflet</a> <a href="http://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->        </div><!-- /.entry-content -->
+    <abbr class="published" title="2016-04-26T14:00:00+01:00">Tue 26 April 2016</abbr>
+<p>Tags: <a href="http://longwayaround.org.uk/tag/openlayer2.html">openlayer2</a> <a href="http://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->        </div><!-- /.entry-content -->
         <div class="comments">
             <div id="disqus_thread"></div>
             <script type="text/javascript">
                // Don't set the identifier so that comments are
                // associated with the url
-               // var disqus_identifier = "notes/practical-openlayers-3-leaflet/";
+               // var disqus_identifier = "notes/openlayers-2-custom-build/";
                (function() {
                var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
                dsq.src = 'http://longwayaroundorguk.disqus.com/embed.js';

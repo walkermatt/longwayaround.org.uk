@@ -40,7 +40,7 @@
 
             <aside id="featured" class="body">
                 <article>
-                    <abbr class="published" title="2014-11-20T00:00:00">Thu 20 November 2014</abbr>
+                    <abbr class="published" title="2014-11-20T00:00:00+00:00">Thu 20 November 2014</abbr>
                     <h1 class="entry-title"><a href="http://longwayaround.org.uk/notes/loading-postgis/">Loading PostGIS</a></h1> 
                     <p><em>Notes from a talk at PostGIS Day, London 20th Nov 2014.</em></p>
 <div class="section" id="the-options">
@@ -79,11 +79,11 @@
 <div class="section" id="id1">
 <h3>shp2pgsql</h3>
 <p>Load a Shapefile using <code>shp2pgsql</code> and <code>psql</code>. <code>shp2pgsql</code> doesn't load into the database directly but instead outputs SQL which can then be loaded via <code>psql</code>. This example pipes the SQL output by <code>shp2pgsql</code> to stdout to <code>psql</code> which executes it against the specified database.</p>
-<div class="highlight"><pre>shp2pgsql -W LATIN1 <span class="se">\</span>
-            -s 4326 <span class="se">\</span>
+<div class="highlight"><pre><span></span>shp2pgsql -W LATIN1 <span class="se">\</span>
+            -s <span class="m">4326</span> <span class="se">\</span>
             -I natural_earth_vector/10m_cultural/ne_10m_admin_0_countries.shp <span class="se">\</span>
             ne.ne_10m_admin_0_countries <span class="se">\</span>
-        | psql -U loader -d postgis
+        <span class="p">|</span> psql -U loader -d postgis
 </pre></div>
 <ul class="simple">
 <li><a class="reference external" href="http://prj2epsg.org/search">http://prj2epsg.org/search</a></li>
@@ -92,7 +92,7 @@
 <div class="section" id="ogr2ogr-f-postgresql">
 <h3>ogr2ogr -f PostgreSQL</h3>
 <p>Load an equivalent Shapefile into PostGIS using <code>ogr2ogr</code>.</p>
-<div class="highlight"><pre>ogr2ogr -f PostgreSQL <span class="se">\</span>
+<div class="highlight"><pre><span></span>ogr2ogr -f PostgreSQL <span class="se">\</span>
         PG:<span class="s1">&#39;dbname=postgis user=loader active_schema=ne&#39;</span> <span class="se">\</span>
         natural_earth_vector/10m_cultural/ne_10m_time_zones.shp <span class="se">\</span>
         -nlt PROMOTE_TO_MULTI
@@ -106,14 +106,14 @@
 <p>When loading large quantities of data both <code>shp2pgsql</code> and <code>ogr2ogr</code> support loading via PostgreSQL Dump format. This involves bulk loading of rows in a textual CSV like format using the <code>COPY</code> command which can be much quicker than <code>INSERT</code> statement.</p>
 <p>Enabling Dump format with <code>shp2pgsql</code> is as simple as specifying the <code>-D</code> flag (<code>shp2pgsql -D ...</code>).</p>
 <p>For <code>ogr2ogr</code> use the <code>PGDump</code> output format with the <code>PG_USE_COPY</code> config set to <code>YES</code>. The are a number of layer creation (<code>-lco</code>) and config options detailed on the <a class="reference external" href="http://www.gdal.org/drv_pgdump.html">PGDump driver page</a>.</p>
-<div class="highlight"><pre>ogr2ogr -f PGDump <span class="se">\</span>
+<div class="highlight"><pre><span></span>ogr2ogr -f PGDump <span class="se">\</span>
         --config PG_USE_COPY YES <span class="se">\</span>
         -lco <span class="nv">schema</span><span class="o">=</span>ne <span class="se">\</span>
         -lco <span class="nv">create_schema</span><span class="o">=</span>off <span class="se">\</span>
         /vsistdout/ <span class="se">\</span>
         natural_earth_vector/10m_cultural/ne_10m_admin_1_states_provinces_shp.shp <span class="se">\</span>
         -nlt PROMOTE_TO_MULTI <span class="se">\</span>
-        | psql -U loader -d postgis
+        <span class="p">|</span> psql -U loader -d postgis
 </pre></div>
 <p>When loading multi file datasets such as Ordnance Survey <a class="reference external" href="http://www.ordnancesurvey.co.uk/business-and-government/products/topography-layer.html">OSMM Topography Layer</a> or <a class="reference external" href="http://www.ordnancesurvey.co.uk/business-and-government/products/vectormap-local.html">VectorMap Local</a> the general approach is:</p>
 <ul class="simple">
@@ -122,7 +122,7 @@
 <li>Create indexes, vacuum etc.</li>
 </ul>
 <p>An example of this workflow for VectorMap Local can be found in the <a class="reference external" href="https://github.com/AstunTechnology/Loader/tree/master/extras/ordnancesurvey/vml/pgdump">Loader repository</a>. Deferring the creation of indexes can also improve performance significantly as it avoids the database continually rebuilding the indexes during load. In this instance the <code>ogr2ogr</code> command might look like:</p>
-<div class="highlight"><pre>ogr2ogr --config PG_USE_COPY YES <span class="se">\</span>
+<div class="highlight"><pre><span></span>ogr2ogr --config PG_USE_COPY YES <span class="se">\</span>
         -lco <span class="nv">schema</span><span class="o">=</span>ne <span class="se">\</span>
         -lco <span class="nv">create_schema</span><span class="o">=</span>off <span class="se">\</span>
         -lco <span class="nv">create_table</span><span class="o">=</span>off <span class="se">\</span>
@@ -138,8 +138,8 @@
 <p>Databases are designed to handle lots of concurrent activity and can easily handle more than one process loading data at the same time. Often load performance can be improved by running several <code>shp2pgsql</code> or <code>ogr2ogr</code> processes at a time. This can be done manually but for large datasets this becomes a pain, lucky on *unix systems we have <a class="reference external" href="http://www.gnu.org/software/parallel/">GNU Parallel</a> which can automate it for use. A <a class="reference external" href="../gnu-parallel-all-the-things/">previous post</a> has covered loading with GNU Parallel in more detail but it fits well with this discussion.</p>
 <p>The <code>parallel</code> command is very flexible and can take some time to understand but a simple</p>
 <p>In a previous post I provided an example of loading all Natural Earth vectors using <code>shp2pgsql</code> so this time lets do the same with <code>ogr2ogr</code>:</p>
-<div class="highlight"><pre><span class="nb">time </span>find natural_earth_vector/10m_physical/ -name <span class="s1">&#39;*.shp&#39;</span> <span class="se">\</span>
-    | parallel <span class="s2">&quot;ogr2ogr -f PGDump \</span>
+<div class="highlight"><pre><span></span><span class="nb">time</span> find natural_earth_vector/10m_physical/ -name <span class="s1">&#39;*.shp&#39;</span> <span class="se">\</span>
+    <span class="p">|</span> parallel <span class="s2">&quot;ogr2ogr -f PGDump \</span>
 <span class="s2">                    --config PG_USE_COPY YES \</span>
 <span class="s2">                    -lco schema=ne \</span>
 <span class="s2">                    -lco create_schema=off \</span>
@@ -156,23 +156,23 @@
 <li>Create indexes, vacuum etc.</li>
 </ul>
 <p>As an example lets load a CSV with details of WMS requests with the bounding box expressed as EWKT:</p>
-<div class="highlight"><pre>cat requests1.csv
+<div class="highlight"><pre><span></span>cat requests1.csv
 2014-10-20 06:33:24,elmbridge,wms,<span class="s2">&quot;SRID=27700;POLYGON((516601 163293, 516729 163293, 516729 163421, 516601 163421, 516601 163293))&quot;</span>
 2014-10-20 06:33:32,surrey,wms,<span class="s2">&quot;SRID=27700;POLYGON((492801 166401, 499201 166401, 499201 172801, 492801 172801, 492801 166401))&quot;</span>
 2014-10-20 06:38:09,exactrak,wms,<span class="s2">&quot;SRID=27700;POLYGON((206848 67200, 206976 67200, 206976 67328, 206848 67328, 206848 67200))&quot;</span>
 ...
 
 psql -U loader -d postgis
-drop table <span class="k">if </span>exists requests;
-create table requests<span class="o">(</span>reqtime timestamp, org text, service text, bbox geometry<span class="o">)</span>;
-<span class="se">\c</span>opy requests FROM <span class="s1">&#39;requests1.csv&#39;</span> DELIMITER <span class="s1">&#39;,&#39;</span> CSV;
-<span class="k">select </span>populate_geometry_columns<span class="o">()</span>;
+drop table <span class="k">if</span> exists requests<span class="p">;</span>
+create table requests<span class="o">(</span>reqtime timestamp, org text, service text, bbox geometry<span class="o">)</span><span class="p">;</span>
+<span class="se">\c</span>opy requests FROM <span class="s1">&#39;requests1.csv&#39;</span> DELIMITER <span class="s1">&#39;,&#39;</span> CSV<span class="p">;</span>
+<span class="k">select</span> populate_geometry_columns<span class="o">()</span><span class="p">;</span>
 </pre></div>
 </div>
 </div>
 
 <footer class="post-info">
-    <abbr class="published" title="2014-11-20T00:00:00">Thu 20 November 2014</abbr>
+    <abbr class="published" title="2014-11-20T00:00:00+00:00">Thu 20 November 2014</abbr>
 <p>Tags: <a href="http://longwayaround.org.uk/tag/command-line.html">command-line</a> <a href="http://longwayaround.org.uk/tag/postgis.html">postgis</a> <a href="http://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->                    <p><a href="http://longwayaround.org.uk/notes/loading-postgis/#disqus_thread">comments</a>.</p>
                 </article>
             </aside><!-- /#featured -->
@@ -184,7 +184,7 @@ create table requests<span class="o">(</span>reqtime timestamp, org text, servic
  
             <li><article class="hentry">
                 <header>
-                        <abbr class="published" title="2014-07-17T19:45:00">Thu 17 July 2014</abbr>
+                        <abbr class="published" title="2014-07-17T19:45:00+01:00">Thu 17 July 2014</abbr>
                         <h1><a href="http://longwayaround.org.uk/notes/gnu-parallel-all-the-things/" rel="bookmark" title="Permalink to GNU Parallel all the things!">GNU Parallel all the things!</a></h1>
                 </header>
                 <div class="entry-content">
@@ -200,7 +200,7 @@ create table requests<span class="o">(</span>reqtime timestamp, org text, servic
  
             <li><article class="hentry">
                 <header>
-                        <abbr class="published" title="2014-02-18T19:42:00">Tue 18 February 2014</abbr>
+                        <abbr class="published" title="2014-02-18T19:42:00+00:00">Tue 18 February 2014</abbr>
                         <h1><a href="http://longwayaround.org.uk/notes/first-few-months-of-clojure/" rel="bookmark" title="Permalink to First few months of Clojure">First few months of Clojure</a></h1>
                 </header>
                 <div class="entry-content">
@@ -216,13 +216,13 @@ create table requests<span class="o">(</span>reqtime timestamp, org text, servic
  
             <li><article class="hentry">
                 <header>
-                        <abbr class="published" title="2011-03-28T10:31:00">Mon 28 March 2011</abbr>
+                        <abbr class="published" title="2011-03-28T10:31:00+01:00">Mon 28 March 2011</abbr>
                         <h1><a href="http://longwayaround.org.uk/notes/recursively-delete-empty-directories/" rel="bookmark" title="Permalink to Recursively delete empty directories">Recursively delete empty directories</a></h1>
                 </header>
                 <div class="entry-content">
                 <div class="slug">
                     <p>To recursively delete all empty directories from the command prompt in Windows. Open command prompt and change to the desired directory then enter the following:</p>
-<div class="highlight"><pre><span class="k">for</span> /F <span class="s2">&quot;tokens=*&quot;</span> %f in <span class="o">(</span><span class="s1">&#39;dir /AD /S /B ^| sort /R&#39;</span><span class="o">)</span> <span class="k">do </span><span class="nb">echo </span>rd <span class="s2">&quot;%f&quot;</span>
+<div class="highlight"><pre><span></span><span class="k">for</span> /F <span class="s2">&quot;tokens=*&quot;</span> %f in <span class="o">(</span><span class="s1">&#39;dir /AD /S /B ^| sort /R&#39;</span><span class="o">)</span> <span class="k">do</span> <span class="nb">echo</span> rd <span class="s2">&quot;%f&quot;</span>
 </pre></div>
 <p>This command generates a list of all directories and sub ...</p>
                     <p>
@@ -235,13 +235,13 @@ create table requests<span class="o">(</span>reqtime timestamp, org text, servic
  
             <li><article class="hentry">
                 <header>
-                        <abbr class="published" title="2011-01-07T17:53:00">Fri 07 January 2011</abbr>
+                        <abbr class="published" title="2011-01-07T17:53:00+00:00">Fri 07 January 2011</abbr>
                         <h1><a href="http://longwayaround.org.uk/notes/convert-a-directory-of-tiffs-to-greyscale-using-imagemagick/" rel="bookmark" title="Permalink to Convert a directory of TIFFs to greyscale using ImageMagick">Convert a directory of TIFFs to greyscale using ImageMagick</a></h1>
                 </header>
                 <div class="entry-content">
                 <div class="slug">
                     <p>Change to the directory then run the command:</p>
-<div class="highlight"><pre>mogrify -colorspace Gray *.tif
+<div class="highlight"><pre><span></span>mogrify -colorspace Gray *.tif
 </pre></div>
 
                     <p>
@@ -257,7 +257,7 @@ create table requests<span class="o">(</span>reqtime timestamp, org text, servic
 
         <footer id="contentinfo" class="body">
                 <address id="about" class="vcard body">
-                    Powered by <a href="http://alexis.notmyidea.org/pelican/">Pelican</a> and <a href="http://python.org">Python</a>, icons from <a href="https://www.gosquared.com/blog/archives/2925">GoSocial</a>. Feel free to <a href="https://github.com/walkermatt/longwayaround.org.uk/issues">open an issue</a> if you spot anything</a>.
+                    Powered by <a href="http://alexis.notmyidea.org/pelican/">Pelican</a> and <a href="http://python.org">Python</a>, using a modified <a href="http://coding.smashingmagazine.com/2009/08/04/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a> theme, background from <a href="http://subtlepatterns.com">Subtle Patterns</a> and icons from <a href="https://www.gosquared.com/blog/archives/2925">GoSocial</a>.
                 </address><!-- /#about -->
         </footer><!-- /#contentinfo -->
 

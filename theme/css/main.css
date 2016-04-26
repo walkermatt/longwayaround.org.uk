@@ -137,8 +137,11 @@ dd {
     margin-bottom: 1em;
 }
 
-.highlight pre {
+.highlight pre, code {
     border: 1px solid #CCC;
+}
+
+.highlight pre {
     padding: 10px;
     margin: 10px 0;
     overflow: auto;

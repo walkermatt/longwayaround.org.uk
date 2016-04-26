@@ -39,12 +39,12 @@
         </header><!-- /#banner -->
 <section id="content" class="body">
 <article>
-        <abbr class="published" title="2013-10-18T17:24:00">Fri 18 October 2013</abbr>
+        <abbr class="published" title="2013-10-18T17:24:00+01:00">Fri 18 October 2013</abbr>
         <header> <h1 class="entry-title"><a href=""
         rel="bookmark" title="Permalink to Custom GeoServer GetFeatureInfo Template">Custom GeoServer GetFeatureInfo Template</a></h1>  </header>
         <div class="entry-content">
         <p>The default  <a class="reference external" href="http://geoserver.org/">GeoServer</a> GetFeatureInfo Freemarker template is a simple table and doesn't work very well when displaying the content in a web map popup. It's a common requirement to change the GetFeatureInfo template to an unordered list, to capitalise the title and attribute names. Here is a sample <cite>content.ftl</cite> that does just that and converts any attrubute values starting with <cite>http</cite> into a link:</p>
-<div class="highlight"><pre><span class="nt">&lt;ul&gt;</span>
+<div class="highlight"><pre><span></span><span class="nt">&lt;ul&gt;</span>
 <span class="err">&lt;</span>#list features as feature&gt;
 <span class="nt">&lt;li&gt;&lt;h2&gt;</span>${feature.type.title}<span class="nt">&lt;/h2&gt;</span>
 <span class="nt">&lt;ul&gt;</span>
@@ -67,7 +67,7 @@
 <p>See the <a class="reference external" href="http://docs.geoserver.org/stable/en/user/tutorials/freemarker.html">GeoServer Freemarker tutorial</a> for details of where the content template needs to live. The <a class="reference external" href="http://freemarker.org/docs/">Freemaker Documentation</a> is comprehensive if you're interested in further customisation.</p>
 
 <footer class="post-info">
-    <abbr class="published" title="2013-10-18T17:24:00">Fri 18 October 2013</abbr>
+    <abbr class="published" title="2013-10-18T17:24:00+01:00">Fri 18 October 2013</abbr>
 <p>Tags: <a href="http://longwayaround.org.uk/tag/geoserver.html">geoserver</a> <a href="http://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->        </div><!-- /.entry-content -->
         <div class="comments">
             <div id="disqus_thread"></div>
@@ -87,20 +87,21 @@
 </section>
 <section id="content" class="body">
 <h1>Posts</h1>
-<ul class="posts">
-    <li><a href='../../notes/testing-python-postgres/'>Testing Python &amp; Postgres</a> - <abbr class="published" title="2015-10-12T21:00:00">Mon 12 October 2015</abbr></li>
-    <li><a href='../../notes/read-only-postgres-database/'>Read-only Postgres database</a> - <abbr class="published" title="2015-09-08T13:00:00">Tue 08 September 2015</abbr></li>
-    <li><a href='../../notes/loading-postgis/'>Loading PostGIS</a> - <abbr class="published" title="2014-11-20T00:00:00">Thu 20 November 2014</abbr></li>
-    <li><a href='../../notes/practical-openlayers-3-leaflet/'>Practical OpenLayers 3 &amp; Leaflet</a> - <abbr class="published" title="2014-09-07T21:30:00">Sun 07 September 2014</abbr></li>
-    <li><a href='../../notes/gnu-parallel-all-the-things/'>GNU Parallel all the things!</a> - <abbr class="published" title="2014-07-17T19:45:00">Thu 17 July 2014</abbr></li>
-    <li><a href='../../notes/first-few-months-of-clojure/'>First few months of Clojure</a> - <abbr class="published" title="2014-02-18T19:42:00">Tue 18 February 2014</abbr></li>
-    <li><a href='../../notes/custom-geoserver-getfeatureinfo-template/'>Custom GeoServer GetFeatureInfo Template</a> - <abbr class="published" title="2013-10-18T17:24:00">Fri 18 October 2013</abbr></li>
-    <li><a href='../../notes/using-leaflet-with-a-custom-projection-and-a-mapproxy-tms/'>Using Leaflet with a custom projection and a MapProxy TMS</a> - <abbr class="published" title="2012-07-02T21:06:00">Mon 02 July 2012</abbr></li>
-    <li><a href='../../notes/greyscale-maps-with-mapserver/'>Greyscale maps with MapServer</a> - <abbr class="published" title="2012-02-02T21:31:00">Thu 02 February 2012</abbr></li>
-    <li><a href='../../notes/disaggregate-multilinestrings-using-st_dump-postgis/'>Disaggregate MultiLineStrings using ST_Dump PostGIS</a> - <abbr class="published" title="2011-11-24T21:39:00">Thu 24 November 2011</abbr></li>
-    <li><a href='../../notes/recursively-delete-empty-directories/'>Recursively delete empty directories</a> - <abbr class="published" title="2011-03-28T10:31:00">Mon 28 March 2011</abbr></li>
-    <li><a href='../../notes/convert-a-directory-of-tiffs-to-greyscale-using-imagemagick/'>Convert a directory of TIFFs to greyscale using ImageMagick</a> - <abbr class="published" title="2011-01-07T17:53:00">Fri 07 January 2011</abbr></li>
-    <li><a href='../../notes/build-ogr-18-with-gml-wfs-and-postgis-support-on-ubuntu-1004/'>Build OGR 1.8 with GML, WFS and PostGIS support on Ubuntu 10.04</a> - <abbr class="published" title="2010-12-19T21:06:00">Sun 19 December 2010</abbr></li>
+<ul>
+    <li><a href='../../notes/openlayers-2-custom-build/'>OpenLayers 2 Custom Build</a> - <abbr class="published" title="2016-04-26T14:00:00+01:00">Tue 26 April 2016</abbr></li>
+    <li><a href='../../notes/testing-python-postgres/'>Testing Python &amp; Postgres</a> - <abbr class="published" title="2015-10-12T21:00:00+01:00">Mon 12 October 2015</abbr></li>
+    <li><a href='../../notes/read-only-postgres-database/'>Read-only Postgres database</a> - <abbr class="published" title="2015-09-08T13:00:00+01:00">Tue 08 September 2015</abbr></li>
+    <li><a href='../../notes/loading-postgis/'>Loading PostGIS</a> - <abbr class="published" title="2014-11-20T00:00:00+00:00">Thu 20 November 2014</abbr></li>
+    <li><a href='../../notes/practical-openlayers-3-leaflet/'>Practical OpenLayers 3 &amp; Leaflet</a> - <abbr class="published" title="2014-09-07T21:30:00+01:00">Sun 07 September 2014</abbr></li>
+    <li><a href='../../notes/gnu-parallel-all-the-things/'>GNU Parallel all the things!</a> - <abbr class="published" title="2014-07-17T19:45:00+01:00">Thu 17 July 2014</abbr></li>
+    <li><a href='../../notes/first-few-months-of-clojure/'>First few months of Clojure</a> - <abbr class="published" title="2014-02-18T19:42:00+00:00">Tue 18 February 2014</abbr></li>
+    <li><a href='../../notes/custom-geoserver-getfeatureinfo-template/'>Custom GeoServer GetFeatureInfo Template</a> - <abbr class="published" title="2013-10-18T17:24:00+01:00">Fri 18 October 2013</abbr></li>
+    <li><a href='../../notes/using-leaflet-with-a-custom-projection-and-a-mapproxy-tms/'>Using Leaflet with a custom projection and a MapProxy TMS</a> - <abbr class="published" title="2012-07-02T21:06:00+01:00">Mon 02 July 2012</abbr></li>
+    <li><a href='../../notes/greyscale-maps-with-mapserver/'>Greyscale maps with MapServer</a> - <abbr class="published" title="2012-02-02T21:31:00+00:00">Thu 02 February 2012</abbr></li>
+    <li><a href='../../notes/disaggregate-multilinestrings-using-st_dump-postgis/'>Disaggregate MultiLineStrings using ST_Dump PostGIS</a> - <abbr class="published" title="2011-11-24T21:39:00+00:00">Thu 24 November 2011</abbr></li>
+    <li><a href='../../notes/recursively-delete-empty-directories/'>Recursively delete empty directories</a> - <abbr class="published" title="2011-03-28T10:31:00+01:00">Mon 28 March 2011</abbr></li>
+    <li><a href='../../notes/convert-a-directory-of-tiffs-to-greyscale-using-imagemagick/'>Convert a directory of TIFFs to greyscale using ImageMagick</a> - <abbr class="published" title="2011-01-07T17:53:00+00:00">Fri 07 January 2011</abbr></li>
+    <li><a href='../../notes/build-ogr-18-with-gml-wfs-and-postgis-support-on-ubuntu-1004/'>Build OGR 1.8 with GML, WFS and PostGIS support on Ubuntu 10.04</a> - <abbr class="published" title="2010-12-19T21:06:00+00:00">Sun 19 December 2010</abbr></li>
 </ul>
 </section>
         <section id="extras" class="body">
@@ -108,7 +109,7 @@
 
         <footer id="contentinfo" class="body">
                 <address id="about" class="vcard body">
-                    Powered by <a href="http://alexis.notmyidea.org/pelican/">Pelican</a> and <a href="http://python.org">Python</a>, icons from <a href="https://www.gosquared.com/blog/archives/2925">GoSocial</a>. Feel free to <a href="https://github.com/walkermatt/longwayaround.org.uk/issues">open an issue</a> if you spot anything</a>.
+                    Powered by <a href="http://alexis.notmyidea.org/pelican/">Pelican</a> and <a href="http://python.org">Python</a>, using a modified <a href="http://coding.smashingmagazine.com/2009/08/04/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a> theme, background from <a href="http://subtlepatterns.com">Subtle Patterns</a> and icons from <a href="https://www.gosquared.com/blog/archives/2925">GoSocial</a>.
                 </address><!-- /#about -->
         </footer><!-- /#contentinfo -->
 
