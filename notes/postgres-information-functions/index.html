@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-        <title>Convert a directory of TIFFs to greyscale using ImageMagick</title>
+        <title>Postgres Information Functions</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, target-densitydpi=device-dpi">
         <link rel="stylesheet" href="http://longwayaround.org.uk/theme/css/main.css" type="text/css" />
@@ -39,23 +39,56 @@
         </header><!-- /#banner -->
 <section id="content" class="body">
 <article>
-        <abbr class="published" title="2011-01-07T17:53:00+00:00">Fri 07 January 2011</abbr>
+        <abbr class="published" title="2017-02-18T07:55:00+00:00">Sat 18 February 2017</abbr>
         <header> <h1 class="entry-title"><a href=""
-        rel="bookmark" title="Permalink to Convert a directory of TIFFs to greyscale using ImageMagick">Convert a directory of TIFFs to greyscale using ImageMagick</a></h1>  </header>
+        rel="bookmark" title="Permalink to Postgres Information Functions">Postgres Information Functions</a></h1>  </header>
         <div class="entry-content">
-        <p>Change to the directory then run the command:</p>
-<div class="highlight"><pre><span></span>mogrify -colorspace Gray *.tif
+        <p>Postgres contains a wealth of functions that provide information about a database and the objects within. The <a class="reference external" href="https://www.postgresql.org/docs/current/static/functions-info.html/">System Information Functions of the official documention</a> provides a full list. There are a huge number of functions covering a whole host of info from the current database session, privileges, function properties.</p>
+<div class="section" id="examples">
+<h2>Examples</h2>
+<div class="section" id="find-an-objects-oid">
+<h3>Find an objects oid</h3>
+<p>A lot of the info functions accept the <a class="reference external" href="https://www.postgresql.org/docs/current/static/datatype-oid.html/">Object Identifier Type</a> for objects in the database. This can be obtained by casting to <code>regclass</code> (also described in the  <a class="reference external" href="https://www.postgresql.org/docs/current/static/datatype-oid.html/">oid docs</a>) then to <code>oid</code>:</p>
+<div class="highlight"><pre><span></span><span class="k">select</span> <span class="s1">&#39;schema_name.relation_name&#39;</span><span class="p">::</span><span class="n">regclass</span><span class="p">::</span><span class="n">oid</span><span class="p">;</span>
 </pre></div>
+<p>Where <code>relation_name</code> is a table, view, index etc.</p>
+</div>
+<div class="section" id="view-definition">
+<h3>View definition</h3>
+<div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">pg_get_viewdef</span><span class="p">(</span><span class="s1">&#39;schema_name.view_name&#39;</span><span class="p">::</span><span class="n">regclass</span><span class="p">::</span><span class="n">oid</span><span class="p">);</span>
+</pre></div>
+<p>Or in <code>psql</code> you can use one of the built in commands:</p>
+<div class="highlight"><pre><span></span><span class="err">\</span><span class="n">d</span><span class="o">+</span> <span class="k">schema_name</span><span class="p">.</span><span class="n">view_name</span>
+</pre></div>
+</div>
+<div class="section" id="function-definition">
+<h3>Function definition</h3>
+<p>Returns the function definition for a given function. Many built-in functions don't reveal much due to them not being written in SQL but for those that are you'll get the complete create function statement. For example to view the definition of the PostGIS <code>st_colormap</code> function:</p>
+<div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">pg_get_functiondef</span><span class="p">(</span><span class="s1">&#39;st_colormap(raster, integer, text, text)&#39;</span><span class="p">::</span><span class="n">regprocedure</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="section" id="privileges">
+<h3>Privileges</h3>
+<p>A <a class="reference external" href="https://www.postgresql.org/docs/current/static/functions-info.html#FUNCTIONS-INFO-ACCESS-TABLE/">whole host of functions exist to determine privileges for schemas, tables, functions etc.</a> Some examples:</p>
+<p>Determine if the current users can select from a table:</p>
+<div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">has_table_privilege</span><span class="p">(</span><span class="s1">&#39;schema_name.relation_name&#39;</span><span class="p">,</span> <span class="s1">&#39;select&#39;</span><span class="p">);</span>
+</pre></div>
+<p>Note: The docs state that &quot;multiple privilege types can be listed separated by commas, in which case the result will be true if any of the listed privileges is held&quot;. This means that in order to test a number of privileges it is normally better to test each privilege individually as <code>select has_table_privilege('schema_name.relation_name', 'select,update');</code> would return <code>t</code> even if only <code>select</code> is supported.</p>
+<p>Determine if a user can use a schema:</p>
+<div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">has_schema_privilege</span><span class="p">(</span><span class="s1">&#39;schema_name&#39;</span><span class="p">,</span> <span class="s1">&#39;usage&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
 
 <footer class="post-info">
-    <abbr class="published" title="2011-01-07T17:53:00+00:00">Fri 07 January 2011</abbr>
-<p>Tags: <a href="http://longwayaround.org.uk/tag/command-line.html">command-line</a> <a href="http://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->        </div><!-- /.entry-content -->
+    <abbr class="published" title="2017-02-18T07:55:00+00:00">Sat 18 February 2017</abbr>
+<p>Tags: <a href="http://longwayaround.org.uk/tag/postgres.html">postgres</a> <a href="http://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->        </div><!-- /.entry-content -->
         <div class="comments">
             <div id="disqus_thread"></div>
             <script type="text/javascript">
                // Don't set the identifier so that comments are
                // associated with the url
-               // var disqus_identifier = "notes/convert-a-directory-of-tiffs-to-greyscale-using-imagemagick/";
+               // var disqus_identifier = "notes/postgres-information-functions/";
                (function() {
                var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
                dsq.src = 'http://longwayaroundorguk.disqus.com/embed.js';

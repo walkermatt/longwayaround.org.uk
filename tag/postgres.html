@@ -40,27 +40,72 @@
 
             <aside id="featured" class="body">
                 <article>
-                    <abbr class="published" title="2015-10-12T21:00:00+01:00">Mon 12 October 2015</abbr>
-                    <h1 class="entry-title"><a href="http://longwayaround.org.uk/notes/testing-python-postgres/">Testing Python &amp; Postgres</a></h1> 
-                    <p>I recently pulled together <a class="reference external" href="https://github.com/walkermatt/python-postgres-testing-demo/">a project to demonstrate testing Python functions that interact with a Postgres database</a>. I find that this sort of thing crops up occasionally and the project is an attempt to distil the approach. The main points include:</p>
-<ul class="simple">
-<li>Creating a fresh temporary database via testing.postgresql prior to running tests</li>
-<li>Setting up the temporary database via a script with required structure (schemas, tables, roles, functions etc.)</li>
-<li>Putting the database into a known state prior to running each individual test (populating tables with known data)</li>
-<li>Inspecting and making assertions about the state of the database once the function being tested has been executed</li>
-<li>Pausing tests using the debugger (<code>pdb</code>) to connect to the temporary database (using <code>db.url()</code> and <code>psql &lt;url&gt;</code>) to inspect it's current state while testing</li>
-</ul>
-<p>View the project on GitHub: <a class="reference external" href="https://github.com/walkermatt/python-postgres-testing-demo/">walkermatt/python-postgres-testing-demo</a>.</p>
+                    <abbr class="published" title="2017-02-18T07:55:00+00:00">Sat 18 February 2017</abbr>
+                    <h1 class="entry-title"><a href="http://longwayaround.org.uk/notes/postgres-information-functions/">Postgres Information Functions</a></h1> 
+                    <p>Postgres contains a wealth of functions that provide information about a database and the objects within. The <a class="reference external" href="https://www.postgresql.org/docs/current/static/functions-info.html/">System Information Functions of the official documention</a> provides a full list. There are a huge number of functions covering a whole host of info from the current database session, privileges, function properties.</p>
+<div class="section" id="examples">
+<h2>Examples</h2>
+<div class="section" id="find-an-objects-oid">
+<h3>Find an objects oid</h3>
+<p>A lot of the info functions accept the <a class="reference external" href="https://www.postgresql.org/docs/current/static/datatype-oid.html/">Object Identifier Type</a> for objects in the database. This can be obtained by casting to <code>regclass</code> (also described in the  <a class="reference external" href="https://www.postgresql.org/docs/current/static/datatype-oid.html/">oid docs</a>) then to <code>oid</code>:</p>
+<div class="highlight"><pre><span></span><span class="k">select</span> <span class="s1">&#39;schema_name.relation_name&#39;</span><span class="p">::</span><span class="n">regclass</span><span class="p">::</span><span class="n">oid</span><span class="p">;</span>
+</pre></div>
+<p>Where <code>relation_name</code> is a table, view, index etc.</p>
+</div>
+<div class="section" id="view-definition">
+<h3>View definition</h3>
+<div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">pg_get_viewdef</span><span class="p">(</span><span class="s1">&#39;schema_name.view_name&#39;</span><span class="p">::</span><span class="n">regclass</span><span class="p">::</span><span class="n">oid</span><span class="p">);</span>
+</pre></div>
+<p>Or in <code>psql</code> you can use one of the built in commands:</p>
+<div class="highlight"><pre><span></span><span class="err">\</span><span class="n">d</span><span class="o">+</span> <span class="k">schema_name</span><span class="p">.</span><span class="n">view_name</span>
+</pre></div>
+</div>
+<div class="section" id="function-definition">
+<h3>Function definition</h3>
+<p>Returns the function definition for a given function. Many built-in functions don't reveal much due to them not being written in SQL but for those that are you'll get the complete create function statement. For example to view the definition of the PostGIS <code>st_colormap</code> function:</p>
+<div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">pg_get_functiondef</span><span class="p">(</span><span class="s1">&#39;st_colormap(raster, integer, text, text)&#39;</span><span class="p">::</span><span class="n">regprocedure</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="section" id="privileges">
+<h3>Privileges</h3>
+<p>A <a class="reference external" href="https://www.postgresql.org/docs/current/static/functions-info.html#FUNCTIONS-INFO-ACCESS-TABLE/">whole host of functions exist to determine privileges for schemas, tables, functions etc.</a> Some examples:</p>
+<p>Determine if the current users can select from a table:</p>
+<div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">has_table_privilege</span><span class="p">(</span><span class="s1">&#39;schema_name.relation_name&#39;</span><span class="p">,</span> <span class="s1">&#39;select&#39;</span><span class="p">);</span>
+</pre></div>
+<p>Note: The docs state that &quot;multiple privilege types can be listed separated by commas, in which case the result will be true if any of the listed privileges is held&quot;. This means that in order to test a number of privileges it is normally better to test each privilege individually as <code>select has_table_privilege('schema_name.relation_name', 'select,update');</code> would return <code>t</code> even if only <code>select</code> is supported.</p>
+<p>Determine if a user can use a schema:</p>
+<div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">has_schema_privilege</span><span class="p">(</span><span class="s1">&#39;schema_name&#39;</span><span class="p">,</span> <span class="s1">&#39;usage&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
 
 <footer class="post-info">
-    <abbr class="published" title="2015-10-12T21:00:00+01:00">Mon 12 October 2015</abbr>
-<p>Tags: <a href="http://longwayaround.org.uk/tag/testing.html">testing</a> <a href="http://longwayaround.org.uk/tag/python.html">python</a> <a href="http://longwayaround.org.uk/tag/postgres.html">postgres</a> <a href="http://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->                    <p><a href="http://longwayaround.org.uk/notes/testing-python-postgres/#disqus_thread">comments</a>.</p>
+    <abbr class="published" title="2017-02-18T07:55:00+00:00">Sat 18 February 2017</abbr>
+<p>Tags: <a href="http://longwayaround.org.uk/tag/postgres.html">postgres</a> <a href="http://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->                    <p><a href="http://longwayaround.org.uk/notes/postgres-information-functions/#disqus_thread">comments</a>.</p>
                 </article>
             </aside><!-- /#featured -->
                 <section id="content" class="body">
                     <h1>Other posts</h1>
                     <hr />
                         <ol id="posts-list" class="hfeed">
+
+ 
+            <li><article class="hentry">
+                <header>
+                        <abbr class="published" title="2015-10-12T21:00:00+01:00">Mon 12 October 2015</abbr>
+                        <h1><a href="http://longwayaround.org.uk/notes/testing-python-postgres/" rel="bookmark" title="Permalink to Testing Python &amp; Postgres">Testing Python &amp; Postgres</a></h1>
+                </header>
+                <div class="entry-content">
+                <div class="slug">
+                    <p>I recently pulled together <a class="reference external" href="https://github.com/walkermatt/python-postgres-testing-demo/">a project to demonstrate testing Python functions that interact with a Postgres database</a>. I find that this sort of thing crops up occasionally and the project is an attempt to distil the approach. The main points include:</p>
+<ul class="simple">
+<li>Creating a fresh temporary database via testing.postgresql prior ...</li></ul>
+                    <p>
+<a href="http://longwayaround.org.uk/notes/testing-python-postgres/#disqus_thread">comments</a>.                        <a class="readmore" href="http://longwayaround.org.uk/notes/testing-python-postgres/">read more</a>
+                    </p>
+                </div>
+                </div><!-- /.entry-content -->
+            </article></li>
 
  
             <li><article class="hentry">

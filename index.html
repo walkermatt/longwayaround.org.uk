@@ -40,50 +40,71 @@
 
             <aside id="featured" class="body">
                 <article>
-                    <abbr class="published" title="2016-04-26T14:00:00+01:00">Tue 26 April 2016</abbr>
-                    <h1 class="entry-title"><a href="http://longwayaround.org.uk/notes/openlayers-2-custom-build/">OpenLayers 2 Custom Build</a></h1> 
-                    <p>A bit of a blast from the past now that OpenLayers 3 has been released but it may be useful for someone who is working on or maintaining an OpenLayer 2 project.</p>
-<p>Create a list of OpenLayers 2 classes used within a code base suitable for including in a <a class="reference external" href="http://docs.openlayers.org/library/deploying.html#custom-build-profiles">custom build profile</a>.</p>
-<div class="highlight"><pre><span></span><span class="nb">cd</span> /path/to/your/js/
-grep --ignore-case --recursive --no-filename --only-matching <span class="s1">&#39;new OpenLayers\.[a-z0-9\.]*&#39;</span> <span class="p">|</span> <span class="se">\</span>
-sed -e <span class="s1">&#39;s/new //&#39;</span> -e <span class="s1">&#39;s/\./\//g&#39;</span> -e <span class="s1">&#39;s/$/\.js/&#39;</span> <span class="p">|</span> <span class="se">\</span>
-sort <span class="p">|</span> <span class="se">\</span>
-uniq
+                    <abbr class="published" title="2017-02-18T07:55:00+00:00">Sat 18 February 2017</abbr>
+                    <h1 class="entry-title"><a href="http://longwayaround.org.uk/notes/postgres-information-functions/">Postgres Information Functions</a></h1> 
+                    <p>Postgres contains a wealth of functions that provide information about a database and the objects within. The <a class="reference external" href="https://www.postgresql.org/docs/current/static/functions-info.html/">System Information Functions of the official documention</a> provides a full list. There are a huge number of functions covering a whole host of info from the current database session, privileges, function properties.</p>
+<div class="section" id="examples">
+<h2>Examples</h2>
+<div class="section" id="find-an-objects-oid">
+<h3>Find an objects oid</h3>
+<p>A lot of the info functions accept the <a class="reference external" href="https://www.postgresql.org/docs/current/static/datatype-oid.html/">Object Identifier Type</a> for objects in the database. This can be obtained by casting to <code>regclass</code> (also described in the  <a class="reference external" href="https://www.postgresql.org/docs/current/static/datatype-oid.html/">oid docs</a>) then to <code>oid</code>:</p>
+<div class="highlight"><pre><span></span><span class="k">select</span> <span class="s1">&#39;schema_name.relation_name&#39;</span><span class="p">::</span><span class="n">regclass</span><span class="p">::</span><span class="n">oid</span><span class="p">;</span>
 </pre></div>
-<div class="section" id="explanation">
-<h2>Explanation</h2>
-<ul class="simple">
-<li>Find instances of <code>new OpenLayers.FOO</code> in all source files below the current directory using <code>grep</code></li>
-<li>Remove <code>&quot;new &quot;</code> from each matching line, replace the dots which separate the parts of the class name with forward slashes and add <code>.js</code> to the end to complete the path all using <code>sed</code> (each <code>-e</code> applies an expression to each line)</li>
-<li>Sort the list with <code>sort</code></li>
-<li>Remove duplicates with <code>uniq</code></li>
-</ul>
+<p>Where <code>relation_name</code> is a table, view, index etc.</p>
 </div>
-<div class="section" id="caveats">
-<h2>Caveats</h2>
-<div class="section" id="vector-renderers">
-<h3>Vector Renderers</h3>
-<p>If you find <code>OpenLayers/Layer/Vector.js</code> in the list then the vector rendering classes will need to be included manually:</p>
-<div class="highlight"><pre><span></span><span class="err">OpenLayers/Renderer/Canvas.js</span>
-<span class="err">OpenLayers/Renderer/SVG.js</span>
-<span class="err">OpenLayers/Renderer/VML.js</span>
+<div class="section" id="view-definition">
+<h3>View definition</h3>
+<div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">pg_get_viewdef</span><span class="p">(</span><span class="s1">&#39;schema_name.view_name&#39;</span><span class="p">::</span><span class="n">regclass</span><span class="p">::</span><span class="n">oid</span><span class="p">);</span>
+</pre></div>
+<p>Or in <code>psql</code> you can use one of the built in commands:</p>
+<div class="highlight"><pre><span></span><span class="err">\</span><span class="n">d</span><span class="o">+</span> <span class="k">schema_name</span><span class="p">.</span><span class="n">view_name</span>
 </pre></div>
 </div>
-<div class="section" id="utility-classes">
-<h3>Utility Classes</h3>
-<p>If you are using classes such as <code>OpenLayers.Pixel</code>, <code>OpenLayers.LonLat</code>. You will find that when using the build script you get an error as the source files can not be found as the class names do not match the location in the OpenLayers source. In most cases for these base classes you can simply remove them from the build config file as they will be automatically included as they are referenced by the other classes such as <code>OpenLayers.Map</code>.</p>
+<div class="section" id="function-definition">
+<h3>Function definition</h3>
+<p>Returns the function definition for a given function. Many built-in functions don't reveal much due to them not being written in SQL but for those that are you'll get the complete create function statement. For example to view the definition of the PostGIS <code>st_colormap</code> function:</p>
+<div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">pg_get_functiondef</span><span class="p">(</span><span class="s1">&#39;st_colormap(raster, integer, text, text)&#39;</span><span class="p">::</span><span class="n">regprocedure</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="section" id="privileges">
+<h3>Privileges</h3>
+<p>A <a class="reference external" href="https://www.postgresql.org/docs/current/static/functions-info.html#FUNCTIONS-INFO-ACCESS-TABLE/">whole host of functions exist to determine privileges for schemas, tables, functions etc.</a> Some examples:</p>
+<p>Determine if the current users can select from a table:</p>
+<div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">has_table_privilege</span><span class="p">(</span><span class="s1">&#39;schema_name.relation_name&#39;</span><span class="p">,</span> <span class="s1">&#39;select&#39;</span><span class="p">);</span>
+</pre></div>
+<p>Note: The docs state that &quot;multiple privilege types can be listed separated by commas, in which case the result will be true if any of the listed privileges is held&quot;. This means that in order to test a number of privileges it is normally better to test each privilege individually as <code>select has_table_privilege('schema_name.relation_name', 'select,update');</code> would return <code>t</code> even if only <code>select</code> is supported.</p>
+<p>Determine if a user can use a schema:</p>
+<div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">has_schema_privilege</span><span class="p">(</span><span class="s1">&#39;schema_name&#39;</span><span class="p">,</span> <span class="s1">&#39;usage&#39;</span><span class="p">);</span>
+</pre></div>
 </div>
 </div>
 
 <footer class="post-info">
-    <abbr class="published" title="2016-04-26T14:00:00+01:00">Tue 26 April 2016</abbr>
-<p>Tags: <a href="http://longwayaround.org.uk/tag/openlayer2.html">openlayer2</a> <a href="http://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->                    <p><a href="http://longwayaround.org.uk/notes/openlayers-2-custom-build/#disqus_thread">comments</a>.</p>
+    <abbr class="published" title="2017-02-18T07:55:00+00:00">Sat 18 February 2017</abbr>
+<p>Tags: <a href="http://longwayaround.org.uk/tag/postgres.html">postgres</a> <a href="http://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->                    <p><a href="http://longwayaround.org.uk/notes/postgres-information-functions/#disqus_thread">comments</a>.</p>
                 </article>
             </aside><!-- /#featured -->
                 <section id="content" class="body">
                     <h1>Other posts</h1>
                     <hr />
                         <ol id="posts-list" class="hfeed">
+
+ 
+            <li><article class="hentry">
+                <header>
+                        <abbr class="published" title="2016-04-26T14:00:00+01:00">Tue 26 April 2016</abbr>
+                        <h1><a href="http://longwayaround.org.uk/notes/openlayers-2-custom-build/" rel="bookmark" title="Permalink to OpenLayers 2 Custom Build">OpenLayers 2 Custom Build</a></h1>
+                </header>
+                <div class="entry-content">
+                <div class="slug">
+                    <p>A bit of a blast from the past now that OpenLayers 3 has been released but it may be useful for someone who is working on or maintaining an OpenLayer 2 project.</p>
+<p>Create a list of OpenLayers 2 classes used within a code base suitable for including in a <a class="reference external" href="http://docs.openlayers.org/library/deploying.html#custom-build-profiles">custom ...</a></p>
+                    <p>
+<a href="http://longwayaround.org.uk/notes/openlayers-2-custom-build/#disqus_thread">comments</a>.                        <a class="readmore" href="http://longwayaround.org.uk/notes/openlayers-2-custom-build/">read more</a>
+                    </p>
+                </div>
+                </div><!-- /.entry-content -->
+            </article></li>
 
  
             <li><article class="hentry">
