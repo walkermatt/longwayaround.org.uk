@@ -4,7 +4,7 @@ About
 Matt Walker
 ~~~~~~~~~~~
 
-Geospatial Technologist at `Astun Technology`_, former Technical Director at `Dotted Eyes Ltd.`_. User and advocate of open software, standards and data.
+Geospatial Technologist at `Astun Technology`_, former Technical Director at `Dotted Eyes Ltd.`_. User, maintainer and advocate of open software, standards and data.
 
 Contact
 ~~~~~~~
