@@ -4,18 +4,18 @@
         <title>longwayaround.org.uk - postgis</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, target-densitydpi=device-dpi">
-        <link rel="stylesheet" href="http://longwayaround.org.uk/theme/css/main.css" type="text/css" />
-        <link href="http://longwayaround.org.uk/feeds/all.rss.xml" type="application/atom+xml" rel="alternate" title="longwayaround.org.uk RSS Feed" />
+        <link rel="stylesheet" href="https://longwayaround.org.uk/theme/css/main.css" type="text/css" />
+        <link href="https://longwayaround.org.uk/feeds/all.rss.xml" type="application/atom+xml" rel="alternate" title="longwayaround.org.uk RSS Feed" />
 
         <!--[if IE]>
                 <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
 
         <!--[if lte IE 7]>
-                <link rel="stylesheet" type="text/css" media="all" href="http://longwayaround.org.uk/css/ie.css"/>
-                <script src="http://longwayaround.org.uk/js/IE8.js" type="text/javascript"></script><![endif]-->
+                <link rel="stylesheet" type="text/css" media="all" href="https://longwayaround.org.uk/css/ie.css"/>
+                <script src="https://longwayaround.org.uk/js/IE8.js" type="text/javascript"></script><![endif]-->
 
         <!--[if lt IE 7]>
-                <link rel="stylesheet" type="text/css" media="all" href="http://longwayaround.org.uk/css/ie6.css"/><![endif]-->
+                <link rel="stylesheet" type="text/css" media="all" href="https://longwayaround.org.uk/css/ie6.css"/><![endif]-->
 
 </head>
 
@@ -24,24 +24,22 @@
                 <h1><a href="/">longwayaround.org.uk  <strong>taking the scenic route and enjoying the journey</strong></a></h1>
                 <nav>
                 <ul>
-                    <li ><a href="http://longwayaround.org.uk/notes/">notes</a></li>
-                    <li><a href="http://longwayaround.org.uk/pages/about/">about</a></li>
+                    <li ><a href="https://longwayaround.org.uk/notes/">notes</a></li>
                 </ul>
                 </nav>
                     <ul class="social">
-                        <li><a href="http://longwayaround.org.uk/feeds/all.rss.xml" rel="alternate"><img src="http://longwayaround.org.uk/theme/images/icons/gosquared/18/rss.png" title="rss" width="18" height="18" /></a></li>
-                    <li><a href="http://uk.linkedin.com/in/walkermatt"><img src="http://longwayaround.org.uk/theme/images/icons/gosquared/18/linkedin.png" title="linkedin" width="18" height="18" /></a></li>
-                    <li><a href="http://delicious.com/walkermatt"><img src="http://longwayaround.org.uk/theme/images/icons/gosquared/18/delicious.png" title="delicious" width="18" height="18" /></a></li>
-                    <li><a href="http://github.com/organizations/AstunTechnology"><img src="http://longwayaround.org.uk/theme/images/icons/gosquared/18/github.png" title="github" width="18" height="18" /></a></li>
-                    <li><a href="http://github.com/walkermatt"><img src="http://longwayaround.org.uk/theme/images/icons/gosquared/18/github.png" title="github" width="18" height="18" /></a></li>
-                    <li><a href="http://twitter.com/_walkermatt"><img src="http://longwayaround.org.uk/theme/images/icons/gosquared/18/twitter.png" title="twitter" width="18" height="18" /></a></li>
+                        <li><a href="https://longwayaround.org.uk/feeds/all.rss.xml" rel="alternate"><img src="https://longwayaround.org.uk/theme/images/icons/gosquared/18/rss.png" title="rss" width="18" height="18" /></a></li>
+                    <li><a href="https://uk.linkedin.com/in/walkermatt"><img src="https://longwayaround.org.uk/theme/images/icons/gosquared/18/linkedin.png" title="linkedin" width="18" height="18" /></a></li>
+                    <li><a href="https://github.com/organizations/AstunTechnology"><img src="https://longwayaround.org.uk/theme/images/icons/gosquared/18/github.png" title="github" width="18" height="18" /></a></li>
+                    <li><a href="https://github.com/walkermatt"><img src="https://longwayaround.org.uk/theme/images/icons/gosquared/18/github.png" title="github" width="18" height="18" /></a></li>
+                    <li><a href="https://twitter.com/_walkermatt"><img src="https://longwayaround.org.uk/theme/images/icons/gosquared/18/twitter.png" title="twitter" width="18" height="18" /></a></li>
                     </ul>
         </header><!-- /#banner -->
 
             <aside id="featured" class="body">
                 <article>
                     <abbr class="published" title="2015-09-08T13:00:00+01:00">Tue 08 September 2015</abbr>
-                    <h1 class="entry-title"><a href="http://longwayaround.org.uk/notes/read-only-postgres-database/">Read-only Postgres database</a></h1> 
+                    <h1 class="entry-title"><a href="https://longwayaround.org.uk/notes/read-only-postgres-database/">Read-only Postgres database</a></h1> 
                     <p>There are times when I've needed to effectively make a Postgres database read-only, for example after loading or updating reference data. In the past I've revoked permissions from database roles to achieve this but as <a class="reference external" href="http://www.postgresql.org/message-id/5fe0d78bda51d7176940fb8e78739b54&#64;biglumber.com">this post on the PostgreSQL list states, it's possible to do so by making all transactions against the database read-only by default</a>.</p>
 <p>For example assuming I have an <code>osdata</code> database, I can alter it to set <code>default_transaction_read_only</code> (<a class="reference external" href="http://www.postgresql.org/docs/9.4/static/runtime-config-client.html#GUC-DEFAULT-TRANSACTION-READ-ONLY">docs</a>) to <code>true</code> which will make future transitions read-only regardless of which login role connects:</p>
 <div class="highlight"><pre><span></span>ALTER DATABASE osdata SET <span class="nv">default_transaction_read_only</span> <span class="o">=</span> true<span class="p">;</span>
@@ -50,19 +48,21 @@
 
 <footer class="post-info">
     <abbr class="published" title="2015-09-08T13:00:00+01:00">Tue 08 September 2015</abbr>
-<p>Tags: <a href="http://longwayaround.org.uk/tag/postgres.html">postgres</a> <a href="http://longwayaround.org.uk/tag/postgis.html">postgis</a> <a href="http://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->                    <p><a href="http://longwayaround.org.uk/notes/read-only-postgres-database/#disqus_thread">comments</a>.</p>
+<p>Tags: <a href="https://longwayaround.org.uk/tag/postgres.html">postgres</a> <a href="https://longwayaround.org.uk/tag/postgis.html">postgis</a> <a href="https://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->                    <p><a href="https://longwayaround.org.uk/notes/read-only-postgres-database/#disqus_thread">comments</a>.</p>
                 </article>
             </aside><!-- /#featured -->
                 <section id="content" class="body">
                     <h1>Other posts</h1>
                     <hr />
                         <ol id="posts-list" class="hfeed">
+    </ol><!-- /#posts-list -->
+    </section><!-- /#content -->
 
  
             <li><article class="hentry">
                 <header>
                         <abbr class="published" title="2014-11-20T00:00:00+00:00">Thu 20 November 2014</abbr>
-                        <h1><a href="http://longwayaround.org.uk/notes/loading-postgis/" rel="bookmark" title="Permalink to Loading PostGIS">Loading PostGIS</a></h1>
+                        <h1><a href="https://longwayaround.org.uk/notes/loading-postgis/" rel="bookmark" title="Permalink to Loading PostGIS">Loading PostGIS</a></h1>
                 </header>
                 <div class="entry-content">
                 <div class="slug">
@@ -76,57 +76,63 @@
 <dt><a class="reference external" href="http://gothos.info/2014/03/loading-data-into-postgis-shapefiles/">shp2pgsql-gui</a></dt>
 <dd>Graphical interface to shp2pgsql tool shipped with PostGIS to load ESRI Shapefiles via pgAdmin III.</dd>
 <dt><a class="reference external" href="https://github.com/zer0infinity/OGR2GUI">ogr2gui</a></dt>
-<dd>Graphical interface to <code>ogr2ogr</code> command line utility ...</dd></dl></div></div>
+<dd>Graphical interface to <code>ogr2ogr</code> command line utility …</dd></dl></div></div>
                     <p>
-<a href="http://longwayaround.org.uk/notes/loading-postgis/#disqus_thread">comments</a>.                        <a class="readmore" href="http://longwayaround.org.uk/notes/loading-postgis/">read more</a>
+<a href="https://longwayaround.org.uk/notes/loading-postgis/#disqus_thread">comments</a>.                        <a class="readmore" href="https://longwayaround.org.uk/notes/loading-postgis/">read more</a>
                     </p>
                 </div>
                 </div><!-- /.entry-content -->
             </article></li>
+    </ol><!-- /#posts-list -->
+    </section><!-- /#content -->
 
  
             <li><article class="hentry">
                 <header>
                         <abbr class="published" title="2014-07-17T19:45:00+01:00">Thu 17 July 2014</abbr>
-                        <h1><a href="http://longwayaround.org.uk/notes/gnu-parallel-all-the-things/" rel="bookmark" title="Permalink to GNU Parallel all the things!">GNU Parallel all the things!</a></h1>
+                        <h1><a href="https://longwayaround.org.uk/notes/gnu-parallel-all-the-things/" rel="bookmark" title="Permalink to GNU Parallel all the things!">GNU Parallel all the things!</a></h1>
                 </header>
                 <div class="entry-content">
                 <div class="slug">
-                    <p>I've been doing a lot of data processing recently and have been looking for a way of running bulk data loads into PostGIS in parallel to make use of all available cores. The work has mainly revolved around loading national cover of Ordnance Survey OS MasterMap and VectorMap Local ...</p>
+                    <p>I've been doing a lot of data processing recently and have been looking for a way of running bulk data loads into PostGIS in parallel to make use of all available cores. The work has mainly revolved around loading national cover of Ordnance Survey OS MasterMap and VectorMap Local for …</p>
                     <p>
-<a href="http://longwayaround.org.uk/notes/gnu-parallel-all-the-things/#disqus_thread">comments</a>.                        <a class="readmore" href="http://longwayaround.org.uk/notes/gnu-parallel-all-the-things/">read more</a>
+<a href="https://longwayaround.org.uk/notes/gnu-parallel-all-the-things/#disqus_thread">comments</a>.                        <a class="readmore" href="https://longwayaround.org.uk/notes/gnu-parallel-all-the-things/">read more</a>
                     </p>
                 </div>
                 </div><!-- /.entry-content -->
             </article></li>
+    </ol><!-- /#posts-list -->
+    </section><!-- /#content -->
 
  
             <li><article class="hentry">
                 <header>
                         <abbr class="published" title="2011-11-24T21:39:00+00:00">Thu 24 November 2011</abbr>
-                        <h1><a href="http://longwayaround.org.uk/notes/disaggregate-multilinestrings-using-st_dump-postgis/" rel="bookmark" title="Permalink to Disaggregate MultiLineStrings using ST_Dump PostGIS">Disaggregate MultiLineStrings using ST_Dump PostGIS</a></h1>
+                        <h1><a href="https://longwayaround.org.uk/notes/disaggregate-multilinestrings-using-st_dump-postgis/" rel="bookmark" title="Permalink to Disaggregate MultiLineStrings using ST_Dump PostGIS">Disaggregate MultiLineStrings using ST_Dump PostGIS</a></h1>
                 </header>
                 <div class="entry-content">
                 <div class="slug">
-                    <p>PostGIS the spatial extension to the PostgreSQL database provides a host of functions for querying, creating and manipulating geometries within the database. ST_Dump allows you to disaggregate collection and multi geometries such as MultiPolygon and MultiLineSting easily. The example below demonstrates starting with a table that contains one row with ...</p>
+                    <p>PostGIS the spatial extension to the PostgreSQL database provides a host of functions for querying, creating and manipulating geometries within the database. ST_Dump allows you to disaggregate collection and multi geometries such as MultiPolygon and MultiLineSting easily. The example below demonstrates starting with a table that contains one row with …</p>
                     <p>
-<a href="http://longwayaround.org.uk/notes/disaggregate-multilinestrings-using-st_dump-postgis/#disqus_thread">comments</a>.                        <a class="readmore" href="http://longwayaround.org.uk/notes/disaggregate-multilinestrings-using-st_dump-postgis/">read more</a>
+<a href="https://longwayaround.org.uk/notes/disaggregate-multilinestrings-using-st_dump-postgis/#disqus_thread">comments</a>.                        <a class="readmore" href="https://longwayaround.org.uk/notes/disaggregate-multilinestrings-using-st_dump-postgis/">read more</a>
                     </p>
                 </div>
                 </div><!-- /.entry-content -->
             </article></li>
+    </ol><!-- /#posts-list -->
+    </section><!-- /#content -->
 
  
             <li><article class="hentry">
                 <header>
                         <abbr class="published" title="2010-12-19T21:06:00+00:00">Sun 19 December 2010</abbr>
-                        <h1><a href="http://longwayaround.org.uk/notes/build-ogr-18-with-gml-wfs-and-postgis-support-on-ubuntu-1004/" rel="bookmark" title="Permalink to Build OGR 1.8 with GML, WFS and PostGIS support on Ubuntu 10.04">Build OGR 1.8 with GML, WFS and PostGIS support on Ubuntu 10.04</a></h1>
+                        <h1><a href="https://longwayaround.org.uk/notes/build-ogr-18-with-gml-wfs-and-postgis-support-on-ubuntu-1004/" rel="bookmark" title="Permalink to Build OGR 1.8 with GML, WFS and PostGIS support on Ubuntu 10.04">Build OGR 1.8 with GML, WFS and PostGIS support on Ubuntu 10.04</a></h1>
                 </header>
                 <div class="entry-content">
                 <div class="slug">
-                    <p>OGR 1.8 introduces support for reading GML with feature attributes expressed as nested elements as found in Ordnance Survey's OS MasterMap as well as support for accessing WFS. This is a brief script for building OGR (GDAL) 1.8 from source as it's not currently released: Download ...</p>
+                    <p>OGR 1.8 introduces support for reading GML with feature attributes expressed as nested elements as found in Ordnance Survey's OS MasterMap as well as support for accessing WFS. This is a brief script for building OGR (GDAL) 1.8 from source as it's not currently released: Download latest daily …</p>
                     <p>
-<a href="http://longwayaround.org.uk/notes/build-ogr-18-with-gml-wfs-and-postgis-support-on-ubuntu-1004/#disqus_thread">comments</a>.                        <a class="readmore" href="http://longwayaround.org.uk/notes/build-ogr-18-with-gml-wfs-and-postgis-support-on-ubuntu-1004/">read more</a>
+<a href="https://longwayaround.org.uk/notes/build-ogr-18-with-gml-wfs-and-postgis-support-on-ubuntu-1004/#disqus_thread">comments</a>.                        <a class="readmore" href="https://longwayaround.org.uk/notes/build-ogr-18-with-gml-wfs-and-postgis-support-on-ubuntu-1004/">read more</a>
                     </p>
                 </div>
                 </div><!-- /.entry-content -->
