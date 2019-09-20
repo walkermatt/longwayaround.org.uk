@@ -38,56 +38,102 @@
 
             <aside id="featured" class="body">
                 <article>
-                    <abbr class="published" title="2017-02-18T07:55:00+00:00">Sat 18 February 2017</abbr>
-                    <h1 class="entry-title"><a href="https://longwayaround.org.uk/notes/postgres-information-functions/">Postgres Information Functions</a></h1> 
-                    <p>Postgres contains a wealth of functions that provide information about a database and the objects within. The <a class="reference external" href="https://www.postgresql.org/docs/current/static/functions-info.html/">System Information Functions of the official documention</a> provides a full list. There are a huge number of functions covering a whole host of info from the current database session, privileges, function properties.</p>
-<div class="section" id="examples">
-<h2>Examples</h2>
-<div class="section" id="find-an-objects-oid">
-<h3>Find an objects oid</h3>
-<p>A lot of the info functions accept the <a class="reference external" href="https://www.postgresql.org/docs/current/static/datatype-oid.html/">Object Identifier Type</a> for objects in the database. This can be obtained by casting to <code>regclass</code> (also described in the  <a class="reference external" href="https://www.postgresql.org/docs/current/static/datatype-oid.html/">oid docs</a>) then to <code>oid</code>:</p>
-<div class="highlight"><pre><span></span><span class="k">select</span> <span class="s1">&#39;schema_name.relation_name&#39;</span><span class="p">::</span><span class="n">regclass</span><span class="p">::</span><span class="n">oid</span><span class="p">;</span>
+                    <abbr class="published" title="2019-09-20T12:00:00+01:00">Fri 20 September 2019</abbr>
+                    <h1 class="entry-title"><a href="https://longwayaround.org.uk/notes/mapserver-postgis-performance/">MapServer PostGIS Performance</a></h1> 
+                    <p>Recently I was looking at improving the performance of rendering a <a class="reference external" href="https://github.com/spacesyntax/OpenMapping">Space Syntax OpenMapping</a> layer in MapServer. The <code>openmapping_gb_v1</code> table is in a PostGIS database with an index on the geometry column. The original MapServer <code>DATA</code> configuration looked like this:</p>
+<div class="highlight"><pre><span></span>DATA &quot;wkb_geometry from (select meridian_class_scale * 10 as line_width, * from openmapping.openmapping_gb_v1 order by choice2kmrank) as a using unique fid using srid=27700&quot;
 </pre></div>
-<p>Where <code>relation_name</code> is a table, view, index etc.</p>
+<p>The main thing to note is that the rows are sorted by the <code>choice2kmrank</code> value to ensure features are rendered in the correct order (a similar problem as described in <a class="reference external" href="http://mapgears.com/en/blog/archive/2013-03-05-roads_network_mapping">Mapping a road network with MapServer - Understanding the display order</a>).</p>
+<p>This SQL results in the following query being executed by MapServer:</p>
+<div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="ss">&quot;choice2kmrank&quot;</span><span class="p">,</span>
+    <span class="ss">&quot;line_width&quot;</span><span class="p">,</span>
+    <span class="n">encode</span><span class="p">(</span><span class="n">ST_AsBinary</span><span class="p">(</span><span class="n">ST_Force_2D</span><span class="p">(</span><span class="ss">&quot;wkb_geometry&quot;</span><span class="p">),</span><span class="s1">&#39;NDR&#39;</span><span class="p">),</span><span class="s1">&#39;hex&#39;</span><span class="p">)</span> <span class="k">AS</span> <span class="n">geom</span><span class="p">,</span>
+    <span class="ss">&quot;fid&quot;</span>
+<span class="k">FROM</span>
+<span class="p">(</span><span class="k">SELECT</span> <span class="n">meridian_class_scale</span> <span class="o">*</span> <span class="mi">10</span> <span class="k">AS</span> <span class="n">line_width</span><span class="p">,</span>
+        <span class="o">*</span>
+<span class="k">FROM</span> <span class="n">openmapping</span><span class="p">.</span><span class="n">openmapping_gb_v1</span>
+<span class="k">ORDER</span> <span class="k">BY</span> <span class="n">choice2kmrank</span><span class="p">)</span> <span class="k">AS</span> <span class="n">a</span>
+<span class="k">WHERE</span> <span class="n">wkb_geometry</span> <span class="o">&amp;&amp;</span> <span class="n">ST_GeomFromText</span><span class="p">(</span><span class="s1">&#39;POLYGON((441580.992440577 112973.855285226,441580.992440577 115008.987681971,443621.486046148 115008.987681971,443621.486046148 112973.855285226,441580.992440577 112973.855285226))&#39;</span><span class="p">,</span><span class="mi">27700</span><span class="p">);</span>
+</pre></div>
+<p>There are two issues with the original query performance-wise:</p>
+<div class="section" id="ordering-too-many-rows">
+<h2>1. Ordering too many rows</h2>
+<p>The order by clause is within the inner query, so it sorts all rows in <code>openmapping.openmapping_gb_v1</code>, not just those that fall within the spatial filter. This is fine for tables with a small number of rows, but has a significant impact for larger tables.</p>
 </div>
-<div class="section" id="view-definition">
-<h3>View definition</h3>
-<div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">pg_get_viewdef</span><span class="p">(</span><span class="s1">&#39;schema_name.view_name&#39;</span><span class="p">::</span><span class="n">regclass</span><span class="p">::</span><span class="n">oid</span><span class="p">);</span>
-</pre></div>
-<p>Or in <code>psql</code> you can use one of the built in commands:</p>
-<div class="highlight"><pre><span></span><span class="err">\</span><span class="n">d</span><span class="o">+</span> <span class="k">schema_name</span><span class="p">.</span><span class="n">view_name</span>
-</pre></div>
+<div class="section" id="spatial-index-not-being-used">
+<h2>2. Spatial index not being used</h2>
+<p>By default MapServer represents the spatial filter as an inline geometry, which often results in Postgres applying the bounding box spatial filter without using the spatial index. This can be seen here when running <code>EXPLAIN SELECT ...</code> to generate an execution plan.</p>
 </div>
-<div class="section" id="function-definition">
-<h3>Function definition</h3>
-<p>Returns the function definition for a given function. Many built-in functions don't reveal much due to them not being written in SQL but for those that are you'll get the complete create function statement. For example to view the definition of the PostGIS <code>st_colormap</code> function:</p>
-<div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">pg_get_functiondef</span><span class="p">(</span><span class="s1">&#39;st_colormap(raster, integer, text, text)&#39;</span><span class="p">::</span><span class="n">regprocedure</span><span class="p">);</span>
+<div class="section" id="solution">
+<h2>Solution</h2>
+<p>Ideally we want to only sort those rows returned by the spatial filter, as well as having the spatial filter use the spatial index.</p>
+<p>MapServer provides a special <code>!BOX!</code> placeholder that can be inserted into a SQL query, which dictates where the <code>ST_GeomFromText('POLGON...</code> statement appears when MapServer constructs the SQL to execute. At the time of writing the <code>!BOX!</code> placeholder is described in <a class="reference external" href="https://mapserver.org/input/vector/postgis.html#data-access-connection-method">the last example in the PostGIS Data Access documentation</a>.</p>
+<p>By using the <code>!BOX!</code> placeholder we can combine the spatial filter and sort into a single select statement:</p>
+<div class="highlight"><pre><span></span>DATA &quot;wkb_geometry from (select meridian_class_scale * 10 as line_width, * from openmapping.openmapping_gb_v1 where wkb_geometry &amp;&amp; !BOX! order by choice2kmrank) as a using unique fid using srid=27700&quot;
 </pre></div>
-</div>
-<div class="section" id="privileges">
-<h3>Privileges</h3>
-<p>A <a class="reference external" href="https://www.postgresql.org/docs/current/static/functions-info.html#FUNCTIONS-INFO-ACCESS-TABLE/">whole host of functions exist to determine privileges for schemas, tables, functions etc.</a> Some examples:</p>
-<p>Determine if the current users can select from a table:</p>
-<div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">has_table_privilege</span><span class="p">(</span><span class="s1">&#39;schema_name.relation_name&#39;</span><span class="p">,</span> <span class="s1">&#39;select&#39;</span><span class="p">);</span>
+<p>Results in MapServer generating:</p>
+<div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="ss">&quot;choice2kmrank&quot;</span><span class="p">,</span>
+    <span class="ss">&quot;line_width&quot;</span><span class="p">,</span>
+    <span class="n">encode</span><span class="p">(</span><span class="n">ST_AsBinary</span><span class="p">(</span><span class="n">ST_Force_2D</span><span class="p">(</span><span class="ss">&quot;wkb_geometry&quot;</span><span class="p">),</span><span class="s1">&#39;NDR&#39;</span><span class="p">),</span><span class="s1">&#39;hex&#39;</span><span class="p">)</span> <span class="k">AS</span> <span class="n">geom</span><span class="p">,</span>
+    <span class="ss">&quot;fid&quot;</span>
+<span class="k">FROM</span>
+<span class="p">(</span><span class="k">SELECT</span> <span class="n">meridian_class_scale</span> <span class="o">*</span> <span class="mi">10</span> <span class="k">AS</span> <span class="n">line_width</span><span class="p">,</span>
+        <span class="o">*</span>
+<span class="k">FROM</span> <span class="n">openmapping</span><span class="p">.</span><span class="n">openmapping_gb_v1</span>
+<span class="k">WHERE</span> <span class="n">wkb_geometry</span> <span class="o">&amp;&amp;</span> <span class="n">ST_GeomFromText</span><span class="p">(</span><span class="s1">&#39;POLYGON((441580.992440577 112973.855285226,441580.992440577 115008.987681971,443621.486046148 115008.987681971,443621.486046148 112973.855285226,441580.992440577 112973.855285226))&#39;</span><span class="p">,</span><span class="mi">27700</span><span class="p">)</span>
+<span class="k">ORDER</span> <span class="k">BY</span> <span class="n">choice2kmrank</span><span class="p">)</span> <span class="k">AS</span> <span class="n">a</span><span class="p">;</span>
 </pre></div>
-<p>Note: The docs state that &quot;multiple privilege types can be listed separated by commas, in which case the result will be true if any of the listed privileges is held&quot;. This means that in order to test a number of privileges it is normally better to test each privilege individually as <code>select has_table_privilege('schema_name.relation_name', 'select,update');</code> would return <code>t</code> even if only <code>select</code> is supported.</p>
-<p>Determine if a user can use a schema:</p>
-<div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">has_schema_privilege</span><span class="p">(</span><span class="s1">&#39;schema_name&#39;</span><span class="p">,</span> <span class="s1">&#39;usage&#39;</span><span class="p">);</span>
+<p>To improve the likelihood that the spatial index is used, we can use a technique described by <a class="reference external" href="https://gis.stackexchange.com/users/429/john-powell">John Powell</a> in <a class="reference external" href="https://gis.stackexchange.com/a/253987/6004">this gis.stackexchange.com answer</a>, which involves moving the geometry creation to a <a class="reference external" href="https://www.postgresql.org/docs/11/queries-with.html">CTE (Common Table Expression)</a> resulting in the query optimiser having prior knowledge of the geometry which generally results in the spatial index being used.</p>
+<div class="highlight"><pre><span></span>DATA &quot;wkb_geometry from (WITH box (geom) AS (SELECT !BOX! as geom) SELECT fid, wkb_geometry, choice2kmrank, meridian_class_scale * 10 AS line_width FROM openmapping.openmapping_gb_v1, box WHERE wkb_geometry &amp;&amp; box.geom ORDER BY choice2kmrank) as a using unique fid using srid=27700&quot;
 </pre></div>
-</div>
+<p>Results in MapServer generating:</p>
+<div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="ss">&quot;choice2kmrank&quot;</span><span class="p">,</span>
+    <span class="ss">&quot;line_width&quot;</span><span class="p">,</span>
+    <span class="n">encode</span><span class="p">(</span><span class="n">ST_AsBinary</span><span class="p">(</span><span class="n">ST_Force_2D</span><span class="p">(</span><span class="ss">&quot;wkb_geometry&quot;</span><span class="p">),</span><span class="s1">&#39;NDR&#39;</span><span class="p">),</span><span class="s1">&#39;hex&#39;</span><span class="p">)</span> <span class="k">AS</span> <span class="n">geom</span><span class="p">,</span>
+    <span class="ss">&quot;fid&quot;</span>
+<span class="k">FROM</span> <span class="p">(</span><span class="k">WITH</span> <span class="n">box</span> <span class="p">(</span><span class="n">geom</span><span class="p">)</span> <span class="k">AS</span>
+        <span class="p">(</span><span class="k">SELECT</span> <span class="n">ST_GeomFromText</span><span class="p">(</span><span class="s1">&#39;POLYGON((441580.992440577 112973.855285226,441580.992440577 115008.987681971,443621.486046148 115008.987681971,443621.486046148 112973.855285226,441580.992440577 112973.855285226))&#39;</span><span class="p">,</span><span class="mi">27700</span><span class="p">)</span> <span class="k">AS</span> <span class="n">geom</span><span class="p">)</span>
+    <span class="k">SELECT</span> <span class="n">fid</span><span class="p">,</span>
+            <span class="n">wkb_geometry</span><span class="p">,</span>
+            <span class="n">choice2kmrank</span><span class="p">,</span>
+            <span class="n">meridian_class_scale</span> <span class="o">*</span> <span class="mi">10</span> <span class="k">AS</span> <span class="n">line_width</span>
+    <span class="k">FROM</span> <span class="n">openmapping</span><span class="p">.</span><span class="n">openmapping_gb_v1</span><span class="p">,</span>
+        <span class="n">box</span>
+    <span class="k">WHERE</span> <span class="n">wkb_geometry</span> <span class="o">&amp;&amp;</span> <span class="n">box</span><span class="p">.</span><span class="n">geom</span>
+    <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">choice2kmrank</span><span class="p">)</span> <span class="k">AS</span> <span class="n">a</span><span class="p">;</span>
+</pre></div>
+<p>With this change we're now using the spatial index when applying the spatial filter, then only sorting the filtered rows. In my case the query execution time went from several seconds to less than 500ms with identical results.</p>
+<p>Thanks to <a class="reference external" href="https://twitter.com/devsupportman">Peter Goulborn</a> and <a class="reference external" href="https://twitter.com/ijturton">Ian Turton</a> for their help getting to the final solution.</p>
 </div>
 
 <footer class="post-info">
-    <abbr class="published" title="2017-02-18T07:55:00+00:00">Sat 18 February 2017</abbr>
-<p>Tags: <a href="https://longwayaround.org.uk/tag/postgres.html">postgres</a> <a href="https://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->                    <p><a href="https://longwayaround.org.uk/notes/postgres-information-functions/#disqus_thread">comments</a>.</p>
+    <abbr class="published" title="2019-09-20T12:00:00+01:00">Fri 20 September 2019</abbr>
+<p>Tags: <a href="https://longwayaround.org.uk/tag/mapserver.html">mapserver</a> <a href="https://longwayaround.org.uk/tag/postgres.html">postgres</a> <a href="https://longwayaround.org.uk/tag/postgis.html">postgis</a> <a href="https://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->                    <p><a href="https://longwayaround.org.uk/notes/mapserver-postgis-performance/#disqus_thread">comments</a>.</p>
                 </article>
             </aside><!-- /#featured -->
                 <section id="content" class="body">
                     <h1>Other posts</h1>
                     <hr />
                         <ol id="posts-list" class="hfeed">
-    </ol><!-- /#posts-list -->
-    </section><!-- /#content -->
+
+ 
+            <li><article class="hentry">
+                <header>
+                        <abbr class="published" title="2017-02-18T07:55:00+00:00">Sat 18 February 2017</abbr>
+                        <h1><a href="https://longwayaround.org.uk/notes/postgres-information-functions/" rel="bookmark" title="Permalink to Postgres Information Functions">Postgres Information Functions</a></h1>
+                </header>
+                <div class="entry-content">
+                <div class="slug">
+                    <p>Postgres contains a wealth of functions that provide information about a database and the objects within. The <a class="reference external" href="https://www.postgresql.org/docs/current/static/functions-info.html/">System Information Functions of the official documention</a> provides a full list. There are a huge number of functions covering a whole host of info from the current database session, privileges, function properties.</p>
+<div class="section" id="examples">
+<h2>Examples …</h2></div>
+                    <p>
+<a href="https://longwayaround.org.uk/notes/postgres-information-functions/#disqus_thread">comments</a>.                        <a class="readmore" href="https://longwayaround.org.uk/notes/postgres-information-functions/">read more</a>
+                    </p>
+                </div>
+                </div><!-- /.entry-content -->
+            </article></li>
 
  
             <li><article class="hentry">
@@ -106,8 +152,6 @@
                 </div>
                 </div><!-- /.entry-content -->
             </article></li>
-    </ol><!-- /#posts-list -->
-    </section><!-- /#content -->
 
  
             <li><article class="hentry">
@@ -125,7 +169,6 @@
                 </div><!-- /.entry-content -->
             </article></li>
     </ol><!-- /#posts-list -->
-    </section><!-- /#content -->
         <section id="extras" class="body">
         </section><!-- /#extras -->
 
