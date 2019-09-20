@@ -7,7 +7,7 @@ RELATIVE_URLS = True
 AUTHOR = u"walkermatt"
 SITENAME = u"longwayaround.org.uk"
 SITESUBTITLE = u"taking the scenic route and enjoying the journey"
-SITEURL = u"http://longwayaround.org.uk"
+SITEURL = u"https://longwayaround.org.uk"
 
 DIRECT_TEMPLATES = ('index', 'archives')
 
@@ -20,11 +20,10 @@ LINKS = ()
 
 # Social widget
 SOCIAL = (
-    ('linkedin', 'http://uk.linkedin.com/in/walkermatt'),
-    ('delicious', 'http://delicious.com/walkermatt'),
-    ('github', 'http://github.com/organizations/AstunTechnology'),
-    ('github', 'http://github.com/walkermatt'),
-    ('twitter', 'http://twitter.com/_walkermatt')
+    ('linkedin', 'https://uk.linkedin.com/in/walkermatt'),
+    ('github', 'https://github.com/organizations/AstunTechnology'),
+    ('github', 'https://github.com/walkermatt'),
+    ('twitter', 'https://twitter.com/_walkermatt')
 )
 
 PLUGINS = [
