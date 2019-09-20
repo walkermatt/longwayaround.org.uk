@@ -42,7 +42,7 @@ serve: html $(OUTPUTDIR)/index.html
 	(cd output && python -m SimpleHTTPServer)
 
 watch_serve:
-	nodemon --ignore ./output --ext rst,py,js,css --exec make serve
+	nodemon --ignore ./output --ext rst,py,html,js,css --exec make serve
 
 .PHONY: html html_deploy help clean deploy serve watch_serve
     
