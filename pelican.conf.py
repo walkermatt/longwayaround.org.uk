@@ -15,9 +15,6 @@ TIMEZONE = 'Europe/London'
 
 DEFAULT_LANG = 'en'
 
-# Blogroll
-LINKS = ()
-
 # Social widget
 SOCIAL = (
     ('linkedin', 'https://uk.linkedin.com/in/walkermatt'),
