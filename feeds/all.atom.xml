@@ -1,5 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>longwayaround.org.uk</title><link href="https://longwayaround.org.uk/" rel="alternate"></link><link href="https://longwayaround.org.uk/feeds/all.atom.xml" rel="self"></link><id>https://longwayaround.org.uk/</id><updated>2019-09-20T12:00:00+01:00</updated><subtitle>taking the scenic route and enjoying the journey</subtitle><entry><title>MapServer PostGIS Performance</title><link href="https://longwayaround.org.uk/notes/mapserver-postgis-performance/" rel="alternate"></link><published>2019-09-20T12:00:00+01:00</published><updated>2019-09-20T12:00:00+01:00</updated><author><name>walkermatt</name></author><id>tag:longwayaround.org.uk,2019-09-20:/notes/mapserver-postgis-performance/</id><summary type="html">&lt;p&gt;Recently I was looking at improving the performance of rendering a &lt;a class="reference external" href="https://github.com/spacesyntax/OpenMapping"&gt;Space Syntax OpenMapping&lt;/a&gt; layer in MapServer. The &lt;code&gt;openmapping_gb_v1&lt;/code&gt; table is in a PostGIS database with an index on the geometry column. The original MapServer &lt;code&gt;DATA&lt;/code&gt; configuration looked like this:&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>longwayaround.org.uk</title><link href="https://longwayaround.org.uk/" rel="alternate"></link><link href="https://longwayaround.org.uk/feeds/all.atom.xml" rel="self"></link><id>https://longwayaround.org.uk/</id><updated>2022-06-22T21:56:00+01:00</updated><subtitle>taking the scenic route and enjoying the journey</subtitle><entry><title>Writing small text filters for the shell and Vim</title><link href="https://longwayaround.org.uk/notes/writing-small-text-filters-for-the-shell-and-vim/" rel="alternate"></link><published>2022-06-22T21:56:00+01:00</published><updated>2022-06-22T21:56:00+01:00</updated><author><name>walkermatt</name></author><id>tag:longwayaround.org.uk,2022-06-22:/notes/writing-small-text-filters-for-the-shell-and-vim/</id><summary type="html">&lt;p&gt;Text filters are command-line programs that take text as input, transform it then output the results. An example of a common built in text filter is &lt;tt class="docutils literal"&gt;sort&lt;/tt&gt; which when passed newline separated text will sort each line:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nb"&gt;printf&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;b\nc\na&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; sort
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;You can write your own text filter scripts …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Text filters are command-line programs that take text as input, transform it then output the results. An example of a common built in text filter is &lt;tt class="docutils literal"&gt;sort&lt;/tt&gt; which when passed newline separated text will sort each line:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nb"&gt;printf&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;b\nc\na&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; sort
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;You can write your own text filter scripts; this is an example from my &lt;tt class="docutils literal"&gt;`.bin&lt;/tt&gt; directory which can be used to filter JSON text. It supports pretty printing the output as well as removing any formatting so that the JSON text is all on one line.&lt;/p&gt;
+&lt;p&gt;&lt;tt class="docutils literal"&gt;jsonformat&lt;/tt&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="ch"&gt;#!/usr/bin/env python3&lt;/span&gt;
+
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;sys&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;json&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;optparse&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;OptionParser&lt;/span&gt;
+
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;main&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+
+    &lt;span class="n"&gt;parser&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;OptionParser&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+    &lt;span class="n"&gt;parser&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;add_option&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;-i&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;--indent&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dest&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;indent&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nb"&gt;type&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;int&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;action&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;store&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;default&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;parser&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;add_option&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;-s&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;--squash&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dest&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;squash&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;action&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;store_true&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;options&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;args&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;parser&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;parse_args&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;infile&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;sys&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;stdin&lt;/span&gt;
+        &lt;span class="n"&gt;outfile&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;sys&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;stdout&lt;/span&gt;
+    &lt;span class="k"&gt;elif&lt;/span&gt; &lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;infile&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;open&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;rb&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;outfile&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;sys&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;stdout&lt;/span&gt;
+    &lt;span class="k"&gt;elif&lt;/span&gt; &lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;infile&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;open&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;rb&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;outfile&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;open&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;wb&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="k"&gt;raise&lt;/span&gt; &lt;span class="ne"&gt;SystemExit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sys&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;argv&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot; [infile [outfile]]&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;try&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;obj&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;json&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;load&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;infile&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;except&lt;/span&gt; &lt;span class="ne"&gt;ValueError&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;e&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="k"&gt;raise&lt;/span&gt; &lt;span class="ne"&gt;SystemExit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;e&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;options&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;squash&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;json&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;dump&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;obj&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;outfile&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;json&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;dump&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;obj&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;outfile&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;sort_keys&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;indent&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;options&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;indent&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;separators&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;,&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;: &amp;#39;&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+    &lt;span class="n"&gt;outfile&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;write&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="vm"&gt;__name__&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;__main__&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;span class="n"&gt;main&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;The Python script makes use of the Python 3 &lt;tt class="docutils literal"&gt;json&lt;/tt&gt; package for reading and writing JSON and supports reading from standard input (&lt;tt class="docutils literal"&gt;stdin&lt;/tt&gt;) or a file and writing to standard out (&lt;tt class="docutils literal"&gt;stdout&lt;/tt&gt;) or file.&lt;/p&gt;
+&lt;p&gt;Assuming a file called &lt;tt class="docutils literal"&gt;feature.json&lt;/tt&gt; it can be pretty printed with an indentation of &lt;tt class="docutils literal"&gt;2&lt;/tt&gt; spaces to &lt;tt class="docutils literal"&gt;stdout&lt;/tt&gt; like so:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;jsonformat --indent &lt;span class="m"&gt;2&lt;/span&gt; features.json
+&lt;/pre&gt;&lt;/div&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="nt"&gt;&amp;quot;features&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+    &lt;span class="p"&gt;{&lt;/span&gt;
+      &lt;span class="nt"&gt;&amp;quot;geometry&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="nt"&gt;&amp;quot;coordinates&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+          &lt;span class="p"&gt;[&lt;/span&gt;
+            &lt;span class="p"&gt;[&lt;/span&gt;
+              &lt;span class="mf"&gt;-2.407379150390625&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+              &lt;span class="mf"&gt;52.36302183361385&lt;/span&gt;
+            &lt;span class="p"&gt;],&lt;/span&gt;
+            &lt;span class="p"&gt;[&lt;/span&gt;
+              &lt;span class="mf"&gt;-2.3258399963378906&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+              &lt;span class="mf"&gt;52.36302183361385&lt;/span&gt;
+            &lt;span class="p"&gt;],&lt;/span&gt;
+            &lt;span class="p"&gt;[&lt;/span&gt;
+              &lt;span class="mf"&gt;-2.3258399963378906&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+              &lt;span class="mf"&gt;52.41488029514571&lt;/span&gt;
+            &lt;span class="p"&gt;],&lt;/span&gt;
+            &lt;span class="p"&gt;[&lt;/span&gt;
+              &lt;span class="mf"&gt;-2.407379150390625&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+              &lt;span class="mf"&gt;52.41488029514571&lt;/span&gt;
+            &lt;span class="p"&gt;],&lt;/span&gt;
+            &lt;span class="p"&gt;[&lt;/span&gt;
+              &lt;span class="mf"&gt;-2.407379150390625&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+              &lt;span class="mf"&gt;52.36302183361385&lt;/span&gt;
+            &lt;span class="p"&gt;]&lt;/span&gt;
+          &lt;span class="p"&gt;]&lt;/span&gt;
+        &lt;span class="p"&gt;],&lt;/span&gt;
+        &lt;span class="nt"&gt;&amp;quot;type&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Polygon&amp;quot;&lt;/span&gt;
+      &lt;span class="p"&gt;},&lt;/span&gt;
+      &lt;span class="nt"&gt;&amp;quot;properties&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="nt"&gt;&amp;quot;name&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Wyre Forest&amp;quot;&lt;/span&gt;
+      &lt;span class="p"&gt;},&lt;/span&gt;
+      &lt;span class="nt"&gt;&amp;quot;type&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Feature&amp;quot;&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+  &lt;span class="p"&gt;],&lt;/span&gt;
+  &lt;span class="nt"&gt;&amp;quot;type&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;FeatureCollection&amp;quot;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Or output with formatting removed:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;jsonformat --squash features.json
+&lt;/pre&gt;&lt;/div&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nt"&gt;&amp;quot;features&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[{&lt;/span&gt;&lt;span class="nt"&gt;&amp;quot;geometry&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nt"&gt;&amp;quot;coordinates&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[[[&lt;/span&gt;&lt;span class="mf"&gt;-2.407379150390625&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mf"&gt;52.36302183361385&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mf"&gt;-2.3258399963378906&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mf"&gt;52.36302183361385&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mf"&gt;-2.3258399963378906&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mf"&gt;52.41488029514571&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mf"&gt;-2.407379150390625&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mf"&gt;52.41488029514571&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mf"&gt;-2.407379150390625&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mf"&gt;52.36302183361385&lt;/span&gt;&lt;span class="p"&gt;]]],&lt;/span&gt; &lt;span class="nt"&gt;&amp;quot;type&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Polygon&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="nt"&gt;&amp;quot;properties&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nt"&gt;&amp;quot;name&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Wyre Forest&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="nt"&gt;&amp;quot;type&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Feature&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;}],&lt;/span&gt; &lt;span class="nt"&gt;&amp;quot;type&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;FeatureCollection&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;div class="section" id="use-in-vim"&gt;
+&lt;h2&gt;Use in Vim&lt;/h2&gt;
+&lt;p&gt;Assuming the script is in your system path it can then be used from within Vim to filter text within a buffer.&lt;/p&gt;
+&lt;div class="section" id="format-program-formatprg"&gt;
+&lt;h3&gt;Format program (&lt;tt class="docutils literal"&gt;formatprg&lt;/tt&gt;)&lt;/h3&gt;
+&lt;p&gt;Add the following to your &lt;tt class="docutils literal"&gt;.vimrc&lt;/tt&gt; to set &lt;tt class="docutils literal"&gt;jsonformat&lt;/tt&gt; as the &lt;a class="reference external" href="https://vimhelp.org/options.txt.html#%27formatprg%27"&gt;format program&lt;/a&gt; for JSON files:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;au&lt;/span&gt; &lt;span class="nb"&gt;FileType&lt;/span&gt; json &lt;span class="k"&gt;setlocal&lt;/span&gt; &lt;span class="nb"&gt;formatprg&lt;/span&gt;&lt;span class="p"&gt;=&lt;/span&gt;jsonformat
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;When you have a buffer with a file type of JSON open you can then use &lt;tt class="docutils literal"&gt;gq&lt;/tt&gt; followed by a motion to invoke the format program. You can also select lines in visual mode and use &lt;tt class="docutils literal"&gt;gq&lt;/tt&gt; to format just those lines.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="execute-shell-command"&gt;
+&lt;h3&gt;Execute shell command (&lt;tt class="docutils literal"&gt;:!&lt;/tt&gt;)&lt;/h3&gt;
+&lt;p&gt;It's also possible to select lines in visual mode then call &lt;tt class="docutils literal"&gt;jsonformat&lt;/tt&gt; &lt;a class="reference external" href="https://vimhelp.org/various.txt.html#%3A%21"&gt;via the command-line mode&lt;/a&gt; (the &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;'&amp;lt;,'&amp;gt;&lt;/span&gt;&lt;/tt&gt; are inserted for you and represent the range of the currently selected lines):&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;&amp;lt;,&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;!&lt;/span&gt;jsonformat &lt;span class="p"&gt;--&lt;/span&gt;squash
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;This approach has the advantage of allowing options to be specified such as &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;--squash&lt;/span&gt;&lt;/tt&gt; in the above example.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</content><category term="vim"></category><category term="bash"></category><category term="sh"></category><category term="python"></category></entry><entry><title>MapServer PostGIS Performance</title><link href="https://longwayaround.org.uk/notes/mapserver-postgis-performance/" rel="alternate"></link><published>2019-09-20T12:00:00+01:00</published><updated>2019-09-20T12:00:00+01:00</updated><author><name>walkermatt</name></author><id>tag:longwayaround.org.uk,2019-09-20:/notes/mapserver-postgis-performance/</id><summary type="html">&lt;p&gt;Recently I was looking at improving the performance of rendering a &lt;a class="reference external" href="https://github.com/spacesyntax/OpenMapping"&gt;Space Syntax OpenMapping&lt;/a&gt; layer in MapServer. The &lt;code&gt;openmapping_gb_v1&lt;/code&gt; table is in a PostGIS database with an index on the geometry column. The original MapServer &lt;code&gt;DATA&lt;/code&gt; configuration looked like this:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;DATA &amp;quot;wkb_geometry from (select meridian_class_scale * 10 as line_width, * from openmapping …&lt;/pre&gt;&lt;/div&gt;</summary><content type="html">&lt;p&gt;Recently I was looking at improving the performance of rendering a &lt;a class="reference external" href="https://github.com/spacesyntax/OpenMapping"&gt;Space Syntax OpenMapping&lt;/a&gt; layer in MapServer. The &lt;code&gt;openmapping_gb_v1&lt;/code&gt; table is in a PostGIS database with an index on the geometry column. The original MapServer &lt;code&gt;DATA&lt;/code&gt; configuration looked like this:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;DATA &amp;quot;wkb_geometry from (select meridian_class_scale * 10 as line_width, * from openmapping.openmapping_gb_v1 order by choice2kmrank) as a using unique fid using srid=27700&amp;quot;
 &lt;/pre&gt;&lt;/div&gt;
