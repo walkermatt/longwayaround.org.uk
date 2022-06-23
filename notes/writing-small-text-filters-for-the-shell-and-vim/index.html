@@ -44,7 +44,7 @@
         <p>Text filters are command-line programs that take text as input, transform it then output the results. An example of a common built in text filter is <tt class="docutils literal">sort</tt> which when passed newline separated text will sort each line:</p>
 <div class="highlight"><pre><span></span><span class="nb">printf</span> <span class="s1">&#39;b\nc\na&#39;</span> <span class="p">|</span> sort
 </pre></div>
-<p>You can write your own text filter scripts; this is an example from my <tt class="docutils literal">`.bin</tt> directory which can be used to filter JSON text. It supports pretty printing the output as well as removing any formatting so that the JSON text is all on one line.</p>
+<p>You can write your own text filter scripts; this is an example from my <a class="reference external" href="https://github.com/walkermatt/dotbin">~/.bin</a> directory which can be used to filter JSON text. It supports pretty printing the output as well as removing any formatting so that the JSON text is all on one line.</p>
 <p><tt class="docutils literal">jsonformat</tt></p>
 <div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python3</span>
 
@@ -83,7 +83,7 @@
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-<span class="n">main</span><span class="p">()</span>
+    <span class="n">main</span><span class="p">()</span>
 </pre></div>
 <p>The Python script makes use of the Python 3 <tt class="docutils literal">json</tt> package for reading and writing JSON and supports reading from standard input (<tt class="docutils literal">stdin</tt>) or a file and writing to standard out (<tt class="docutils literal">stdout</tt>) or file.</p>
 <p>Assuming a file called <tt class="docutils literal">feature.json</tt> it can be pretty printed with an indentation of <tt class="docutils literal">2</tt> spaces to <tt class="docutils literal">stdout</tt> like so:</p>

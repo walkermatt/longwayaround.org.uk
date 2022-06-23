@@ -5,7 +5,7 @@
 &lt;p&gt;You can write your own text filter scripts …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Text filters are command-line programs that take text as input, transform it then output the results. An example of a common built in text filter is &lt;tt class="docutils literal"&gt;sort&lt;/tt&gt; which when passed newline separated text will sort each line:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nb"&gt;printf&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;b\nc\na&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; sort
 &lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;You can write your own text filter scripts; this is an example from my &lt;tt class="docutils literal"&gt;`.bin&lt;/tt&gt; directory which can be used to filter JSON text. It supports pretty printing the output as well as removing any formatting so that the JSON text is all on one line.&lt;/p&gt;
+&lt;p&gt;You can write your own text filter scripts; this is an example from my &lt;a class="reference external" href="https://github.com/walkermatt/dotbin"&gt;~/.bin&lt;/a&gt; directory which can be used to filter JSON text. It supports pretty printing the output as well as removing any formatting so that the JSON text is all on one line.&lt;/p&gt;
 &lt;p&gt;&lt;tt class="docutils literal"&gt;jsonformat&lt;/tt&gt;&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="ch"&gt;#!/usr/bin/env python3&lt;/span&gt;
 
@@ -44,7 +44,7 @@
 
 
 &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="vm"&gt;__name__&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;__main__&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-&lt;span class="n"&gt;main&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+    &lt;span class="n"&gt;main&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;The Python script makes use of the Python 3 &lt;tt class="docutils literal"&gt;json&lt;/tt&gt; package for reading and writing JSON and supports reading from standard input (&lt;tt class="docutils literal"&gt;stdin&lt;/tt&gt;) or a file and writing to standard out (&lt;tt class="docutils literal"&gt;stdout&lt;/tt&gt;) or file.&lt;/p&gt;
 &lt;p&gt;Assuming a file called &lt;tt class="docutils literal"&gt;feature.json&lt;/tt&gt; it can be pretty printed with an indentation of &lt;tt class="docutils literal"&gt;2&lt;/tt&gt; spaces to &lt;tt class="docutils literal"&gt;stdout&lt;/tt&gt; like so:&lt;/p&gt;
