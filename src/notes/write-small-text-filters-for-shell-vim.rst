@@ -10,7 +10,7 @@ Text filters are command-line programs that take text as input, transform it the
 
     printf 'b\nc\na' | sort
 
-You can write your own text filter scripts; this is an example from my ```.bin`` directory which can be used to filter JSON text. It supports pretty printing the output as well as removing any formatting so that the JSON text is all on one line.
+You can write your own text filter scripts; this is an example from my `~/.bin <https://github.com/walkermatt/dotbin>`_ directory which can be used to filter JSON text. It supports pretty printing the output as well as removing any formatting so that the JSON text is all on one line.
 
 ``jsonformat``
 
@@ -53,7 +53,7 @@ You can write your own text filter scripts; this is an example from my ```.bin``
 
 
     if __name__ == '__main__':
-    main()
+        main()
 
 The Python script makes use of the Python 3 ``json`` package for reading and writing JSON and supports reading from standard input (``stdin``) or a file and writing to standard out (``stdout``) or file.
 
