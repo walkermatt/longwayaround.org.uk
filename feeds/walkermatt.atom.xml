@@ -90,7 +90,7 @@
 &lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;html&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;See the comments in the code for an explanation of the steps involved. The you should end up with a map that looks something like this:&lt;/p&gt;
-&lt;img alt="OpenLayers map showing styled OS Vector Tiles data for Malvern, UK" src="../files/os-vector-tile-openlayers.png" style="width: 100%;" /&gt;
+&lt;img alt="OpenLayers map showing styled OS Vector Tiles data for Malvern, UK" src="/files/os-vector-tile-openlayers.png" style="width: 100%;" /&gt;
 &lt;/div&gt;
 &lt;div class="section" id="what-about-mapboxvector-layer"&gt;
 &lt;h2&gt;What about MapboxVector layer?&lt;/h2&gt;
