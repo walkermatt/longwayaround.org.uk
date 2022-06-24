@@ -2,7 +2,7 @@ Web Mercator OS Vector Tile API in OpenLayers
 #############################################
 :date: 2022-06-23 21:56
 :category: notes
-:tags: javascript, openlayers, vector-tiles
+:tags: javascript, openlayers, vector-tiles, notes
 
 Adding a Vector Tile layer of Ordnance Survey data from the OS Data Hub to an OpenLayers map in Web Mercator is a little more work than expected as the JSON style document and associated JSON source document include paths for the default British National Grid tiles. The following is based on the output from `create-ol-app <https://github.com/openlayers/create-ol-app>`_ and the `OS Vector Tile API OpenLayers demo <https://github.com/OrdnanceSurvey/OS-Data-Hub-API-Demos/tree/master/OSVectorTileAPI/OpenLayers>`_.
 
