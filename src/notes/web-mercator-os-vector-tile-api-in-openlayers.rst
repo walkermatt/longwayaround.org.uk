@@ -91,9 +91,9 @@ Adding a Vector Tile layer of Ordnance Survey data from the OS Data Hub to an Op
         <meta charset="UTF-8" />
         <link rel="icon" type="image/x-icon" href="https://openlayers.org/favicon.ico" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <!-- Include the web font for the OS Vector Tile API styles -->
+        <!-- Include the web font for the OS Vector Tile API labels -->
         <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600" rel="stylesheet" />
-        <title>Using OpenLayers with Vite</title>
+        <title>OS Vector Tiles API - OpenLayers</title>
       </head>
       <body>
         <div id="map"></div>
