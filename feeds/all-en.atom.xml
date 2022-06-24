@@ -1,5 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>longwayaround.org.uk</title><link href="https://longwayaround.org.uk/" rel="alternate"></link><link href="https://longwayaround.org.uk/feeds/all-en.atom.xml" rel="self"></link><id>https://longwayaround.org.uk/</id><updated>2022-06-22T21:56:00+01:00</updated><subtitle>taking the scenic route and enjoying the journey</subtitle><entry><title>Writing small text filters for the shell and Vim</title><link href="https://longwayaround.org.uk/notes/writing-small-text-filters-for-the-shell-and-vim/" rel="alternate"></link><published>2022-06-22T21:56:00+01:00</published><updated>2022-06-22T21:56:00+01:00</updated><author><name>walkermatt</name></author><id>tag:longwayaround.org.uk,2022-06-22:/notes/writing-small-text-filters-for-the-shell-and-vim/</id><summary type="html">&lt;p&gt;Text filters are command-line programs that take text as input, transform it then output the results. An example of a common built in text filter is &lt;tt class="docutils literal"&gt;sort&lt;/tt&gt; which when passed newline separated text will sort each line:&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>longwayaround.org.uk</title><link href="https://longwayaround.org.uk/" rel="alternate"></link><link href="https://longwayaround.org.uk/feeds/all-en.atom.xml" rel="self"></link><id>https://longwayaround.org.uk/</id><updated>2022-06-23T21:56:00+01:00</updated><subtitle>taking the scenic route and enjoying the journey</subtitle><entry><title>Web Mercator OS Vector Tile API in OpenLayers</title><link href="https://longwayaround.org.uk/notes/web-mercator-os-vector-tile-api-in-openlayers/" rel="alternate"></link><published>2022-06-23T21:56:00+01:00</published><updated>2022-06-23T21:56:00+01:00</updated><author><name>walkermatt</name></author><id>tag:longwayaround.org.uk,2022-06-23:/notes/web-mercator-os-vector-tile-api-in-openlayers/</id><summary type="html">&lt;p&gt;Adding a Vector Tile layer of Ordnance Survey data from the OS Data Hub to an OpenLayers map in Web Mercator is a little more work than expected as the JSON style document and associated JSON source document include paths for the default British National Grid tiles. The following is …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Adding a Vector Tile layer of Ordnance Survey data from the OS Data Hub to an OpenLayers map in Web Mercator is a little more work than expected as the JSON style document and associated JSON source document include paths for the default British National Grid tiles. The following is based on the output from &lt;a class="reference external" href="https://github.com/openlayers/create-ol-app"&gt;create-ol-app&lt;/a&gt; and the &lt;a class="reference external" href="https://github.com/OrdnanceSurvey/OS-Data-Hub-API-Demos/tree/master/OSVectorTileAPI/OpenLayers"&gt;OS Vector Tile API OpenLayers demo&lt;/a&gt;.&lt;/p&gt;
+&lt;div class="section" id="main-js"&gt;
+&lt;h2&gt;&lt;tt class="docutils literal"&gt;main.js&lt;/tt&gt;&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;./style.css&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nx"&gt;Map&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;View&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="nx"&gt;from&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;ol&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="nx"&gt;VectorTileLayer&lt;/span&gt; &lt;span class="nx"&gt;from&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;ol/layer/VectorTile&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="nx"&gt;VectorTile&lt;/span&gt; &lt;span class="nx"&gt;from&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;ol/source/VectorTile&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="nx"&gt;MVT&lt;/span&gt; &lt;span class="nx"&gt;from&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;ol/format/MVT&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nx"&gt;transform&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="nx"&gt;from&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;ol/proj&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="nx"&gt;stylefunction&lt;/span&gt; &lt;span class="nx"&gt;from&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;ol-mapbox-style/dist/stylefunction&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+&lt;span class="kd"&gt;let&lt;/span&gt; &lt;span class="nx"&gt;osApiKey&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;YOUR_OS_API_KEY&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+&lt;span class="kd"&gt;let&lt;/span&gt; &lt;span class="nx"&gt;vtLyr&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;VectorTileLayer&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+  &lt;span class="nx"&gt;declutter&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="c1"&gt;// Set the layer style to null to avoid, features being displayed with&lt;/span&gt;
+  &lt;span class="c1"&gt;// the default OpenLayers vector styles before the OS styling is applied&lt;/span&gt;
+  &lt;span class="nx"&gt;style&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;null&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="c1"&gt;// As we&amp;#39;re using the Web Mercator tiles we don&amp;#39;t need to specify the source&lt;/span&gt;
+  &lt;span class="c1"&gt;// projection, TileGrid etc. as OpenLayers defaults to Web Mercator&lt;/span&gt;
+  &lt;span class="nx"&gt;source&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;VectorTile&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+    &lt;span class="nx"&gt;format&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;MVT&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt;
+    &lt;span class="c1"&gt;// Specify the tile URL including `srs=3857` so that we request&lt;/span&gt;
+    &lt;span class="c1"&gt;// Web Mercator tiles instead of British National Grid tiles which&lt;/span&gt;
+    &lt;span class="c1"&gt;// are the default when the `srs` parameter is missing&lt;/span&gt;
+    &lt;span class="nx"&gt;url&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+      &lt;span class="s1"&gt;&amp;#39;https://api.os.uk/maps/vector/v1/vts/tile/{z}/{y}/{x}.pbf?srs=3857&amp;amp;key=&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="nx"&gt;osApiKey&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="nx"&gt;attributions&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+      &lt;span class="s1"&gt;&amp;#39;&amp;amp;copy; &amp;lt;a href=&amp;quot;http://www.ordnancesurvey.co.uk/&amp;quot;&amp;gt;Ordnance Survey&amp;lt;/a&amp;gt;&amp;#39;&lt;/span&gt;
+  &lt;span class="p"&gt;})&lt;/span&gt;
+&lt;span class="p"&gt;});&lt;/span&gt;
+
+&lt;span class="c1"&gt;// Fetch the Web Mercator JSON style document, note the `srs=3857` query&lt;/span&gt;
+&lt;span class="c1"&gt;// string parameter which is required&lt;/span&gt;
+&lt;span class="nx"&gt;fetch&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+  &lt;span class="s1"&gt;&amp;#39;https://api.os.uk/maps/vector/v1/vts/resources/styles?srs=3857&amp;amp;key=&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="nx"&gt;osApiKey&lt;/span&gt;
+&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;then&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="nx"&gt;response&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="nx"&gt;response&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;json&lt;/span&gt;&lt;span class="p"&gt;())&lt;/span&gt;
+  &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;then&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="nx"&gt;styleJson&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="c1"&gt;// Look up the JSON sprite document URL and fetch it, note that we&amp;#39;re&lt;/span&gt;
+    &lt;span class="c1"&gt;// updating the URL to include a `.json` extension&lt;/span&gt;
+    &lt;span class="nx"&gt;fetch&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;styleJson&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;sprite&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;replace&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;?key=&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;.json?key=&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+      &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;then&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="nx"&gt;response&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="nx"&gt;response&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;json&lt;/span&gt;&lt;span class="p"&gt;())&lt;/span&gt;
+      &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;then&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="nx"&gt;spritesJson&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="c1"&gt;// Update the sprite PNG URL to include the `.png` extension&lt;/span&gt;
+        &lt;span class="kd"&gt;let&lt;/span&gt; &lt;span class="nx"&gt;spritesPngUrl&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;styleJson&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;sprite&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;replace&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;?key=&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;.png?key=&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+        &lt;span class="c1"&gt;// Call the stylefunction provided by the ol-mapbox-style package&lt;/span&gt;
+        &lt;span class="c1"&gt;// to apply a style Function to our VectorTileLayer instance. This&lt;/span&gt;
+        &lt;span class="c1"&gt;// will replace our `null` style and render the features as per&lt;/span&gt;
+        &lt;span class="c1"&gt;// the JSON style document&lt;/span&gt;
+        &lt;span class="nx"&gt;stylefunction&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+          &lt;span class="nx"&gt;vtLyr&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+          &lt;span class="nx"&gt;styleJson&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+          &lt;span class="s1"&gt;&amp;#39;esri&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+          &lt;span class="nx"&gt;vtLyr&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;getSource&lt;/span&gt;&lt;span class="p"&gt;().&lt;/span&gt;&lt;span class="nx"&gt;getResolutions&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt;
+          &lt;span class="nx"&gt;spritesJson&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+          &lt;span class="nx"&gt;spritesPngUrl&lt;/span&gt;
+        &lt;span class="p"&gt;);&lt;/span&gt;
+      &lt;span class="p"&gt;});&lt;/span&gt;
+  &lt;span class="p"&gt;});&lt;/span&gt;
+
+&lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;map&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;Map&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+  &lt;span class="nx"&gt;target&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;map&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="nx"&gt;layers&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;vtLyr&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+  &lt;span class="nx"&gt;view&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;View&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+    &lt;span class="nx"&gt;center&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;transform&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mf"&gt;2.333029&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mf"&gt;52.109524&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;EPSG:4326&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;EPSG:3857&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+    &lt;span class="nx"&gt;zoom&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;14&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="p"&gt;}),&lt;/span&gt;
+&lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="index-html"&gt;
+&lt;h2&gt;&lt;tt class="docutils literal"&gt;index.html&lt;/tt&gt;&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="cp"&gt;&amp;lt;!DOCTYPE html&amp;gt;&lt;/span&gt;
+&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;html&lt;/span&gt; &lt;span class="na"&gt;lang&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;en&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+  &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;head&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;meta&lt;/span&gt; &lt;span class="na"&gt;charset&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;UTF-8&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;/&amp;gt;&lt;/span&gt;
+    &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;link&lt;/span&gt; &lt;span class="na"&gt;rel&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;icon&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;type&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;image/x-icon&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;href&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;https://openlayers.org/favicon.ico&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;/&amp;gt;&lt;/span&gt;
+    &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;meta&lt;/span&gt; &lt;span class="na"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;viewport&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;content&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;width=device-width, initial-scale=1.0&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;/&amp;gt;&lt;/span&gt;
+    &lt;span class="c"&gt;&amp;lt;!-- Include the web font for the OS Vector Tile API styles --&amp;gt;&lt;/span&gt;
+    &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;link&lt;/span&gt; &lt;span class="na"&gt;href&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;rel&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;stylesheet&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;/&amp;gt;&lt;/span&gt;
+    &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;title&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;Using OpenLayers with Vite&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;title&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+  &lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;head&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+  &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;body&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;div&lt;/span&gt; &lt;span class="na"&gt;id&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;map&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;div&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt; &lt;span class="na"&gt;type&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;module&amp;quot;&lt;/span&gt; &lt;span class="na"&gt;src&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;./main.js&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;script&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+  &lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;body&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;html&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;See the comments in the code for an explanation of the steps involved. The you should end up with a map that looks something like this:&lt;/p&gt;
+&lt;img alt="OpenLayers map showing styled OS Vector Tiles data for Malvern, UK" src="../files/os-vector-tile-openlayers.png" style="width: 100%;" /&gt;
+&lt;/div&gt;
+&lt;div class="section" id="what-about-mapboxvector-layer"&gt;
+&lt;h2&gt;What about MapboxVector layer?&lt;/h2&gt;
+&lt;p&gt;Ideally we would be able to use the &lt;a class="reference external" href="https://openlayers.org/en/latest/apidoc/module-ol_layer_MapboxVector-MapboxVectorLayer.html"&gt;ol/layer/MapboxVector~MapboxVectorLayer&lt;/a&gt; instance which would simplify things greatly:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;let osApiKey = &amp;#39;YOUR_OS_API_KEY&amp;#39;;
+
+let vtLyr = new MapboxVectorLayer({
+  styleUrl: &amp;#39;https://api.os.uk/maps/vector/v1/vts/resources/styles?srs=3857&amp;amp;key=&amp;#39; + osApiKey
+});
+
+const map = new Map({
+  target: &amp;#39;map&amp;#39;,
+  layers: [vtLyr],
+  view: new View({
+    center: transform([-2.333029, 52.109524], &amp;#39;EPSG:4326&amp;#39;, &amp;#39;EPSG:3857&amp;#39;),
+    zoom: 14,
+  }),
+});
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;However as it currently stands the JSON style document returned by the OS Vector Tile API includes a sprite URL that doesn't include the &lt;cite&gt;srs=3857&lt;/cite&gt; parameter and the JSON source document which defines the URL for fetching tiles also doesn't include the &lt;cite&gt;srs&lt;/cite&gt; parameter. Because of this we end up loading the Web Mercator style document which then references the British National Grid sprite and source documents which are incompatible.&lt;/p&gt;
+&lt;/div&gt;
+</content><category term="javascript"></category><category term="openlayers"></category><category term="vector-tiles"></category></entry><entry><title>Writing small text filters for the shell and Vim</title><link href="https://longwayaround.org.uk/notes/writing-small-text-filters-for-the-shell-and-vim/" rel="alternate"></link><published>2022-06-22T21:56:00+01:00</published><updated>2022-06-22T21:56:00+01:00</updated><author><name>walkermatt</name></author><id>tag:longwayaround.org.uk,2022-06-22:/notes/writing-small-text-filters-for-the-shell-and-vim/</id><summary type="html">&lt;p&gt;Text filters are command-line programs that take text as input, transform it then output the results. An example of a common built in text filter is &lt;tt class="docutils literal"&gt;sort&lt;/tt&gt; which when passed newline separated text will sort each line:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nb"&gt;printf&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;b\nc\na&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; sort
 &lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;You can write your own text filter scripts …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Text filters are command-line programs that take text as input, transform it then output the results. An example of a common built in text filter is &lt;tt class="docutils literal"&gt;sort&lt;/tt&gt; which when passed newline separated text will sort each line:&lt;/p&gt;
