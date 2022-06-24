@@ -103,7 +103,7 @@ Adding a Vector Tile layer of Ordnance Survey data from the OS Data Hub to an Op
 
 See the comments in the code for an explanation of the steps involved. The you should end up with a map that looks something like this:
 
-.. image:: ../files/os-vector-tile-openlayers.png
+.. image:: /files/os-vector-tile-openlayers.png
   :width: 100%
   :alt: OpenLayers map showing styled OS Vector Tiles data for Malvern, UK
 
