@@ -38,84 +38,148 @@
 
             <aside id="featured" class="body">
                 <article>
-                    <abbr class="published" title="2019-09-20T12:00:00+01:00">Fri 20 September 2019</abbr>
-                    <h1 class="entry-title"><a href="https://longwayaround.org.uk/notes/mapserver-postgis-performance/">MapServer PostGIS Performance</a></h1> 
-                    <p>Recently I was looking at improving the performance of rendering a <a class="reference external" href="https://github.com/spacesyntax/OpenMapping">Space Syntax OpenMapping</a> layer in MapServer. The <code>openmapping_gb_v1</code> table is in a PostGIS database with an index on the geometry column. The original MapServer <code>DATA</code> configuration looked like this:</p>
-<div class="highlight"><pre><span></span>DATA &quot;wkb_geometry from (select meridian_class_scale * 10 as line_width, * from openmapping.openmapping_gb_v1 order by choice2kmrank) as a using unique fid using srid=27700&quot;
+                    <abbr class="published" title="2022-06-23T21:56:00+01:00">Thu 23 June 2022</abbr>
+                    <h1 class="entry-title"><a href="https://longwayaround.org.uk/notes/web-mercator-os-vector-tile-api-in-openlayers/">Web Mercator OS Vector Tile API in OpenLayers</a></h1> 
+                    <p>Adding a Vector Tile layer of Ordnance Survey data from the OS Data Hub to an OpenLayers map in Web Mercator is a little more work than expected as the JSON style document and associated JSON source document include paths for the default British National Grid tiles. The following is based on the output from <a class="reference external" href="https://github.com/openlayers/create-ol-app">create-ol-app</a> and the <a class="reference external" href="https://github.com/OrdnanceSurvey/OS-Data-Hub-API-Demos/tree/master/OSVectorTileAPI/OpenLayers">OS Vector Tile API OpenLayers demo</a>.</p>
+<div class="section" id="main-js">
+<h2><tt class="docutils literal">main.js</tt></h2>
+<div class="highlight"><pre><span></span><span class="kr">import</span> <span class="s1">&#39;./style.css&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">Map</span><span class="p">,</span> <span class="nx">View</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;ol&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="nx">VectorTileLayer</span> <span class="nx">from</span> <span class="s1">&#39;ol/layer/VectorTile&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="nx">VectorTile</span> <span class="nx">from</span> <span class="s1">&#39;ol/source/VectorTile&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="nx">MVT</span> <span class="nx">from</span> <span class="s1">&#39;ol/format/MVT&#39;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">transform</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;ol/proj&#39;</span><span class="p">;</span>
+
+<span class="kr">import</span> <span class="nx">stylefunction</span> <span class="nx">from</span> <span class="s1">&#39;ol-mapbox-style/dist/stylefunction&#39;</span><span class="p">;</span>
+
+<span class="kd">let</span> <span class="nx">osApiKey</span> <span class="o">=</span> <span class="s1">&#39;YOUR_OS_API_KEY&#39;</span><span class="p">;</span>
+
+<span class="kd">let</span> <span class="nx">vtLyr</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">VectorTileLayer</span><span class="p">({</span>
+  <span class="nx">declutter</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+  <span class="c1">// Set the layer style to null to avoid, features being displayed with</span>
+  <span class="c1">// the default OpenLayers vector styles before the OS styling is applied</span>
+  <span class="nx">style</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+  <span class="c1">// As we&#39;re using the Web Mercator tiles we don&#39;t need to specify the source</span>
+  <span class="c1">// projection, TileGrid etc. as OpenLayers defaults to Web Mercator</span>
+  <span class="nx">source</span><span class="o">:</span> <span class="k">new</span> <span class="nx">VectorTile</span><span class="p">({</span>
+    <span class="nx">format</span><span class="o">:</span> <span class="k">new</span> <span class="nx">MVT</span><span class="p">(),</span>
+    <span class="c1">// Specify the tile URL including `srs=3857` so that we request</span>
+    <span class="c1">// Web Mercator tiles instead of British National Grid tiles which</span>
+    <span class="c1">// are the default when the `srs` parameter is missing</span>
+    <span class="nx">url</span><span class="o">:</span>
+      <span class="s1">&#39;https://api.os.uk/maps/vector/v1/vts/tile/{z}/{y}/{x}.pbf?srs=3857&amp;key=&#39;</span> <span class="o">+</span> <span class="nx">osApiKey</span><span class="p">,</span>
+    <span class="nx">attributions</span><span class="o">:</span>
+      <span class="s1">&#39;&amp;copy; &lt;a href=&quot;http://www.ordnancesurvey.co.uk/&quot;&gt;Ordnance Survey&lt;/a&gt;&#39;</span>
+  <span class="p">})</span>
+<span class="p">});</span>
+
+<span class="c1">// Fetch the Web Mercator JSON style document, note the `srs=3857` query</span>
+<span class="c1">// string parameter which is required</span>
+<span class="nx">fetch</span><span class="p">(</span>
+  <span class="s1">&#39;https://api.os.uk/maps/vector/v1/vts/resources/styles?srs=3857&amp;key=&#39;</span> <span class="o">+</span> <span class="nx">osApiKey</span>
+<span class="p">)</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">((</span><span class="nx">response</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">())</span>
+  <span class="p">.</span><span class="nx">then</span><span class="p">((</span><span class="nx">styleJson</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="c1">// Look up the JSON sprite document URL and fetch it, note that we&#39;re</span>
+    <span class="c1">// updating the URL to include a `.json` extension</span>
+    <span class="nx">fetch</span><span class="p">(</span><span class="nx">styleJson</span><span class="p">.</span><span class="nx">sprite</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="s1">&#39;?key=&#39;</span><span class="p">,</span> <span class="s1">&#39;.json?key=&#39;</span><span class="p">))</span>
+      <span class="p">.</span><span class="nx">then</span><span class="p">((</span><span class="nx">response</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">())</span>
+      <span class="p">.</span><span class="nx">then</span><span class="p">((</span><span class="nx">spritesJson</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+        <span class="c1">// Update the sprite PNG URL to include the `.png` extension</span>
+        <span class="kd">let</span> <span class="nx">spritesPngUrl</span> <span class="o">=</span> <span class="nx">styleJson</span><span class="p">.</span><span class="nx">sprite</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="s1">&#39;?key=&#39;</span><span class="p">,</span> <span class="s1">&#39;.png?key=&#39;</span><span class="p">);</span>
+        <span class="c1">// Call the stylefunction provided by the ol-mapbox-style package</span>
+        <span class="c1">// to apply a style Function to our VectorTileLayer instance. This</span>
+        <span class="c1">// will replace our `null` style and render the features as per</span>
+        <span class="c1">// the JSON style document</span>
+        <span class="nx">stylefunction</span><span class="p">(</span>
+          <span class="nx">vtLyr</span><span class="p">,</span>
+          <span class="nx">styleJson</span><span class="p">,</span>
+          <span class="s1">&#39;esri&#39;</span><span class="p">,</span>
+          <span class="nx">vtLyr</span><span class="p">.</span><span class="nx">getSource</span><span class="p">().</span><span class="nx">getResolutions</span><span class="p">(),</span>
+          <span class="nx">spritesJson</span><span class="p">,</span>
+          <span class="nx">spritesPngUrl</span>
+        <span class="p">);</span>
+      <span class="p">});</span>
+  <span class="p">});</span>
+
+<span class="kr">const</span> <span class="nx">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Map</span><span class="p">({</span>
+  <span class="nx">target</span><span class="o">:</span> <span class="s1">&#39;map&#39;</span><span class="p">,</span>
+  <span class="nx">layers</span><span class="o">:</span> <span class="p">[</span><span class="nx">vtLyr</span><span class="p">],</span>
+  <span class="nx">view</span><span class="o">:</span> <span class="k">new</span> <span class="nx">View</span><span class="p">({</span>
+    <span class="nx">center</span><span class="o">:</span> <span class="nx">transform</span><span class="p">([</span><span class="o">-</span><span class="mf">2.333029</span><span class="p">,</span> <span class="mf">52.109524</span><span class="p">],</span> <span class="s1">&#39;EPSG:4326&#39;</span><span class="p">,</span> <span class="s1">&#39;EPSG:3857&#39;</span><span class="p">),</span>
+    <span class="nx">zoom</span><span class="o">:</span> <span class="mi">14</span><span class="p">,</span>
+  <span class="p">}),</span>
+<span class="p">});</span>
 </pre></div>
-<p>The main thing to note is that the rows are sorted by the <code>choice2kmrank</code> value to ensure features are rendered in the correct order (a similar problem as described in <a class="reference external" href="http://mapgears.com/en/blog/archive/2013-03-05-roads_network_mapping">Mapping a road network with MapServer - Understanding the display order</a>).</p>
-<p>This SQL results in the following query being executed by MapServer:</p>
-<div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="ss">&quot;choice2kmrank&quot;</span><span class="p">,</span>
-    <span class="ss">&quot;line_width&quot;</span><span class="p">,</span>
-    <span class="n">encode</span><span class="p">(</span><span class="n">ST_AsBinary</span><span class="p">(</span><span class="n">ST_Force_2D</span><span class="p">(</span><span class="ss">&quot;wkb_geometry&quot;</span><span class="p">),</span><span class="s1">&#39;NDR&#39;</span><span class="p">),</span><span class="s1">&#39;hex&#39;</span><span class="p">)</span> <span class="k">AS</span> <span class="n">geom</span><span class="p">,</span>
-    <span class="ss">&quot;fid&quot;</span>
-<span class="k">FROM</span>
-<span class="p">(</span><span class="k">SELECT</span> <span class="n">meridian_class_scale</span> <span class="o">*</span> <span class="mi">10</span> <span class="k">AS</span> <span class="n">line_width</span><span class="p">,</span>
-        <span class="o">*</span>
-<span class="k">FROM</span> <span class="n">openmapping</span><span class="p">.</span><span class="n">openmapping_gb_v1</span>
-<span class="k">ORDER</span> <span class="k">BY</span> <span class="n">choice2kmrank</span><span class="p">)</span> <span class="k">AS</span> <span class="n">a</span>
-<span class="k">WHERE</span> <span class="n">wkb_geometry</span> <span class="o">&amp;&amp;</span> <span class="n">ST_GeomFromText</span><span class="p">(</span><span class="s1">&#39;POLYGON((441580.992440577 112973.855285226,441580.992440577 115008.987681971,443621.486046148 115008.987681971,443621.486046148 112973.855285226,441580.992440577 112973.855285226))&#39;</span><span class="p">,</span><span class="mi">27700</span><span class="p">);</span>
-</pre></div>
-<p>There are two issues with the original query performance-wise:</p>
-<div class="section" id="ordering-too-many-rows">
-<h2>1. Ordering too many rows</h2>
-<p>The order by clause is within the inner query, so it sorts all rows in <code>openmapping.openmapping_gb_v1</code>, not just those that fall within the spatial filter. This is fine for tables with a small number of rows, but has a significant impact for larger tables.</p>
 </div>
-<div class="section" id="spatial-index-not-being-used">
-<h2>2. Spatial index not being used</h2>
-<p>By default MapServer represents the spatial filter as an inline geometry, which often results in Postgres applying the bounding box spatial filter without using the spatial index. This can be seen here when running <code>EXPLAIN SELECT ...</code> to generate an execution plan.</p>
+<div class="section" id="index-html">
+<h2><tt class="docutils literal">index.html</tt></h2>
+<div class="highlight"><pre><span></span><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span> <span class="na">lang</span><span class="o">=</span><span class="s">&quot;en&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;UTF-8&quot;</span> <span class="p">/&gt;</span>
+    <span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&quot;icon&quot;</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;image/x-icon&quot;</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;https://openlayers.org/favicon.ico&quot;</span> <span class="p">/&gt;</span>
+    <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;viewport&quot;</span> <span class="na">content</span><span class="o">=</span><span class="s">&quot;width=device-width, initial-scale=1.0&quot;</span> <span class="p">/&gt;</span>
+    <span class="c">&lt;!-- Include the web font for the OS Vector Tile API styles --&gt;</span>
+    <span class="p">&lt;</span><span class="nt">link</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600&quot;</span> <span class="na">rel</span><span class="o">=</span><span class="s">&quot;stylesheet&quot;</span> <span class="p">/&gt;</span>
+    <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Using OpenLayers with Vite<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;map&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;module&quot;</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;./main.js&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+<p>See the comments in the code for an explanation of the steps involved. The you should end up with a map that looks something like this:</p>
+<img alt="OpenLayers map showing styled OS Vector Tiles data for Malvern, UK" src="../files/os-vector-tile-openlayers.png" style="width: 100%;" />
 </div>
-<div class="section" id="solution">
-<h2>Solution</h2>
-<p>Ideally we want to only sort those rows returned by the spatial filter, as well as having the spatial filter use the spatial index.</p>
-<p>MapServer provides a special <code>!BOX!</code> placeholder that can be inserted into a SQL query, which dictates where the <code>ST_GeomFromText('POLGON...</code> statement appears when MapServer constructs the SQL to execute. At the time of writing the <code>!BOX!</code> placeholder is described in <a class="reference external" href="https://mapserver.org/input/vector/postgis.html#data-access-connection-method">the last example in the PostGIS Data Access documentation</a>.</p>
-<p>By using the <code>!BOX!</code> placeholder we can combine the spatial filter and sort into a single select statement:</p>
-<div class="highlight"><pre><span></span>DATA &quot;wkb_geometry from (select meridian_class_scale * 10 as line_width, * from openmapping.openmapping_gb_v1 where wkb_geometry &amp;&amp; !BOX! order by choice2kmrank) as a using unique fid using srid=27700&quot;
+<div class="section" id="what-about-mapboxvector-layer">
+<h2>What about MapboxVector layer?</h2>
+<p>Ideally we would be able to use the <a class="reference external" href="https://openlayers.org/en/latest/apidoc/module-ol_layer_MapboxVector-MapboxVectorLayer.html">ol/layer/MapboxVector~MapboxVectorLayer</a> instance which would simplify things greatly:</p>
+<div class="highlight"><pre><span></span>let osApiKey = &#39;YOUR_OS_API_KEY&#39;;
+
+let vtLyr = new MapboxVectorLayer({
+  styleUrl: &#39;https://api.os.uk/maps/vector/v1/vts/resources/styles?srs=3857&amp;key=&#39; + osApiKey
+});
+
+const map = new Map({
+  target: &#39;map&#39;,
+  layers: [vtLyr],
+  view: new View({
+    center: transform([-2.333029, 52.109524], &#39;EPSG:4326&#39;, &#39;EPSG:3857&#39;),
+    zoom: 14,
+  }),
+});
 </pre></div>
-<p>Results in MapServer generating:</p>
-<div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="ss">&quot;choice2kmrank&quot;</span><span class="p">,</span>
-    <span class="ss">&quot;line_width&quot;</span><span class="p">,</span>
-    <span class="n">encode</span><span class="p">(</span><span class="n">ST_AsBinary</span><span class="p">(</span><span class="n">ST_Force_2D</span><span class="p">(</span><span class="ss">&quot;wkb_geometry&quot;</span><span class="p">),</span><span class="s1">&#39;NDR&#39;</span><span class="p">),</span><span class="s1">&#39;hex&#39;</span><span class="p">)</span> <span class="k">AS</span> <span class="n">geom</span><span class="p">,</span>
-    <span class="ss">&quot;fid&quot;</span>
-<span class="k">FROM</span>
-<span class="p">(</span><span class="k">SELECT</span> <span class="n">meridian_class_scale</span> <span class="o">*</span> <span class="mi">10</span> <span class="k">AS</span> <span class="n">line_width</span><span class="p">,</span>
-        <span class="o">*</span>
-<span class="k">FROM</span> <span class="n">openmapping</span><span class="p">.</span><span class="n">openmapping_gb_v1</span>
-<span class="k">WHERE</span> <span class="n">wkb_geometry</span> <span class="o">&amp;&amp;</span> <span class="n">ST_GeomFromText</span><span class="p">(</span><span class="s1">&#39;POLYGON((441580.992440577 112973.855285226,441580.992440577 115008.987681971,443621.486046148 115008.987681971,443621.486046148 112973.855285226,441580.992440577 112973.855285226))&#39;</span><span class="p">,</span><span class="mi">27700</span><span class="p">)</span>
-<span class="k">ORDER</span> <span class="k">BY</span> <span class="n">choice2kmrank</span><span class="p">)</span> <span class="k">AS</span> <span class="n">a</span><span class="p">;</span>
-</pre></div>
-<p>To improve the likelihood that the spatial index is used, we can use a technique described by <a class="reference external" href="https://gis.stackexchange.com/users/429/john-powell">John Powell</a> in <a class="reference external" href="https://gis.stackexchange.com/a/253987/6004">this gis.stackexchange.com answer</a>, which involves moving the geometry creation to a <a class="reference external" href="https://www.postgresql.org/docs/11/queries-with.html">CTE (Common Table Expression)</a> resulting in the query optimiser having prior knowledge of the geometry which generally results in the spatial index being used.</p>
-<div class="highlight"><pre><span></span>DATA &quot;wkb_geometry from (WITH box (geom) AS (SELECT !BOX! as geom) SELECT fid, wkb_geometry, choice2kmrank, meridian_class_scale * 10 AS line_width FROM openmapping.openmapping_gb_v1, box WHERE wkb_geometry &amp;&amp; box.geom ORDER BY choice2kmrank) as a using unique fid using srid=27700&quot;
-</pre></div>
-<p>Results in MapServer generating:</p>
-<div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="ss">&quot;choice2kmrank&quot;</span><span class="p">,</span>
-    <span class="ss">&quot;line_width&quot;</span><span class="p">,</span>
-    <span class="n">encode</span><span class="p">(</span><span class="n">ST_AsBinary</span><span class="p">(</span><span class="n">ST_Force_2D</span><span class="p">(</span><span class="ss">&quot;wkb_geometry&quot;</span><span class="p">),</span><span class="s1">&#39;NDR&#39;</span><span class="p">),</span><span class="s1">&#39;hex&#39;</span><span class="p">)</span> <span class="k">AS</span> <span class="n">geom</span><span class="p">,</span>
-    <span class="ss">&quot;fid&quot;</span>
-<span class="k">FROM</span> <span class="p">(</span><span class="k">WITH</span> <span class="n">box</span> <span class="p">(</span><span class="n">geom</span><span class="p">)</span> <span class="k">AS</span>
-        <span class="p">(</span><span class="k">SELECT</span> <span class="n">ST_GeomFromText</span><span class="p">(</span><span class="s1">&#39;POLYGON((441580.992440577 112973.855285226,441580.992440577 115008.987681971,443621.486046148 115008.987681971,443621.486046148 112973.855285226,441580.992440577 112973.855285226))&#39;</span><span class="p">,</span><span class="mi">27700</span><span class="p">)</span> <span class="k">AS</span> <span class="n">geom</span><span class="p">)</span>
-    <span class="k">SELECT</span> <span class="n">fid</span><span class="p">,</span>
-            <span class="n">wkb_geometry</span><span class="p">,</span>
-            <span class="n">choice2kmrank</span><span class="p">,</span>
-            <span class="n">meridian_class_scale</span> <span class="o">*</span> <span class="mi">10</span> <span class="k">AS</span> <span class="n">line_width</span>
-    <span class="k">FROM</span> <span class="n">openmapping</span><span class="p">.</span><span class="n">openmapping_gb_v1</span><span class="p">,</span>
-        <span class="n">box</span>
-    <span class="k">WHERE</span> <span class="n">wkb_geometry</span> <span class="o">&amp;&amp;</span> <span class="n">box</span><span class="p">.</span><span class="n">geom</span>
-    <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">choice2kmrank</span><span class="p">)</span> <span class="k">AS</span> <span class="n">a</span><span class="p">;</span>
-</pre></div>
-<p>With this change we're now using the spatial index when applying the spatial filter, then only sorting the filtered rows. In my case the query execution time went from several seconds to less than 500ms with identical results.</p>
-<p>Thanks to <a class="reference external" href="https://twitter.com/devsupportman">Peter Goulborn</a> and <a class="reference external" href="https://twitter.com/ijturton">Ian Turton</a> for their help getting to the final solution.</p>
+<p>However as it currently stands the JSON style document returned by the OS Vector Tile API includes a sprite URL that doesn't include the <cite>srs=3857</cite> parameter and the JSON source document which defines the URL for fetching tiles also doesn't include the <cite>srs</cite> parameter. Because of this we end up loading the Web Mercator style document which then references the British National Grid sprite and source documents which are incompatible.</p>
 </div>
 
 <footer class="post-info">
-    <abbr class="published" title="2019-09-20T12:00:00+01:00">Fri 20 September 2019</abbr>
-<p>Tags: <a href="https://longwayaround.org.uk/tag/mapserver.html">mapserver</a> <a href="https://longwayaround.org.uk/tag/postgres.html">postgres</a> <a href="https://longwayaround.org.uk/tag/postgis.html">postgis</a> <a href="https://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->                    <p><a href="https://longwayaround.org.uk/notes/mapserver-postgis-performance/#disqus_thread">comments</a>.</p>
+    <abbr class="published" title="2022-06-23T21:56:00+01:00">Thu 23 June 2022</abbr>
+<p>Tags: <a href="https://longwayaround.org.uk/tag/javascript.html">javascript</a> <a href="https://longwayaround.org.uk/tag/openlayers.html">openlayers</a> <a href="https://longwayaround.org.uk/tag/vector-tiles.html">vector-tiles</a> <a href="https://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->                    <p><a href="https://longwayaround.org.uk/notes/web-mercator-os-vector-tile-api-in-openlayers/#disqus_thread">comments</a>.</p>
                 </article>
             </aside><!-- /#featured -->
                 <section id="content" class="body">
                     <h1>Other posts</h1>
                     <hr />
                         <ol id="posts-list" class="hfeed">
+
+ 
+            <li><article class="hentry">
+                <header>
+                        <abbr class="published" title="2019-09-20T12:00:00+01:00">Fri 20 September 2019</abbr>
+                        <h1><a href="https://longwayaround.org.uk/notes/mapserver-postgis-performance/" rel="bookmark" title="Permalink to MapServer PostGIS Performance">MapServer PostGIS Performance</a></h1>
+                </header>
+                <div class="entry-content">
+                <div class="slug">
+                    <p>Recently I was looking at improving the performance of rendering a <a class="reference external" href="https://github.com/spacesyntax/OpenMapping">Space Syntax OpenMapping</a> layer in MapServer. The <code>openmapping_gb_v1</code> table is in a PostGIS database with an index on the geometry column. The original MapServer <code>DATA</code> configuration looked like this:</p>
+<div class="highlight"><pre><span></span>DATA &quot;wkb_geometry from (select meridian_class_scale * 10 as line_width, * from openmapping …</pre></div>
+                    <p>
+<a href="https://longwayaround.org.uk/notes/mapserver-postgis-performance/#disqus_thread">comments</a>.                        <a class="readmore" href="https://longwayaround.org.uk/notes/mapserver-postgis-performance/">read more</a>
+                    </p>
+                </div>
+                </div><!-- /.entry-content -->
+            </article></li>
 
  
             <li><article class="hentry">
