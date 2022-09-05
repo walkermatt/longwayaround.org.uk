@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-        <title>longwayaround.org.uk - vector-tiles</title>
+        <title>Web Mercator OS Vector Tile API in OpenLayers - Take #2</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, target-densitydpi=device-dpi">
         <link rel="stylesheet" href="https://longwayaround.org.uk/theme/css/main.css" type="text/css" />
@@ -24,7 +24,7 @@
                 <h1><a href="/">longwayaround.org.uk  <strong>taking the scenic route and enjoying the journey</strong></a></h1>
                 <nav>
                 <ul>
-                    <li ><a href="https://longwayaround.org.uk/notes/">notes</a></li>
+                    <li class="active"><a href="https://longwayaround.org.uk/notes/">notes</a></li>
                 </ul>
                 </nav>
                     <ul class="social">
@@ -35,12 +35,13 @@
                     <li><a href="https://twitter.com/_walkermatt"><img src="https://longwayaround.org.uk/theme/images/icons/gosquared/18/twitter.png" title="twitter" width="18" height="18" /></a></li>
                     </ul>
         </header><!-- /#banner -->
-
-            <aside id="featured" class="body">
-                <article>
-                    <abbr class="published" title="2022-09-05T08:05:00+01:00">Mon 05 September 2022</abbr>
-                    <h1 class="entry-title"><a href="https://longwayaround.org.uk/notes/web-mercator-os-vector-tile-api-in-openlayers-take-2/">Web Mercator OS Vector Tile API in OpenLayers - Take #2</a></h1> 
-                    <p>This is an update to my <a class="reference external" href="/notes/web-mercator-os-vector-tile-api-in-openlayers/">previous post</a> on the same subject.</p>
+<section id="content" class="body">
+<article>
+        <abbr class="published" title="2022-09-05T08:05:00+01:00">Mon 05 September 2022</abbr>
+        <header> <h1 class="entry-title"><a href=""
+        rel="bookmark" title="Permalink to Web Mercator OS Vector Tile API in OpenLayers - Take #2">Web Mercator OS Vector Tile API in OpenLayers - Take #2</a></h1>  </header>
+        <div class="entry-content">
+        <p>This is an update to my <a class="reference external" href="/notes/web-mercator-os-vector-tile-api-in-openlayers/">previous post</a> on the same subject.</p>
 <p>Thanks to <a class="reference external" href="https://twitter.com/ahoce/status/1545409888226099200">some feedback from Andreas Hocevar</a> and <a class="reference external" href="https://github.com/openlayers/ol-mapbox-style/pull/618">a pull request I made to ol-mapbox-style</a> adding a Vector Tile layer of Ordnance Survey data from the OS Data Hub to an OpenLayers map in Web Mercator is a little easier than it was <a class="reference external" href="/notes/web-mercator-os-vector-tile-api-in-openlayers/">a few months ago</a> 🎉</p>
 <p>The following uses <a class="reference external" href="https://github.com/openlayers/create-ol-app">create-ol-app</a> to create a basic OpenLayers app, we then add the <a class="reference external" href="https://github.com/openlayers/ol-mapbox-style/pull/618">ol-mapbox-style</a> package and install the other dependencies:</p>
 <div class="highlight"><pre><span></span><span class="c1"># Create a new OpenLayers app in a folder called os-vt-api-ol</span>
@@ -118,30 +119,47 @@ npm start
 
 <footer class="post-info">
     <abbr class="published" title="2022-09-05T08:05:00+01:00">Mon 05 September 2022</abbr>
-<p>Tags: <a href="https://longwayaround.org.uk/tag/javascript.html">javascript</a> <a href="https://longwayaround.org.uk/tag/openlayers.html">openlayers</a> <a href="https://longwayaround.org.uk/tag/vector-tiles.html">vector-tiles</a> <a href="https://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->                    <p><a href="https://longwayaround.org.uk/notes/web-mercator-os-vector-tile-api-in-openlayers-take-2/#disqus_thread">comments</a>.</p>
-                </article>
-            </aside><!-- /#featured -->
-                <section id="content" class="body">
-                    <h1>Other posts</h1>
-                    <hr />
-                        <ol id="posts-list" class="hfeed">
+<p>Tags: <a href="https://longwayaround.org.uk/tag/javascript.html">javascript</a> <a href="https://longwayaround.org.uk/tag/openlayers.html">openlayers</a> <a href="https://longwayaround.org.uk/tag/vector-tiles.html">vector-tiles</a> <a href="https://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->        </div><!-- /.entry-content -->
+        <div class="comments">
+            <div id="disqus_thread"></div>
+            <script type="text/javascript">
+               // Don't set the identifier so that comments are
+               // associated with the url
+               // var disqus_identifier = "notes/web-mercator-os-vector-tile-api-in-openlayers-take-2/";
+               (function() {
+               var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+               dsq.src = 'https://longwayaroundorguk.disqus.com/embed.js';
+               (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+              })();
+            </script>
+        </div>
 
- 
-            <li><article class="hentry">
-                <header>
-                        <abbr class="published" title="2022-06-23T21:56:00+01:00">Thu 23 June 2022</abbr>
-                        <h1><a href="https://longwayaround.org.uk/notes/web-mercator-os-vector-tile-api-in-openlayers/" rel="bookmark" title="Permalink to Web Mercator OS Vector Tile API in OpenLayers">Web Mercator OS Vector Tile API in OpenLayers</a></h1>
-                </header>
-                <div class="entry-content">
-                <div class="slug">
-                    <p>Adding a Vector Tile layer of Ordnance Survey data from the OS Data Hub to an OpenLayers map in Web Mercator is a little more work than expected as the JSON style document and associated JSON source document include paths for the default British National Grid tiles. The following is …</p>
-                    <p>
-<a href="https://longwayaround.org.uk/notes/web-mercator-os-vector-tile-api-in-openlayers/#disqus_thread">comments</a>.                        <a class="readmore" href="https://longwayaround.org.uk/notes/web-mercator-os-vector-tile-api-in-openlayers/">read more</a>
-                    </p>
-                </div>
-                </div><!-- /.entry-content -->
-            </article></li>
-    </ol><!-- /#posts-list -->
+</article>
+</section>
+<section id="content" class="body">
+<h1>Posts</h1>
+<ul>
+    <li><a href='../../notes/web-mercator-os-vector-tile-api-in-openlayers-take-2/'>Web Mercator OS Vector Tile API in OpenLayers - Take #2</a> - <abbr class="published" title="2022-09-05T08:05:00+01:00">Mon 05 September 2022</abbr></li>
+    <li><a href='../../notes/web-mercator-os-vector-tile-api-in-openlayers/'>Web Mercator OS Vector Tile API in OpenLayers</a> - <abbr class="published" title="2022-06-23T21:56:00+01:00">Thu 23 June 2022</abbr></li>
+    <li><a href='../../notes/writing-small-text-filters-for-the-shell-and-vim/'>Writing small text filters for the shell and Vim</a> - <abbr class="published" title="2022-06-22T21:56:00+01:00">Wed 22 June 2022</abbr></li>
+    <li><a href='../../notes/mapserver-postgis-performance/'>MapServer PostGIS Performance</a> - <abbr class="published" title="2019-09-20T12:00:00+01:00">Fri 20 September 2019</abbr></li>
+    <li><a href='../../notes/postgres-information-functions/'>Postgres Information Functions</a> - <abbr class="published" title="2017-02-18T07:55:00+00:00">Sat 18 February 2017</abbr></li>
+    <li><a href='../../notes/openlayers-2-custom-build/'>OpenLayers 2 Custom Build</a> - <abbr class="published" title="2016-04-26T14:00:00+01:00">Tue 26 April 2016</abbr></li>
+    <li><a href='../../notes/testing-python-postgres/'>Testing Python &amp; Postgres</a> - <abbr class="published" title="2015-10-12T21:00:00+01:00">Mon 12 October 2015</abbr></li>
+    <li><a href='../../notes/read-only-postgres-database/'>Read-only Postgres database</a> - <abbr class="published" title="2015-09-08T13:00:00+01:00">Tue 08 September 2015</abbr></li>
+    <li><a href='../../notes/loading-postgis/'>Loading PostGIS</a> - <abbr class="published" title="2014-11-20T00:00:00+00:00">Thu 20 November 2014</abbr></li>
+    <li><a href='../../notes/practical-openlayers-3-leaflet/'>Practical OpenLayers 3 &amp; Leaflet</a> - <abbr class="published" title="2014-09-07T21:30:00+01:00">Sun 07 September 2014</abbr></li>
+    <li><a href='../../notes/gnu-parallel-all-the-things/'>GNU Parallel all the things!</a> - <abbr class="published" title="2014-07-17T19:45:00+01:00">Thu 17 July 2014</abbr></li>
+    <li><a href='../../notes/first-few-months-of-clojure/'>First few months of Clojure</a> - <abbr class="published" title="2014-02-18T19:42:00+00:00">Tue 18 February 2014</abbr></li>
+    <li><a href='../../notes/custom-geoserver-getfeatureinfo-template/'>Custom GeoServer GetFeatureInfo Template</a> - <abbr class="published" title="2013-10-18T17:24:00+01:00">Fri 18 October 2013</abbr></li>
+    <li><a href='../../notes/using-leaflet-with-a-custom-projection-and-a-mapproxy-tms/'>Using Leaflet with a custom projection and a MapProxy TMS</a> - <abbr class="published" title="2012-07-02T21:06:00+01:00">Mon 02 July 2012</abbr></li>
+    <li><a href='../../notes/greyscale-maps-with-mapserver/'>Greyscale maps with MapServer</a> - <abbr class="published" title="2012-02-02T21:31:00+00:00">Thu 02 February 2012</abbr></li>
+    <li><a href='../../notes/disaggregate-multilinestrings-using-st_dump-postgis/'>Disaggregate MultiLineStrings using ST_Dump PostGIS</a> - <abbr class="published" title="2011-11-24T21:39:00+00:00">Thu 24 November 2011</abbr></li>
+    <li><a href='../../notes/recursively-delete-empty-directories/'>Recursively delete empty directories</a> - <abbr class="published" title="2011-03-28T10:31:00+01:00">Mon 28 March 2011</abbr></li>
+    <li><a href='../../notes/convert-a-directory-of-tiffs-to-greyscale-using-imagemagick/'>Convert a directory of TIFFs to greyscale using ImageMagick</a> - <abbr class="published" title="2011-01-07T17:53:00+00:00">Fri 07 January 2011</abbr></li>
+    <li><a href='../../notes/build-ogr-18-with-gml-wfs-and-postgis-support-on-ubuntu-1004/'>Build OGR 1.8 with GML, WFS and PostGIS support on Ubuntu 10.04</a> - <abbr class="published" title="2010-12-19T21:06:00+00:00">Sun 19 December 2010</abbr></li>
+</ul>
+</section>
         <section id="extras" class="body">
         </section><!-- /#extras -->
 

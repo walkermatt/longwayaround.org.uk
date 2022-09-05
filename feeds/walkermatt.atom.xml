@@ -1,5 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>longwayaround.org.uk - walkermatt</title><link href="https://longwayaround.org.uk/" rel="alternate"></link><link href="https://longwayaround.org.uk/feeds/walkermatt.atom.xml" rel="self"></link><id>https://longwayaround.org.uk/</id><updated>2022-06-23T21:56:00+01:00</updated><subtitle>taking the scenic route and enjoying the journey</subtitle><entry><title>Web Mercator OS Vector Tile API in OpenLayers</title><link href="https://longwayaround.org.uk/notes/web-mercator-os-vector-tile-api-in-openlayers/" rel="alternate"></link><published>2022-06-23T21:56:00+01:00</published><updated>2022-06-23T21:56:00+01:00</updated><author><name>walkermatt</name></author><id>tag:longwayaround.org.uk,2022-06-23:/notes/web-mercator-os-vector-tile-api-in-openlayers/</id><summary type="html">&lt;p&gt;Adding a Vector Tile layer of Ordnance Survey data from the OS Data Hub to an OpenLayers map in Web Mercator is a little more work than expected as the JSON style document and associated JSON source document include paths for the default British National Grid tiles. The following is …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Adding a Vector Tile layer of Ordnance Survey data from the OS Data Hub to an OpenLayers map in Web Mercator is a little more work than expected as the JSON style document and associated JSON source document include paths for the default British National Grid tiles. The following is based on the output from &lt;a class="reference external" href="https://github.com/openlayers/create-ol-app"&gt;create-ol-app&lt;/a&gt; and the &lt;a class="reference external" href="https://github.com/OrdnanceSurvey/OS-Data-Hub-API-Demos/tree/master/OSVectorTileAPI/OpenLayers"&gt;OS Vector Tile API OpenLayers demo&lt;/a&gt;.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>longwayaround.org.uk - walkermatt</title><link href="https://longwayaround.org.uk/" rel="alternate"></link><link href="https://longwayaround.org.uk/feeds/walkermatt.atom.xml" rel="self"></link><id>https://longwayaround.org.uk/</id><updated>2022-09-05T08:05:00+01:00</updated><subtitle>taking the scenic route and enjoying the journey</subtitle><entry><title>Web Mercator OS Vector Tile API in OpenLayers - Take #2</title><link href="https://longwayaround.org.uk/notes/web-mercator-os-vector-tile-api-in-openlayers-take-2/" rel="alternate"></link><published>2022-09-05T08:05:00+01:00</published><updated>2022-09-05T08:05:00+01:00</updated><author><name>walkermatt</name></author><id>tag:longwayaround.org.uk,2022-09-05:/notes/web-mercator-os-vector-tile-api-in-openlayers-take-2/</id><summary type="html">&lt;p&gt;This is an update to my &lt;a class="reference external" href="/notes/web-mercator-os-vector-tile-api-in-openlayers/"&gt;previous post&lt;/a&gt; on the same subject.&lt;/p&gt;
+&lt;p&gt;Thanks to &lt;a class="reference external" href="https://twitter.com/ahoce/status/1545409888226099200"&gt;some feedback from Andreas Hocevar&lt;/a&gt; and &lt;a class="reference external" href="https://github.com/openlayers/ol-mapbox-style/pull/618"&gt;a pull request I made to ol-mapbox-style&lt;/a&gt; adding a Vector Tile layer of Ordnance Survey data from the OS Data Hub to an OpenLayers map in Web Mercator is a …&lt;/p&gt;</summary><content type="html">&lt;p&gt;This is an update to my &lt;a class="reference external" href="/notes/web-mercator-os-vector-tile-api-in-openlayers/"&gt;previous post&lt;/a&gt; on the same subject.&lt;/p&gt;
+&lt;p&gt;Thanks to &lt;a class="reference external" href="https://twitter.com/ahoce/status/1545409888226099200"&gt;some feedback from Andreas Hocevar&lt;/a&gt; and &lt;a class="reference external" href="https://github.com/openlayers/ol-mapbox-style/pull/618"&gt;a pull request I made to ol-mapbox-style&lt;/a&gt; adding a Vector Tile layer of Ordnance Survey data from the OS Data Hub to an OpenLayers map in Web Mercator is a little easier than it was &lt;a class="reference external" href="/notes/web-mercator-os-vector-tile-api-in-openlayers/"&gt;a few months ago&lt;/a&gt; 🎉&lt;/p&gt;
+&lt;p&gt;The following uses &lt;a class="reference external" href="https://github.com/openlayers/create-ol-app"&gt;create-ol-app&lt;/a&gt; to create a basic OpenLayers app, we then add the &lt;a class="reference external" href="https://github.com/openlayers/ol-mapbox-style/pull/618"&gt;ol-mapbox-style&lt;/a&gt; package and install the other dependencies:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# Create a new OpenLayers app in a folder called os-vt-api-ol&lt;/span&gt;
+npx create-ol-app os-vt-api-ol
+
+&lt;span class="c1"&gt;# Change to the newly created folder which contains our app&lt;/span&gt;
+&lt;span class="nb"&gt;cd&lt;/span&gt; os-vt-api-ol/
+
+&lt;span class="c1"&gt;# Install the ol-mapbox-style package from npm&lt;/span&gt;
+npm i ol-mapbox-style
+
+&lt;span class="c1"&gt;# Install the other dependencies (vite and ol)&lt;/span&gt;
+npm i
+
+&lt;span class="c1"&gt;# Start the vite local web server which reloads during development (see the &amp;quot;start&amp;quot; script in package.json)&lt;/span&gt;
+npm start
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Next update the code to add the OS Vector Tile layer:&lt;/p&gt;
+&lt;div class="section" id="main-js"&gt;
+&lt;h2&gt;&lt;tt class="docutils literal"&gt;main.js&lt;/tt&gt;&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;./style.css&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nx"&gt;Map&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;View&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="nx"&gt;from&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;ol&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="nx"&gt;VectorTileLayer&lt;/span&gt; &lt;span class="nx"&gt;from&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;ol/layer/VectorTile&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nx"&gt;transform&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="nx"&gt;from&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;ol/proj&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nx"&gt;applyStyle&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="nx"&gt;from&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;ol-mapbox-style&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+&lt;span class="kd"&gt;let&lt;/span&gt; &lt;span class="nx"&gt;OS_API_KEY&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;YOUR_OS_API_KEY&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+&lt;span class="kd"&gt;let&lt;/span&gt; &lt;span class="nx"&gt;OsVtLyr&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;VectorTileLayer&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+  &lt;span class="nx"&gt;declutter&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;span class="p"&gt;});&lt;/span&gt;
+
+&lt;span class="nx"&gt;applyStyle&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+  &lt;span class="nx"&gt;OsVtLyr&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="s1"&gt;&amp;#39;https://api.os.uk/maps/vector/v1/vts/resources/styles?srs=3857&amp;amp;key=&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
+    &lt;span class="nx"&gt;OS_API_KEY&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="s1"&gt;&amp;#39;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="c1"&gt;// Specify the optional transformRequest function which is&lt;/span&gt;
+    &lt;span class="c1"&gt;// called before each resource associated with the style&lt;/span&gt;
+    &lt;span class="c1"&gt;// is fetched. In this instance we are ensuring the `srs`&lt;/span&gt;
+    &lt;span class="c1"&gt;// parameter is set to `3857` (Web Mercator) when fetching&lt;/span&gt;
+    &lt;span class="c1"&gt;// each resource (Source, Sprite, Tiles etc.). Full docs at&lt;/span&gt;
+    &lt;span class="c1"&gt;// https://github.com/openlayers/ol-mapbox-style#transformRequest&lt;/span&gt;
+    &lt;span class="nx"&gt;transformRequest&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;url&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;type&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+      &lt;span class="nx"&gt;url&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;URL&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;url&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+      &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;!&lt;/span&gt;&lt;span class="nx"&gt;url&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;searchParams&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;has&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;srs&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="nx"&gt;url&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;searchParams&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;srs&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;3857&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+      &lt;span class="p"&gt;}&lt;/span&gt;
+      &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;Request&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;url&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="p"&gt;},&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="nx"&gt;then&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="nx"&gt;e&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="c1"&gt;// Once the style has been applied set the attribution which is missing&lt;/span&gt;
+  &lt;span class="c1"&gt;// from the source document&lt;/span&gt;
+  &lt;span class="nx"&gt;OsVtLyr&lt;/span&gt;
+    &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;getSource&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+    &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;setAttributions&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+      &lt;span class="s1"&gt;&amp;#39;&amp;amp;copy; &amp;lt;a href=&amp;quot;http://www.ordnancesurvey.co.uk/&amp;quot;&amp;gt;Ordnance Survey&amp;lt;/a&amp;gt;&amp;#39;&lt;/span&gt;
+    &lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;});&lt;/span&gt;
+
+&lt;span class="kr"&gt;const&lt;/span&gt; &lt;span class="nx"&gt;map&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;Map&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+  &lt;span class="nx"&gt;target&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;map&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="nx"&gt;layers&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;OsVtLyr&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+  &lt;span class="nx"&gt;view&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;View&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+    &lt;span class="nx"&gt;center&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;transform&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mf"&gt;2.333029&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mf"&gt;52.109524&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;EPSG:4326&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;EPSG:3857&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+    &lt;span class="nx"&gt;zoom&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;14&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="p"&gt;}),&lt;/span&gt;
+&lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;See the comments in the code for an explanation of the steps involved. The you should end up with a map that looks something like this:&lt;/p&gt;
+&lt;img alt="OpenLayers map showing styled OS Vector Tiles data for Malvern, UK" src="/files/os-vector-tile-openlayers.png" style="width: 100%;" /&gt;
+&lt;/div&gt;
+</content><category term="javascript"></category><category term="openlayers"></category><category term="vector-tiles"></category><category term="notes"></category></entry><entry><title>Web Mercator OS Vector Tile API in OpenLayers</title><link href="https://longwayaround.org.uk/notes/web-mercator-os-vector-tile-api-in-openlayers/" rel="alternate"></link><published>2022-06-23T21:56:00+01:00</published><updated>2022-06-23T21:56:00+01:00</updated><author><name>walkermatt</name></author><id>tag:longwayaround.org.uk,2022-06-23:/notes/web-mercator-os-vector-tile-api-in-openlayers/</id><summary type="html">&lt;p&gt;Adding a Vector Tile layer of Ordnance Survey data from the OS Data Hub to an OpenLayers map in Web Mercator is a little more work than expected as the JSON style document and associated JSON source document include paths for the default British National Grid tiles. The following is …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Adding a Vector Tile layer of Ordnance Survey data from the OS Data Hub to an OpenLayers map in Web Mercator is a little more work than expected as the JSON style document and associated JSON source document include paths for the default British National Grid tiles. The following is based on the output from &lt;a class="reference external" href="https://github.com/openlayers/create-ol-app"&gt;create-ol-app&lt;/a&gt; and the &lt;a class="reference external" href="https://github.com/OrdnanceSurvey/OS-Data-Hub-API-Demos/tree/master/OSVectorTileAPI/OpenLayers"&gt;OS Vector Tile API OpenLayers demo&lt;/a&gt;.&lt;/p&gt;
 &lt;div class="section" id="main-js"&gt;
 &lt;h2&gt;&lt;tt class="docutils literal"&gt;main.js&lt;/tt&gt;&lt;/h2&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;./style.css&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
