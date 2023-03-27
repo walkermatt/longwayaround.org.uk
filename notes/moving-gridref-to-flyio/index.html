@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-        <title>longwayaround.org.uk - command-line</title>
+        <title>Moving gridref to fly.io</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, target-densitydpi=device-dpi">
         <link rel="stylesheet" href="https://longwayaround.org.uk/theme/css/main.css" type="text/css" />
@@ -24,7 +24,7 @@
                 <h1><a href="/">longwayaround.org.uk  <strong>taking the scenic route and enjoying the journey</strong></a></h1>
                 <nav>
                 <ul>
-                    <li ><a href="https://longwayaround.org.uk/notes/">notes</a></li>
+                    <li class="active"><a href="https://longwayaround.org.uk/notes/">notes</a></li>
                 </ul>
                 </nav>
                     <ul class="social">
@@ -35,12 +35,13 @@
                     <li><a href="https://twitter.com/_walkermatt"><img src="https://longwayaround.org.uk/theme/images/icons/gosquared/18/twitter.png" title="twitter" width="18" height="18" /></a></li>
                     </ul>
         </header><!-- /#banner -->
-
-            <aside id="featured" class="body">
-                <article>
-                    <abbr class="published" title="2023-03-27T11:20:00+01:00">Mon 27 March 2023</abbr>
-                    <h1 class="entry-title"><a href="https://longwayaround.org.uk/notes/moving-gridref-to-flyio/">Moving gridref to fly.io</a></h1> 
-                    <p>A few years ago I made an effort to learn <a class="reference external" href="http://clojure.org/">Clojure</a>, during which time I built a small Clojure library and command-line app <a class="reference external" href="https://github.com/walkermatt/gridref">GridRef</a> to convert between an Ordnance Survey GB grid reference and British National Grid coordinates. While I was at it I built a web API <a class="reference external" href="https://github.com/walkermatt/gridref-web">GridRef Web</a> which exposes the conversion functions via a <a class="reference external" href="https://github.com/ring-clojure/ring">Ring</a> web app. For several years gridref-web was deployed via Heroku on it's free-tier, following the free-tier coming to an end it needed a new home.</p>
+<section id="content" class="body">
+<article>
+        <abbr class="published" title="2023-03-27T11:20:00+01:00">Mon 27 March 2023</abbr>
+        <header> <h1 class="entry-title"><a href=""
+        rel="bookmark" title="Permalink to Moving gridref to fly.io">Moving gridref to fly.io</a></h1>  </header>
+        <div class="entry-content">
+        <p>A few years ago I made an effort to learn <a class="reference external" href="http://clojure.org/">Clojure</a>, during which time I built a small Clojure library and command-line app <a class="reference external" href="https://github.com/walkermatt/gridref">GridRef</a> to convert between an Ordnance Survey GB grid reference and British National Grid coordinates. While I was at it I built a web API <a class="reference external" href="https://github.com/walkermatt/gridref-web">GridRef Web</a> which exposes the conversion functions via a <a class="reference external" href="https://github.com/ring-clojure/ring">Ring</a> web app. For several years gridref-web was deployed via Heroku on it's free-tier, following the free-tier coming to an end it needed a new home.</p>
 <p>I saw mention of <a class="reference external" href="https://fly.io/">fly.io</a> a little while ago and saw they had a <a class="reference external" href="https://fly.io/docs/about/pricing/#free-allowances">genorious free tier</a> including support for custom domains, https and deployment via Docker so I thought I'd give it a go.</p>
 <div class="section" id="creating-a-dockerfile">
 <h2>Creating a Dockerfile</h2>
@@ -144,110 +145,48 @@ docker run -it --rm --memory-swap 250m --memory 250m --env <span class="nv">PORT
 
 <footer class="post-info">
     <abbr class="published" title="2023-03-27T11:20:00+01:00">Mon 27 March 2023</abbr>
-<p>Tags: <a href="https://longwayaround.org.uk/tag/command-line.html">command-line</a> <a href="https://longwayaround.org.uk/tag/geo.html">geo</a> <a href="https://longwayaround.org.uk/tag/clojure.html">clojure</a> <a href="https://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->                    <p><a href="https://longwayaround.org.uk/notes/moving-gridref-to-flyio/#disqus_thread">comments</a>.</p>
-                </article>
-            </aside><!-- /#featured -->
-                <section id="content" class="body">
-                    <h1>Other posts</h1>
-                    <hr />
-                        <ol id="posts-list" class="hfeed">
+<p>Tags: <a href="https://longwayaround.org.uk/tag/command-line.html">command-line</a> <a href="https://longwayaround.org.uk/tag/geo.html">geo</a> <a href="https://longwayaround.org.uk/tag/clojure.html">clojure</a> <a href="https://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->        </div><!-- /.entry-content -->
+        <div class="comments">
+            <div id="disqus_thread"></div>
+            <script type="text/javascript">
+               // Don't set the identifier so that comments are
+               // associated with the url
+               // var disqus_identifier = "notes/moving-gridref-to-flyio/";
+               (function() {
+               var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+               dsq.src = 'https://longwayaroundorguk.disqus.com/embed.js';
+               (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+              })();
+            </script>
+        </div>
 
- 
-            <li><article class="hentry">
-                <header>
-                        <abbr class="published" title="2014-11-20T00:00:00+00:00">Thu 20 November 2014</abbr>
-                        <h1><a href="https://longwayaround.org.uk/notes/loading-postgis/" rel="bookmark" title="Permalink to Loading PostGIS">Loading PostGIS</a></h1>
-                </header>
-                <div class="entry-content">
-                <div class="slug">
-                    <p><em>Notes from a talk at PostGIS Day, London 20th Nov 2014.</em></p>
-<div class="section" id="the-options">
-<h2>The options</h2>
-<p>All support basic options such as specifying table names, schema, SRS etc.</p>
-<div class="section" id="graphical">
-<h3>Graphical</h3>
-<dl class="docutils">
-<dt><a class="reference external" href="http://gothos.info/2014/03/loading-data-into-postgis-shapefiles/">shp2pgsql-gui</a></dt>
-<dd>Graphical interface to shp2pgsql tool shipped with PostGIS to load ESRI Shapefiles via pgAdmin III.</dd>
-<dt><a class="reference external" href="https://github.com/zer0infinity/OGR2GUI">ogr2gui</a></dt>
-<dd>Graphical interface to <code>ogr2ogr</code> command line utility …</dd></dl></div></div>
-                    <p>
-<a href="https://longwayaround.org.uk/notes/loading-postgis/#disqus_thread">comments</a>.                        <a class="readmore" href="https://longwayaround.org.uk/notes/loading-postgis/">read more</a>
-                    </p>
-                </div>
-                </div><!-- /.entry-content -->
-            </article></li>
-
- 
-            <li><article class="hentry">
-                <header>
-                        <abbr class="published" title="2014-07-17T19:45:00+01:00">Thu 17 July 2014</abbr>
-                        <h1><a href="https://longwayaround.org.uk/notes/gnu-parallel-all-the-things/" rel="bookmark" title="Permalink to GNU Parallel all the things!">GNU Parallel all the things!</a></h1>
-                </header>
-                <div class="entry-content">
-                <div class="slug">
-                    <p>I've been doing a lot of data processing recently and have been looking for a way of running bulk data loads into PostGIS in parallel to make use of all available cores. The work has mainly revolved around loading national cover of Ordnance Survey OS MasterMap and VectorMap Local for …</p>
-                    <p>
-<a href="https://longwayaround.org.uk/notes/gnu-parallel-all-the-things/#disqus_thread">comments</a>.                        <a class="readmore" href="https://longwayaround.org.uk/notes/gnu-parallel-all-the-things/">read more</a>
-                    </p>
-                </div>
-                </div><!-- /.entry-content -->
-            </article></li>
-
- 
-            <li><article class="hentry">
-                <header>
-                        <abbr class="published" title="2014-02-18T19:42:00+00:00">Tue 18 February 2014</abbr>
-                        <h1><a href="https://longwayaround.org.uk/notes/first-few-months-of-clojure/" rel="bookmark" title="Permalink to First few months of Clojure">First few months of Clojure</a></h1>
-                </header>
-                <div class="entry-content">
-                <div class="slug">
-                    <p>I've been learning a bit of Lisp on and off for a few years, I first read (about half of) <a class="reference external" href="http://landoflisp.com/">Land of Lisp</a>, then <a class="reference external" href="http://www.gigamonkeys.com/book/">Practical Lisp</a> then I came across <a class="reference external" href="http://clojure.org/">Clojure</a> a modern Lisp that runs on the JVM and since I've been reading <a class="reference external" href="http://www.clojurebook.com/">Clojure Programming</a> and working through <a class="reference external" href="https://github.com/walkermatt/clojure-koans">koans …</a></p>
-                    <p>
-<a href="https://longwayaround.org.uk/notes/first-few-months-of-clojure/#disqus_thread">comments</a>.                        <a class="readmore" href="https://longwayaround.org.uk/notes/first-few-months-of-clojure/">read more</a>
-                    </p>
-                </div>
-                </div><!-- /.entry-content -->
-            </article></li>
-
- 
-            <li><article class="hentry">
-                <header>
-                        <abbr class="published" title="2011-03-28T10:31:00+01:00">Mon 28 March 2011</abbr>
-                        <h1><a href="https://longwayaround.org.uk/notes/recursively-delete-empty-directories/" rel="bookmark" title="Permalink to Recursively delete empty directories">Recursively delete empty directories</a></h1>
-                </header>
-                <div class="entry-content">
-                <div class="slug">
-                    <p>To recursively delete all empty directories from the command prompt in Windows. Open command prompt and change to the desired directory then enter the following:</p>
-<div class="highlight"><pre><span></span><span class="k">for</span> /F <span class="s2">&quot;tokens=*&quot;</span> %f in <span class="o">(</span><span class="s1">&#39;dir /AD /S /B ^| sort /R&#39;</span><span class="o">)</span> <span class="k">do</span> <span class="nb">echo</span> rd <span class="s2">&quot;%f&quot;</span>
-</pre></div>
-<p>This command generates a list of all directories and sub …</p>
-                    <p>
-<a href="https://longwayaround.org.uk/notes/recursively-delete-empty-directories/#disqus_thread">comments</a>.                        <a class="readmore" href="https://longwayaround.org.uk/notes/recursively-delete-empty-directories/">read more</a>
-                    </p>
-                </div>
-                </div><!-- /.entry-content -->
-            </article></li>
-
- 
-            <li><article class="hentry">
-                <header>
-                        <abbr class="published" title="2011-01-07T17:53:00+00:00">Fri 07 January 2011</abbr>
-                        <h1><a href="https://longwayaround.org.uk/notes/convert-a-directory-of-tiffs-to-greyscale-using-imagemagick/" rel="bookmark" title="Permalink to Convert a directory of TIFFs to greyscale using ImageMagick">Convert a directory of TIFFs to greyscale using ImageMagick</a></h1>
-                </header>
-                <div class="entry-content">
-                <div class="slug">
-                    <p>Change to the directory then run the command:</p>
-<div class="highlight"><pre><span></span>mogrify -colorspace Gray *.tif
-</pre></div>
-
-                    <p>
-<a href="https://longwayaround.org.uk/notes/convert-a-directory-of-tiffs-to-greyscale-using-imagemagick/#disqus_thread">comments</a>.                        <a class="readmore" href="https://longwayaround.org.uk/notes/convert-a-directory-of-tiffs-to-greyscale-using-imagemagick/">read more</a>
-                    </p>
-                </div>
-                </div><!-- /.entry-content -->
-            </article></li>
-    </ol><!-- /#posts-list -->
+</article>
+</section>
+<section id="content" class="body">
+<h1>Posts</h1>
+<ul>
+    <li><a href='../../notes/moving-gridref-to-flyio/'>Moving gridref to fly.io</a> - <abbr class="published" title="2023-03-27T11:20:00+01:00">Mon 27 March 2023</abbr></li>
+    <li><a href='../../notes/web-mercator-os-vector-tile-api-in-openlayers-take-2/'>Web Mercator OS Vector Tile API in OpenLayers - Take #2</a> - <abbr class="published" title="2022-09-05T08:05:00+01:00">Mon 05 September 2022</abbr></li>
+    <li><a href='../../notes/web-mercator-os-vector-tile-api-in-openlayers/'>Web Mercator OS Vector Tile API in OpenLayers</a> - <abbr class="published" title="2022-06-23T21:56:00+01:00">Thu 23 June 2022</abbr></li>
+    <li><a href='../../notes/writing-small-text-filters-for-the-shell-and-vim/'>Writing small text filters for the shell and Vim</a> - <abbr class="published" title="2022-06-22T21:56:00+01:00">Wed 22 June 2022</abbr></li>
+    <li><a href='../../notes/mapserver-postgis-performance/'>MapServer PostGIS Performance</a> - <abbr class="published" title="2019-09-20T12:00:00+01:00">Fri 20 September 2019</abbr></li>
+    <li><a href='../../notes/postgres-information-functions/'>Postgres Information Functions</a> - <abbr class="published" title="2017-02-18T07:55:00+00:00">Sat 18 February 2017</abbr></li>
+    <li><a href='../../notes/openlayers-2-custom-build/'>OpenLayers 2 Custom Build</a> - <abbr class="published" title="2016-04-26T14:00:00+01:00">Tue 26 April 2016</abbr></li>
+    <li><a href='../../notes/testing-python-postgres/'>Testing Python &amp; Postgres</a> - <abbr class="published" title="2015-10-12T21:00:00+01:00">Mon 12 October 2015</abbr></li>
+    <li><a href='../../notes/read-only-postgres-database/'>Read-only Postgres database</a> - <abbr class="published" title="2015-09-08T13:00:00+01:00">Tue 08 September 2015</abbr></li>
+    <li><a href='../../notes/loading-postgis/'>Loading PostGIS</a> - <abbr class="published" title="2014-11-20T00:00:00+00:00">Thu 20 November 2014</abbr></li>
+    <li><a href='../../notes/practical-openlayers-3-leaflet/'>Practical OpenLayers 3 &amp; Leaflet</a> - <abbr class="published" title="2014-09-07T21:30:00+01:00">Sun 07 September 2014</abbr></li>
+    <li><a href='../../notes/gnu-parallel-all-the-things/'>GNU Parallel all the things!</a> - <abbr class="published" title="2014-07-17T19:45:00+01:00">Thu 17 July 2014</abbr></li>
+    <li><a href='../../notes/first-few-months-of-clojure/'>First few months of Clojure</a> - <abbr class="published" title="2014-02-18T19:42:00+00:00">Tue 18 February 2014</abbr></li>
+    <li><a href='../../notes/custom-geoserver-getfeatureinfo-template/'>Custom GeoServer GetFeatureInfo Template</a> - <abbr class="published" title="2013-10-18T17:24:00+01:00">Fri 18 October 2013</abbr></li>
+    <li><a href='../../notes/using-leaflet-with-a-custom-projection-and-a-mapproxy-tms/'>Using Leaflet with a custom projection and a MapProxy TMS</a> - <abbr class="published" title="2012-07-02T21:06:00+01:00">Mon 02 July 2012</abbr></li>
+    <li><a href='../../notes/greyscale-maps-with-mapserver/'>Greyscale maps with MapServer</a> - <abbr class="published" title="2012-02-02T21:31:00+00:00">Thu 02 February 2012</abbr></li>
+    <li><a href='../../notes/disaggregate-multilinestrings-using-st_dump-postgis/'>Disaggregate MultiLineStrings using ST_Dump PostGIS</a> - <abbr class="published" title="2011-11-24T21:39:00+00:00">Thu 24 November 2011</abbr></li>
+    <li><a href='../../notes/recursively-delete-empty-directories/'>Recursively delete empty directories</a> - <abbr class="published" title="2011-03-28T10:31:00+01:00">Mon 28 March 2011</abbr></li>
+    <li><a href='../../notes/convert-a-directory-of-tiffs-to-greyscale-using-imagemagick/'>Convert a directory of TIFFs to greyscale using ImageMagick</a> - <abbr class="published" title="2011-01-07T17:53:00+00:00">Fri 07 January 2011</abbr></li>
+    <li><a href='../../notes/build-ogr-18-with-gml-wfs-and-postgis-support-on-ubuntu-1004/'>Build OGR 1.8 with GML, WFS and PostGIS support on Ubuntu 10.04</a> - <abbr class="published" title="2010-12-19T21:06:00+00:00">Sun 19 December 2010</abbr></li>
+</ul>
+</section>
         <section id="extras" class="body">
         </section><!-- /#extras -->
 

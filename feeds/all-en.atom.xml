@@ -1,5 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>longwayaround.org.uk</title><link href="https://longwayaround.org.uk/" rel="alternate"></link><link href="https://longwayaround.org.uk/feeds/all-en.atom.xml" rel="self"></link><id>https://longwayaround.org.uk/</id><updated>2022-09-05T08:05:00+01:00</updated><subtitle>taking the scenic route and enjoying the journey</subtitle><entry><title>Web Mercator OS Vector Tile API in OpenLayers - Take #2</title><link href="https://longwayaround.org.uk/notes/web-mercator-os-vector-tile-api-in-openlayers-take-2/" rel="alternate"></link><published>2022-09-05T08:05:00+01:00</published><updated>2022-09-05T08:05:00+01:00</updated><author><name>walkermatt</name></author><id>tag:longwayaround.org.uk,2022-09-05:/notes/web-mercator-os-vector-tile-api-in-openlayers-take-2/</id><summary type="html">&lt;p&gt;This is an update to my &lt;a class="reference external" href="/notes/web-mercator-os-vector-tile-api-in-openlayers/"&gt;previous post&lt;/a&gt; on the same subject.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>longwayaround.org.uk</title><link href="https://longwayaround.org.uk/" rel="alternate"></link><link href="https://longwayaround.org.uk/feeds/all-en.atom.xml" rel="self"></link><id>https://longwayaround.org.uk/</id><updated>2023-03-27T11:20:00+01:00</updated><subtitle>taking the scenic route and enjoying the journey</subtitle><entry><title>Moving gridref to fly.io</title><link href="https://longwayaround.org.uk/notes/moving-gridref-to-flyio/" rel="alternate"></link><published>2023-03-27T11:20:00+01:00</published><updated>2023-03-27T11:20:00+01:00</updated><author><name>walkermatt</name></author><id>tag:longwayaround.org.uk,2023-03-27:/notes/moving-gridref-to-flyio/</id><summary type="html">&lt;p&gt;A few years ago I made an effort to learn &lt;a class="reference external" href="http://clojure.org/"&gt;Clojure&lt;/a&gt;, during which time I built a small Clojure library and command-line app &lt;a class="reference external" href="https://github.com/walkermatt/gridref"&gt;GridRef&lt;/a&gt; to convert between an Ordnance Survey GB grid reference and British National Grid coordinates. While I was at it I built a web API &lt;a class="reference external" href="https://github.com/walkermatt/gridref-web"&gt;GridRef Web …&lt;/a&gt;&lt;/p&gt;</summary><content type="html">&lt;p&gt;A few years ago I made an effort to learn &lt;a class="reference external" href="http://clojure.org/"&gt;Clojure&lt;/a&gt;, during which time I built a small Clojure library and command-line app &lt;a class="reference external" href="https://github.com/walkermatt/gridref"&gt;GridRef&lt;/a&gt; to convert between an Ordnance Survey GB grid reference and British National Grid coordinates. While I was at it I built a web API &lt;a class="reference external" href="https://github.com/walkermatt/gridref-web"&gt;GridRef Web&lt;/a&gt; which exposes the conversion functions via a &lt;a class="reference external" href="https://github.com/ring-clojure/ring"&gt;Ring&lt;/a&gt; web app. For several years gridref-web was deployed via Heroku on it's free-tier, following the free-tier coming to an end it needed a new home.&lt;/p&gt;
+&lt;p&gt;I saw mention of &lt;a class="reference external" href="https://fly.io/"&gt;fly.io&lt;/a&gt; a little while ago and saw they had a &lt;a class="reference external" href="https://fly.io/docs/about/pricing/#free-allowances"&gt;genorious free tier&lt;/a&gt; including support for custom domains, https and deployment via Docker so I thought I'd give it a go.&lt;/p&gt;
+&lt;div class="section" id="creating-a-dockerfile"&gt;
+&lt;h2&gt;Creating a Dockerfile&lt;/h2&gt;
+&lt;p&gt;The first step was to create a Docker container which turned out to be straight forward. This is the &lt;code&gt;Dockerfile&lt;/code&gt; which is based on the &lt;a class="reference external" href="https://hub.docker.com/_/clojure/"&gt;official clojure Docker image&lt;/a&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;FROM&lt;/span&gt;&lt;span class="s"&gt; clojure&lt;/span&gt;
+&lt;span class="k"&gt;ENV&lt;/span&gt; &lt;span class="nv"&gt;PORT&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;8080&lt;/span&gt;
+&lt;span class="k"&gt;ENV&lt;/span&gt; &lt;span class="nv"&gt;JVM_OPTS&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;-Xmx250m&amp;quot;&lt;/span&gt;
+&lt;span class="k"&gt;COPY&lt;/span&gt; . /usr/src/app
+&lt;span class="k"&gt;WORKDIR&lt;/span&gt;&lt;span class="s"&gt; /usr/src/app&lt;/span&gt;
+&lt;span class="k"&gt;EXPOSE&lt;/span&gt;&lt;span class="s"&gt; ${PORT}&lt;/span&gt;
+&lt;span class="k"&gt;CMD&lt;/span&gt; lein run &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;PORT&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;First we define a &lt;code&gt;PORT&lt;/code&gt; environment variable which determines which port the embedded Jetty HTTP server will listen on. I'm defaulting to &lt;code&gt;8080&lt;/code&gt; which is the default http port that fly.io will forward http requests to.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;JVM_OPTS&lt;/code&gt; environment variable is used to limit the amount of memory that our app can use, I've chosen &lt;code&gt;250m&lt;/code&gt; which is slightly lower than the memory available to a fly.io instance on the &lt;a class="reference external" href="https://fly.io/docs/about/pricing/#free-allowances"&gt;free tier&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;We then copy the contents of the repo to &lt;code&gt;/usr/src/app&lt;/code&gt;, set the current directory (&lt;code&gt;WORKDIR&lt;/code&gt;) to the same and &lt;code&gt;EXPOSE&lt;/code&gt; the &lt;code&gt;PORT&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Finally we start the app via &lt;code&gt;lein run&lt;/code&gt; passing the value of the &lt;code&gt;PORT&lt;/code&gt; environment variable which is handled by the &lt;a class="reference external" href="https://github.com/walkermatt/gridref-web/blob/master/src/gridref_web/web.clj#L95"&gt;main method of GridRef Web&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="build-and-run-locally"&gt;
+&lt;h2&gt;Build and run locally&lt;/h2&gt;
+&lt;p&gt;The &lt;code&gt;Dockerfile&lt;/code&gt; can be built and run locally via:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;docker build -t gridref-web .
+docker run -it --rm --memory-swap 250m --memory 250m --env &lt;span class="nv"&gt;PORT&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;8181&lt;/span&gt; -p &lt;span class="m"&gt;8181&lt;/span&gt;:8181 --name gridref-web gridref-web
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Specifying the same value for &lt;cite&gt;--memory-swap&lt;/cite&gt; and &lt;cite&gt;--memory&lt;/cite&gt; effectively limits the container to that much memory without swap which mimics the fly.io free-tier.&lt;/p&gt;
+&lt;p&gt;We're setting the &lt;code&gt;PORT&lt;/code&gt; environment variable used in the Dockerfile to determine which port the Jetty listens on; the &lt;code&gt;-p&lt;/code&gt; option exposes the container port to localhost for testing.&lt;/p&gt;
+&lt;p&gt;Visiting &lt;code&gt;http://localhost:8181&lt;/code&gt; should load the home page.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="deploy-to-fly-io"&gt;
+&lt;h2&gt;Deploy to fly.io&lt;/h2&gt;
+&lt;p&gt;First download and install &lt;a class="reference external" href="https://fly.io/docs/#flyctl-your-cli-command-center"&gt;flyctl&lt;/a&gt; before running the following to authenticate (and create an account):&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;flyctl auth login
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Then change to the root of the &lt;code&gt;gridref-web&lt;/code&gt; repository and execute the following to configure the app for deployment via fly.io:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;flyctl launch
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Running &lt;code&gt;flyctl launch&lt;/code&gt; prompts for various options (shown below) and creates a &lt;code&gt;fly.toml&lt;/code&gt; file which contains the apps configuration.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# ? Choose an app name (leave blank to generate one): gridref-web&lt;/span&gt;
+&lt;span class="c1"&gt;# ? Choose a region for deployment: London, United Kingdom (lhr)&lt;/span&gt;
+&lt;span class="c1"&gt;# Created app &amp;#39;gridref-web&amp;#39; in organization &amp;#39;personal&amp;#39;&lt;/span&gt;
+&lt;span class="c1"&gt;# ? Would you like to set up a Postgresql database now? No&lt;/span&gt;
+&lt;span class="c1"&gt;# ? Would you like to set up an Upstash Redis database now? No&lt;/span&gt;
+&lt;span class="c1"&gt;# ? Create .dockerignore from 3 .gitignore files? Yes&lt;/span&gt;
+&lt;span class="c1"&gt;# ? Would you like to deploy now? No&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;These choices resulted in the following &lt;code&gt;fly.toml&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;app&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;gridref-web&amp;quot;&lt;/span&gt;
+&lt;span class="n"&gt;kill_signal&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;SIGINT&amp;quot;&lt;/span&gt;
+&lt;span class="n"&gt;kill_timeout&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;
+&lt;span class="n"&gt;primary_region&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;lhr&amp;quot;&lt;/span&gt;
+&lt;span class="n"&gt;processes&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;[]&lt;/span&gt;
+
+&lt;span class="k"&gt;[env]&lt;/span&gt;
+
+&lt;span class="k"&gt;[experimental]&lt;/span&gt;
+  &lt;span class="n"&gt;auto_rollback&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;
+
+&lt;span class="k"&gt;[[services]]&lt;/span&gt;
+  &lt;span class="n"&gt;http_checks&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;[]&lt;/span&gt;
+  &lt;span class="n"&gt;internal_port&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;8080&lt;/span&gt;
+  &lt;span class="n"&gt;processes&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;[&amp;quot;app&amp;quot;]&lt;/span&gt;
+  &lt;span class="n"&gt;protocol&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;tcp&amp;quot;&lt;/span&gt;
+  &lt;span class="n"&gt;script_checks&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;[]&lt;/span&gt;
+  &lt;span class="k"&gt;[services.concurrency]&lt;/span&gt;
+    &lt;span class="n"&gt;hard_limit&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;25&lt;/span&gt;
+    &lt;span class="n"&gt;soft_limit&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;20&lt;/span&gt;
+    &lt;span class="n"&gt;type&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;connections&amp;quot;&lt;/span&gt;
+
+  &lt;span class="k"&gt;[[services.ports]]&lt;/span&gt;
+    &lt;span class="n"&gt;force_https&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;
+    &lt;span class="n"&gt;handlers&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;[&amp;quot;http&amp;quot;]&lt;/span&gt;
+    &lt;span class="n"&gt;port&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;80&lt;/span&gt;
+
+  &lt;span class="k"&gt;[[services.ports]]&lt;/span&gt;
+    &lt;span class="n"&gt;handlers&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;[&amp;quot;tls&amp;quot;, &amp;quot;http&amp;quot;]&lt;/span&gt;
+    &lt;span class="n"&gt;port&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;443&lt;/span&gt;
+
+  &lt;span class="k"&gt;[[services.tcp_checks]]&lt;/span&gt;
+    &lt;span class="n"&gt;grace_period&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;1s&amp;quot;&lt;/span&gt;
+    &lt;span class="n"&gt;interval&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;15s&amp;quot;&lt;/span&gt;
+    &lt;span class="n"&gt;restart_limit&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;
+    &lt;span class="n"&gt;timeout&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;2s&amp;quot;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;I couldn't see any obvious changes to &lt;code&gt;fly.toml&lt;/code&gt; so I moved onto deploying via:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;flyctl deploy
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;At this point the gridref-web application is available at &lt;a class="reference external" href="https://gridref-web.fly.dev/"&gt;https://gridref-web.fly.dev/&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The application is available by default via https on fly.io (with a redirect from http), I had to make a &lt;a class="reference external" href="https://github.com/walkermatt/gridref-web/commit/ff2b5b6bb62ec78f2816ae48ffda8e9b68c1efde"&gt;small change to the code&lt;/a&gt; to use the &lt;code&gt;x-forwarded-proto&lt;/code&gt; header to determine the client protocol to ensure the links shown on the home page use the correct protocol as fly.io makes requests to my application running in Docker via plain http.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="custom-domain-and-certificate"&gt;
+&lt;h2&gt;Custom domain and certificate&lt;/h2&gt;
+&lt;p&gt;Setting up a custom domain and associated certificate for http traffic involved:&lt;/p&gt;
+&lt;ol class="arabic simple"&gt;
+&lt;li&gt;Creating a CNAME to point &lt;code&gt;gridref.longwayaround.org.uk&lt;/code&gt; at &lt;code&gt;gridref-web.fly.dev.&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Once the CNAME had propagated, requesting a certificate via the &lt;cite&gt;flyctl&lt;/cite&gt;:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;flyctl certs create gridref.longwayaround.org.uk
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;The web application is now available at &lt;a class="reference external" href="https://gridref.longwayaround.org.uk/"&gt;https://gridref.longwayaround.org.uk/&lt;/a&gt; 🎉&lt;/p&gt;
+&lt;p&gt;The application has been running for a few weeks without any issues, it's now running via https and is more responsive due to the instance always being available.&lt;/p&gt;
+&lt;/div&gt;
+</content><category term="command-line"></category><category term="geo"></category><category term="clojure"></category><category term="notes"></category></entry><entry><title>Web Mercator OS Vector Tile API in OpenLayers - Take #2</title><link href="https://longwayaround.org.uk/notes/web-mercator-os-vector-tile-api-in-openlayers-take-2/" rel="alternate"></link><published>2022-09-05T08:05:00+01:00</published><updated>2022-09-05T08:05:00+01:00</updated><author><name>walkermatt</name></author><id>tag:longwayaround.org.uk,2022-09-05:/notes/web-mercator-os-vector-tile-api-in-openlayers-take-2/</id><summary type="html">&lt;p&gt;This is an update to my &lt;a class="reference external" href="/notes/web-mercator-os-vector-tile-api-in-openlayers/"&gt;previous post&lt;/a&gt; on the same subject.&lt;/p&gt;
 &lt;p&gt;Thanks to &lt;a class="reference external" href="https://twitter.com/ahoce/status/1545409888226099200"&gt;some feedback from Andreas Hocevar&lt;/a&gt; and &lt;a class="reference external" href="https://github.com/openlayers/ol-mapbox-style/pull/618"&gt;a pull request I made to ol-mapbox-style&lt;/a&gt; adding a Vector Tile layer of Ordnance Survey data from the OS Data Hub to an OpenLayers map in Web Mercator is a …&lt;/p&gt;</summary><content type="html">&lt;p&gt;This is an update to my &lt;a class="reference external" href="/notes/web-mercator-os-vector-tile-api-in-openlayers/"&gt;previous post&lt;/a&gt; on the same subject.&lt;/p&gt;
 &lt;p&gt;Thanks to &lt;a class="reference external" href="https://twitter.com/ahoce/status/1545409888226099200"&gt;some feedback from Andreas Hocevar&lt;/a&gt; and &lt;a class="reference external" href="https://github.com/openlayers/ol-mapbox-style/pull/618"&gt;a pull request I made to ol-mapbox-style&lt;/a&gt; adding a Vector Tile layer of Ordnance Survey data from the OS Data Hub to an OpenLayers map in Web Mercator is a little easier than it was &lt;a class="reference external" href="/notes/web-mercator-os-vector-tile-api-in-openlayers/"&gt;a few months ago&lt;/a&gt; 🎉&lt;/p&gt;
 &lt;p&gt;The following uses &lt;a class="reference external" href="https://github.com/openlayers/create-ol-app"&gt;create-ol-app&lt;/a&gt; to create a basic OpenLayers app, we then add the &lt;a class="reference external" href="https://github.com/openlayers/ol-mapbox-style/pull/618"&gt;ol-mapbox-style&lt;/a&gt; package and install the other dependencies:&lt;/p&gt;

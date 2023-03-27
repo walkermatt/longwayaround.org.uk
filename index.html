@@ -38,93 +38,136 @@
 
             <aside id="featured" class="body">
                 <article>
-                    <abbr class="published" title="2022-09-05T08:05:00+01:00">Mon 05 September 2022</abbr>
-                    <h1 class="entry-title"><a href="https://longwayaround.org.uk/notes/web-mercator-os-vector-tile-api-in-openlayers-take-2/">Web Mercator OS Vector Tile API in OpenLayers - Take #2</a></h1> 
-                    <p>This is an update to my <a class="reference external" href="/notes/web-mercator-os-vector-tile-api-in-openlayers/">previous post</a> on the same subject.</p>
-<p>Thanks to <a class="reference external" href="https://twitter.com/ahoce/status/1545409888226099200">some feedback from Andreas Hocevar</a> and <a class="reference external" href="https://github.com/openlayers/ol-mapbox-style/pull/618">a pull request I made to ol-mapbox-style</a> adding a Vector Tile layer of Ordnance Survey data from the OS Data Hub to an OpenLayers map in Web Mercator is a little easier than it was <a class="reference external" href="/notes/web-mercator-os-vector-tile-api-in-openlayers/">a few months ago</a> 🎉</p>
-<p>The following uses <a class="reference external" href="https://github.com/openlayers/create-ol-app">create-ol-app</a> to create a basic OpenLayers app, we then add the <a class="reference external" href="https://github.com/openlayers/ol-mapbox-style/pull/618">ol-mapbox-style</a> package and install the other dependencies:</p>
-<div class="highlight"><pre><span></span><span class="c1"># Create a new OpenLayers app in a folder called os-vt-api-ol</span>
-npx create-ol-app os-vt-api-ol
-
-<span class="c1"># Change to the newly created folder which contains our app</span>
-<span class="nb">cd</span> os-vt-api-ol/
-
-<span class="c1"># Install the ol-mapbox-style package from npm</span>
-npm i ol-mapbox-style
-
-<span class="c1"># Install the other dependencies (vite and ol)</span>
-npm i
-
-<span class="c1"># Start the vite local web server which reloads during development (see the &quot;start&quot; script in package.json)</span>
-npm start
+                    <abbr class="published" title="2023-03-27T11:20:00+01:00">Mon 27 March 2023</abbr>
+                    <h1 class="entry-title"><a href="https://longwayaround.org.uk/notes/moving-gridref-to-flyio/">Moving gridref to fly.io</a></h1> 
+                    <p>A few years ago I made an effort to learn <a class="reference external" href="http://clojure.org/">Clojure</a>, during which time I built a small Clojure library and command-line app <a class="reference external" href="https://github.com/walkermatt/gridref">GridRef</a> to convert between an Ordnance Survey GB grid reference and British National Grid coordinates. While I was at it I built a web API <a class="reference external" href="https://github.com/walkermatt/gridref-web">GridRef Web</a> which exposes the conversion functions via a <a class="reference external" href="https://github.com/ring-clojure/ring">Ring</a> web app. For several years gridref-web was deployed via Heroku on it's free-tier, following the free-tier coming to an end it needed a new home.</p>
+<p>I saw mention of <a class="reference external" href="https://fly.io/">fly.io</a> a little while ago and saw they had a <a class="reference external" href="https://fly.io/docs/about/pricing/#free-allowances">genorious free tier</a> including support for custom domains, https and deployment via Docker so I thought I'd give it a go.</p>
+<div class="section" id="creating-a-dockerfile">
+<h2>Creating a Dockerfile</h2>
+<p>The first step was to create a Docker container which turned out to be straight forward. This is the <code>Dockerfile</code> which is based on the <a class="reference external" href="https://hub.docker.com/_/clojure/">official clojure Docker image</a>:</p>
+<div class="highlight"><pre><span></span><span class="k">FROM</span><span class="s"> clojure</span>
+<span class="k">ENV</span> <span class="nv">PORT</span><span class="o">=</span><span class="m">8080</span>
+<span class="k">ENV</span> <span class="nv">JVM_OPTS</span><span class="o">=</span><span class="s2">&quot;-Xmx250m&quot;</span>
+<span class="k">COPY</span> . /usr/src/app
+<span class="k">WORKDIR</span><span class="s"> /usr/src/app</span>
+<span class="k">EXPOSE</span><span class="s"> ${PORT}</span>
+<span class="k">CMD</span> lein run <span class="s2">&quot;</span><span class="si">${</span><span class="nv">PORT</span><span class="si">}</span><span class="s2">&quot;</span>
 </pre></div>
-<p>Next update the code to add the OS Vector Tile layer:</p>
-<div class="section" id="main-js">
-<h2><tt class="docutils literal">main.js</tt></h2>
-<div class="highlight"><pre><span></span><span class="kr">import</span> <span class="s1">&#39;./style.css&#39;</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">Map</span><span class="p">,</span> <span class="nx">View</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;ol&#39;</span><span class="p">;</span>
-<span class="kr">import</span> <span class="nx">VectorTileLayer</span> <span class="nx">from</span> <span class="s1">&#39;ol/layer/VectorTile&#39;</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">transform</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;ol/proj&#39;</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">applyStyle</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;ol-mapbox-style&#39;</span><span class="p">;</span>
-
-<span class="kd">let</span> <span class="nx">OS_API_KEY</span> <span class="o">=</span> <span class="s1">&#39;YOUR_OS_API_KEY&#39;</span><span class="p">;</span>
-
-<span class="kd">let</span> <span class="nx">OsVtLyr</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">VectorTileLayer</span><span class="p">({</span>
-  <span class="nx">declutter</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
-<span class="p">});</span>
-
-<span class="nx">applyStyle</span><span class="p">(</span>
-  <span class="nx">OsVtLyr</span><span class="p">,</span>
-  <span class="s1">&#39;https://api.os.uk/maps/vector/v1/vts/resources/styles?srs=3857&amp;key=&#39;</span> <span class="o">+</span>
-    <span class="nx">OS_API_KEY</span><span class="p">,</span>
-  <span class="s1">&#39;&#39;</span><span class="p">,</span>
-  <span class="p">{</span>
-    <span class="c1">// Specify the optional transformRequest function which is</span>
-    <span class="c1">// called before each resource associated with the style</span>
-    <span class="c1">// is fetched. In this instance we are ensuring the `srs`</span>
-    <span class="c1">// parameter is set to `3857` (Web Mercator) when fetching</span>
-    <span class="c1">// each resource (Source, Sprite, Tiles etc.). Full docs at</span>
-    <span class="c1">// https://github.com/openlayers/ol-mapbox-style#transformRequest</span>
-    <span class="nx">transformRequest</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">url</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">URL</span><span class="p">(</span><span class="nx">url</span><span class="p">);</span>
-      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">url</span><span class="p">.</span><span class="nx">searchParams</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="s1">&#39;srs&#39;</span><span class="p">))</span> <span class="p">{</span>
-        <span class="nx">url</span><span class="p">.</span><span class="nx">searchParams</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">&#39;srs&#39;</span><span class="p">,</span> <span class="s1">&#39;3857&#39;</span><span class="p">);</span>
-      <span class="p">}</span>
-      <span class="k">return</span> <span class="k">new</span> <span class="nx">Request</span><span class="p">(</span><span class="nx">url</span><span class="p">);</span>
-    <span class="p">},</span>
-  <span class="p">}</span>
-<span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">e</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
-  <span class="c1">// Once the style has been applied set the attribution which is missing</span>
-  <span class="c1">// from the source document</span>
-  <span class="nx">OsVtLyr</span>
-    <span class="p">.</span><span class="nx">getSource</span><span class="p">()</span>
-    <span class="p">.</span><span class="nx">setAttributions</span><span class="p">(</span>
-      <span class="s1">&#39;&amp;copy; &lt;a href=&quot;http://www.ordnancesurvey.co.uk/&quot;&gt;Ordnance Survey&lt;/a&gt;&#39;</span>
-    <span class="p">);</span>
-<span class="p">});</span>
-
-<span class="kr">const</span> <span class="nx">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Map</span><span class="p">({</span>
-  <span class="nx">target</span><span class="o">:</span> <span class="s1">&#39;map&#39;</span><span class="p">,</span>
-  <span class="nx">layers</span><span class="o">:</span> <span class="p">[</span><span class="nx">OsVtLyr</span><span class="p">],</span>
-  <span class="nx">view</span><span class="o">:</span> <span class="k">new</span> <span class="nx">View</span><span class="p">({</span>
-    <span class="nx">center</span><span class="o">:</span> <span class="nx">transform</span><span class="p">([</span><span class="o">-</span><span class="mf">2.333029</span><span class="p">,</span> <span class="mf">52.109524</span><span class="p">],</span> <span class="s1">&#39;EPSG:4326&#39;</span><span class="p">,</span> <span class="s1">&#39;EPSG:3857&#39;</span><span class="p">),</span>
-    <span class="nx">zoom</span><span class="o">:</span> <span class="mi">14</span><span class="p">,</span>
-  <span class="p">}),</span>
-<span class="p">});</span>
+<p>First we define a <code>PORT</code> environment variable which determines which port the embedded Jetty HTTP server will listen on. I'm defaulting to <code>8080</code> which is the default http port that fly.io will forward http requests to.</p>
+<p>The <code>JVM_OPTS</code> environment variable is used to limit the amount of memory that our app can use, I've chosen <code>250m</code> which is slightly lower than the memory available to a fly.io instance on the <a class="reference external" href="https://fly.io/docs/about/pricing/#free-allowances">free tier</a>.</p>
+<p>We then copy the contents of the repo to <code>/usr/src/app</code>, set the current directory (<code>WORKDIR</code>) to the same and <code>EXPOSE</code> the <code>PORT</code>.</p>
+<p>Finally we start the app via <code>lein run</code> passing the value of the <code>PORT</code> environment variable which is handled by the <a class="reference external" href="https://github.com/walkermatt/gridref-web/blob/master/src/gridref_web/web.clj#L95">main method of GridRef Web</a>.</p>
+</div>
+<div class="section" id="build-and-run-locally">
+<h2>Build and run locally</h2>
+<p>The <code>Dockerfile</code> can be built and run locally via:</p>
+<div class="highlight"><pre><span></span>docker build -t gridref-web .
+docker run -it --rm --memory-swap 250m --memory 250m --env <span class="nv">PORT</span><span class="o">=</span><span class="m">8181</span> -p <span class="m">8181</span>:8181 --name gridref-web gridref-web
 </pre></div>
-<p>See the comments in the code for an explanation of the steps involved. The you should end up with a map that looks something like this:</p>
-<img alt="OpenLayers map showing styled OS Vector Tiles data for Malvern, UK" src="/files/os-vector-tile-openlayers.png" style="width: 100%;" />
+<p>Specifying the same value for <cite>--memory-swap</cite> and <cite>--memory</cite> effectively limits the container to that much memory without swap which mimics the fly.io free-tier.</p>
+<p>We're setting the <code>PORT</code> environment variable used in the Dockerfile to determine which port the Jetty listens on; the <code>-p</code> option exposes the container port to localhost for testing.</p>
+<p>Visiting <code>http://localhost:8181</code> should load the home page.</p>
+</div>
+<div class="section" id="deploy-to-fly-io">
+<h2>Deploy to fly.io</h2>
+<p>First download and install <a class="reference external" href="https://fly.io/docs/#flyctl-your-cli-command-center">flyctl</a> before running the following to authenticate (and create an account):</p>
+<div class="highlight"><pre><span></span>flyctl auth login
+</pre></div>
+<p>Then change to the root of the <code>gridref-web</code> repository and execute the following to configure the app for deployment via fly.io:</p>
+<div class="highlight"><pre><span></span>flyctl launch
+</pre></div>
+<p>Running <code>flyctl launch</code> prompts for various options (shown below) and creates a <code>fly.toml</code> file which contains the apps configuration.</p>
+<div class="highlight"><pre><span></span><span class="c1"># ? Choose an app name (leave blank to generate one): gridref-web</span>
+<span class="c1"># ? Choose a region for deployment: London, United Kingdom (lhr)</span>
+<span class="c1"># Created app &#39;gridref-web&#39; in organization &#39;personal&#39;</span>
+<span class="c1"># ? Would you like to set up a Postgresql database now? No</span>
+<span class="c1"># ? Would you like to set up an Upstash Redis database now? No</span>
+<span class="c1"># ? Create .dockerignore from 3 .gitignore files? Yes</span>
+<span class="c1"># ? Would you like to deploy now? No</span>
+</pre></div>
+<p>These choices resulted in the following <code>fly.toml</code>:</p>
+<div class="highlight"><pre><span></span><span class="n">app</span> <span class="o">=</span> <span class="s">&quot;gridref-web&quot;</span>
+<span class="n">kill_signal</span> <span class="o">=</span> <span class="s">&quot;SIGINT&quot;</span>
+<span class="n">kill_timeout</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">primary_region</span> <span class="o">=</span> <span class="s">&quot;lhr&quot;</span>
+<span class="n">processes</span> <span class="o">=</span> <span class="k">[]</span>
+
+<span class="k">[env]</span>
+
+<span class="k">[experimental]</span>
+  <span class="n">auto_rollback</span> <span class="o">=</span> <span class="kc">true</span>
+
+<span class="k">[[services]]</span>
+  <span class="n">http_checks</span> <span class="o">=</span> <span class="k">[]</span>
+  <span class="n">internal_port</span> <span class="o">=</span> <span class="mi">8080</span>
+  <span class="n">processes</span> <span class="o">=</span> <span class="k">[&quot;app&quot;]</span>
+  <span class="n">protocol</span> <span class="o">=</span> <span class="s">&quot;tcp&quot;</span>
+  <span class="n">script_checks</span> <span class="o">=</span> <span class="k">[]</span>
+  <span class="k">[services.concurrency]</span>
+    <span class="n">hard_limit</span> <span class="o">=</span> <span class="mi">25</span>
+    <span class="n">soft_limit</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="n">type</span> <span class="o">=</span> <span class="s">&quot;connections&quot;</span>
+
+  <span class="k">[[services.ports]]</span>
+    <span class="n">force_https</span> <span class="o">=</span> <span class="kc">true</span>
+    <span class="n">handlers</span> <span class="o">=</span> <span class="k">[&quot;http&quot;]</span>
+    <span class="n">port</span> <span class="o">=</span> <span class="mi">80</span>
+
+  <span class="k">[[services.ports]]</span>
+    <span class="n">handlers</span> <span class="o">=</span> <span class="k">[&quot;tls&quot;, &quot;http&quot;]</span>
+    <span class="n">port</span> <span class="o">=</span> <span class="mi">443</span>
+
+  <span class="k">[[services.tcp_checks]]</span>
+    <span class="n">grace_period</span> <span class="o">=</span> <span class="s">&quot;1s&quot;</span>
+    <span class="n">interval</span> <span class="o">=</span> <span class="s">&quot;15s&quot;</span>
+    <span class="n">restart_limit</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">timeout</span> <span class="o">=</span> <span class="s">&quot;2s&quot;</span>
+</pre></div>
+<p>I couldn't see any obvious changes to <code>fly.toml</code> so I moved onto deploying via:</p>
+<div class="highlight"><pre><span></span>flyctl deploy
+</pre></div>
+<p>At this point the gridref-web application is available at <a class="reference external" href="https://gridref-web.fly.dev/">https://gridref-web.fly.dev/</a>.</p>
+<p>The application is available by default via https on fly.io (with a redirect from http), I had to make a <a class="reference external" href="https://github.com/walkermatt/gridref-web/commit/ff2b5b6bb62ec78f2816ae48ffda8e9b68c1efde">small change to the code</a> to use the <code>x-forwarded-proto</code> header to determine the client protocol to ensure the links shown on the home page use the correct protocol as fly.io makes requests to my application running in Docker via plain http.</p>
+</div>
+<div class="section" id="custom-domain-and-certificate">
+<h2>Custom domain and certificate</h2>
+<p>Setting up a custom domain and associated certificate for http traffic involved:</p>
+<ol class="arabic simple">
+<li>Creating a CNAME to point <code>gridref.longwayaround.org.uk</code> at <code>gridref-web.fly.dev.</code></li>
+<li>Once the CNAME had propagated, requesting a certificate via the <cite>flyctl</cite>:</li>
+</ol>
+<div class="highlight"><pre><span></span>flyctl certs create gridref.longwayaround.org.uk
+</pre></div>
+<p>The web application is now available at <a class="reference external" href="https://gridref.longwayaround.org.uk/">https://gridref.longwayaround.org.uk/</a> 🎉</p>
+<p>The application has been running for a few weeks without any issues, it's now running via https and is more responsive due to the instance always being available.</p>
 </div>
 
 <footer class="post-info">
-    <abbr class="published" title="2022-09-05T08:05:00+01:00">Mon 05 September 2022</abbr>
-<p>Tags: <a href="https://longwayaround.org.uk/tag/javascript.html">javascript</a> <a href="https://longwayaround.org.uk/tag/openlayers.html">openlayers</a> <a href="https://longwayaround.org.uk/tag/vector-tiles.html">vector-tiles</a> <a href="https://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->                    <p><a href="https://longwayaround.org.uk/notes/web-mercator-os-vector-tile-api-in-openlayers-take-2/#disqus_thread">comments</a>.</p>
+    <abbr class="published" title="2023-03-27T11:20:00+01:00">Mon 27 March 2023</abbr>
+<p>Tags: <a href="https://longwayaround.org.uk/tag/command-line.html">command-line</a> <a href="https://longwayaround.org.uk/tag/geo.html">geo</a> <a href="https://longwayaround.org.uk/tag/clojure.html">clojure</a> <a href="https://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->                    <p><a href="https://longwayaround.org.uk/notes/moving-gridref-to-flyio/#disqus_thread">comments</a>.</p>
                 </article>
             </aside><!-- /#featured -->
                 <section id="content" class="body">
                     <h1>Other posts</h1>
                     <hr />
                         <ol id="posts-list" class="hfeed">
+
+ 
+            <li><article class="hentry">
+                <header>
+                        <abbr class="published" title="2022-09-05T08:05:00+01:00">Mon 05 September 2022</abbr>
+                        <h1><a href="https://longwayaround.org.uk/notes/web-mercator-os-vector-tile-api-in-openlayers-take-2/" rel="bookmark" title="Permalink to Web Mercator OS Vector Tile API in OpenLayers - Take #2">Web Mercator OS Vector Tile API in OpenLayers - Take #2</a></h1>
+                </header>
+                <div class="entry-content">
+                <div class="slug">
+                    <p>This is an update to my <a class="reference external" href="/notes/web-mercator-os-vector-tile-api-in-openlayers/">previous post</a> on the same subject.</p>
+<p>Thanks to <a class="reference external" href="https://twitter.com/ahoce/status/1545409888226099200">some feedback from Andreas Hocevar</a> and <a class="reference external" href="https://github.com/openlayers/ol-mapbox-style/pull/618">a pull request I made to ol-mapbox-style</a> adding a Vector Tile layer of Ordnance Survey data from the OS Data Hub to an OpenLayers map in Web Mercator is a …</p>
+                    <p>
+<a href="https://longwayaround.org.uk/notes/web-mercator-os-vector-tile-api-in-openlayers-take-2/#disqus_thread">comments</a>.                        <a class="readmore" href="https://longwayaround.org.uk/notes/web-mercator-os-vector-tile-api-in-openlayers-take-2/">read more</a>
+                    </p>
+                </div>
+                </div><!-- /.entry-content -->
+            </article></li>
 
  
             <li><article class="hentry">

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-        <title>longwayaround.org.uk - command-line</title>
+        <title>longwayaround.org.uk - geo</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, target-densitydpi=device-dpi">
         <link rel="stylesheet" href="https://longwayaround.org.uk/theme/css/main.css" type="text/css" />
@@ -147,106 +147,6 @@ docker run -it --rm --memory-swap 250m --memory 250m --env <span class="nv">PORT
 <p>Tags: <a href="https://longwayaround.org.uk/tag/command-line.html">command-line</a> <a href="https://longwayaround.org.uk/tag/geo.html">geo</a> <a href="https://longwayaround.org.uk/tag/clojure.html">clojure</a> <a href="https://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->                    <p><a href="https://longwayaround.org.uk/notes/moving-gridref-to-flyio/#disqus_thread">comments</a>.</p>
                 </article>
             </aside><!-- /#featured -->
-                <section id="content" class="body">
-                    <h1>Other posts</h1>
-                    <hr />
-                        <ol id="posts-list" class="hfeed">
-
- 
-            <li><article class="hentry">
-                <header>
-                        <abbr class="published" title="2014-11-20T00:00:00+00:00">Thu 20 November 2014</abbr>
-                        <h1><a href="https://longwayaround.org.uk/notes/loading-postgis/" rel="bookmark" title="Permalink to Loading PostGIS">Loading PostGIS</a></h1>
-                </header>
-                <div class="entry-content">
-                <div class="slug">
-                    <p><em>Notes from a talk at PostGIS Day, London 20th Nov 2014.</em></p>
-<div class="section" id="the-options">
-<h2>The options</h2>
-<p>All support basic options such as specifying table names, schema, SRS etc.</p>
-<div class="section" id="graphical">
-<h3>Graphical</h3>
-<dl class="docutils">
-<dt><a class="reference external" href="http://gothos.info/2014/03/loading-data-into-postgis-shapefiles/">shp2pgsql-gui</a></dt>
-<dd>Graphical interface to shp2pgsql tool shipped with PostGIS to load ESRI Shapefiles via pgAdmin III.</dd>
-<dt><a class="reference external" href="https://github.com/zer0infinity/OGR2GUI">ogr2gui</a></dt>
-<dd>Graphical interface to <code>ogr2ogr</code> command line utility …</dd></dl></div></div>
-                    <p>
-<a href="https://longwayaround.org.uk/notes/loading-postgis/#disqus_thread">comments</a>.                        <a class="readmore" href="https://longwayaround.org.uk/notes/loading-postgis/">read more</a>
-                    </p>
-                </div>
-                </div><!-- /.entry-content -->
-            </article></li>
-
- 
-            <li><article class="hentry">
-                <header>
-                        <abbr class="published" title="2014-07-17T19:45:00+01:00">Thu 17 July 2014</abbr>
-                        <h1><a href="https://longwayaround.org.uk/notes/gnu-parallel-all-the-things/" rel="bookmark" title="Permalink to GNU Parallel all the things!">GNU Parallel all the things!</a></h1>
-                </header>
-                <div class="entry-content">
-                <div class="slug">
-                    <p>I've been doing a lot of data processing recently and have been looking for a way of running bulk data loads into PostGIS in parallel to make use of all available cores. The work has mainly revolved around loading national cover of Ordnance Survey OS MasterMap and VectorMap Local for …</p>
-                    <p>
-<a href="https://longwayaround.org.uk/notes/gnu-parallel-all-the-things/#disqus_thread">comments</a>.                        <a class="readmore" href="https://longwayaround.org.uk/notes/gnu-parallel-all-the-things/">read more</a>
-                    </p>
-                </div>
-                </div><!-- /.entry-content -->
-            </article></li>
-
- 
-            <li><article class="hentry">
-                <header>
-                        <abbr class="published" title="2014-02-18T19:42:00+00:00">Tue 18 February 2014</abbr>
-                        <h1><a href="https://longwayaround.org.uk/notes/first-few-months-of-clojure/" rel="bookmark" title="Permalink to First few months of Clojure">First few months of Clojure</a></h1>
-                </header>
-                <div class="entry-content">
-                <div class="slug">
-                    <p>I've been learning a bit of Lisp on and off for a few years, I first read (about half of) <a class="reference external" href="http://landoflisp.com/">Land of Lisp</a>, then <a class="reference external" href="http://www.gigamonkeys.com/book/">Practical Lisp</a> then I came across <a class="reference external" href="http://clojure.org/">Clojure</a> a modern Lisp that runs on the JVM and since I've been reading <a class="reference external" href="http://www.clojurebook.com/">Clojure Programming</a> and working through <a class="reference external" href="https://github.com/walkermatt/clojure-koans">koans …</a></p>
-                    <p>
-<a href="https://longwayaround.org.uk/notes/first-few-months-of-clojure/#disqus_thread">comments</a>.                        <a class="readmore" href="https://longwayaround.org.uk/notes/first-few-months-of-clojure/">read more</a>
-                    </p>
-                </div>
-                </div><!-- /.entry-content -->
-            </article></li>
-
- 
-            <li><article class="hentry">
-                <header>
-                        <abbr class="published" title="2011-03-28T10:31:00+01:00">Mon 28 March 2011</abbr>
-                        <h1><a href="https://longwayaround.org.uk/notes/recursively-delete-empty-directories/" rel="bookmark" title="Permalink to Recursively delete empty directories">Recursively delete empty directories</a></h1>
-                </header>
-                <div class="entry-content">
-                <div class="slug">
-                    <p>To recursively delete all empty directories from the command prompt in Windows. Open command prompt and change to the desired directory then enter the following:</p>
-<div class="highlight"><pre><span></span><span class="k">for</span> /F <span class="s2">&quot;tokens=*&quot;</span> %f in <span class="o">(</span><span class="s1">&#39;dir /AD /S /B ^| sort /R&#39;</span><span class="o">)</span> <span class="k">do</span> <span class="nb">echo</span> rd <span class="s2">&quot;%f&quot;</span>
-</pre></div>
-<p>This command generates a list of all directories and sub …</p>
-                    <p>
-<a href="https://longwayaround.org.uk/notes/recursively-delete-empty-directories/#disqus_thread">comments</a>.                        <a class="readmore" href="https://longwayaround.org.uk/notes/recursively-delete-empty-directories/">read more</a>
-                    </p>
-                </div>
-                </div><!-- /.entry-content -->
-            </article></li>
-
- 
-            <li><article class="hentry">
-                <header>
-                        <abbr class="published" title="2011-01-07T17:53:00+00:00">Fri 07 January 2011</abbr>
-                        <h1><a href="https://longwayaround.org.uk/notes/convert-a-directory-of-tiffs-to-greyscale-using-imagemagick/" rel="bookmark" title="Permalink to Convert a directory of TIFFs to greyscale using ImageMagick">Convert a directory of TIFFs to greyscale using ImageMagick</a></h1>
-                </header>
-                <div class="entry-content">
-                <div class="slug">
-                    <p>Change to the directory then run the command:</p>
-<div class="highlight"><pre><span></span>mogrify -colorspace Gray *.tif
-</pre></div>
-
-                    <p>
-<a href="https://longwayaround.org.uk/notes/convert-a-directory-of-tiffs-to-greyscale-using-imagemagick/#disqus_thread">comments</a>.                        <a class="readmore" href="https://longwayaround.org.uk/notes/convert-a-directory-of-tiffs-to-greyscale-using-imagemagick/">read more</a>
-                    </p>
-                </div>
-                </div><!-- /.entry-content -->
-            </article></li>
     </ol><!-- /#posts-list -->
         <section id="extras" class="body">
         </section><!-- /#extras -->
