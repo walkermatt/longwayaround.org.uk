@@ -39,7 +39,7 @@ deploy: html_deploy
 	ghp-import -n -p $(OUTPUTDIR)
 
 serve: html $(OUTPUTDIR)/index.html
-	(cd output && python -m SimpleHTTPServer)
+	(cd output && python -m http.server)
 
 watch_serve:
 	nodemon --ignore ./output --ext rst,py,html,js,css --exec make serve
