@@ -135,7 +135,9 @@ dd {
 }
 
 .highlight pre, code {
+    background-color: #f0f0f0;
     border: 1px solid #CCC;
+    padding: 2px;
 }
 
 .highlight pre {
@@ -147,6 +149,7 @@ dd {
 .highlight pre .err {
     border: none;
 }
+
 
 blockquote {
     margin: 20px;

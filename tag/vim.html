@@ -38,124 +38,82 @@
 
             <aside id="featured" class="body">
                 <article>
-                    <abbr class="published" title="2022-06-22T21:56:00+01:00">Wed 22 June 2022</abbr>
-                    <h1 class="entry-title"><a href="https://longwayaround.org.uk/notes/writing-small-text-filters-for-the-shell-and-vim/">Writing small text filters for the shell and Vim</a></h1> 
-                    <p>Text filters are command-line programs that take text as input, transform it then output the results. An example of a common built in text filter is <tt class="docutils literal">sort</tt> which when passed newline separated text will sort each line:</p>
-<div class="highlight"><pre><span></span><span class="nb">printf</span> <span class="s1">&#39;b\nc\na&#39;</span> <span class="p">|</span> sort
+                    <abbr class="published" title="2024-04-08T08:45:00+01:00">Mon 08 April 2024</abbr>
+                    <h1 class="entry-title"><a href="https://longwayaround.org.uk/notes/sorting-lines-in-neovim/">Sorting lines in (Neo)Vim</a></h1> 
+                    <p>The built-in Vim <code>:sort</code> command supports sorting either all lines in a buffer or a range of lines.</p>
+<p>For example to sort a range of lines it's possible to visually select those lines then run <code>:sort</code>.</p>
+<p>Help docs can be accessed via <code>:help :sort</code> and can be viewed <a class="reference external" href="https://vimhelp.org/change.txt.html#%3Asort">online via vimhelp.org</a>.</p>
+<div class="section" id="example-sort-on-pattern">
+<h2>Example: Sort on pattern</h2>
+<p>It's possible to sort on a specific part of each line by specifying either a search pattern to ignore (the default) or a search pattern that matches the text to search on.</p>
+<p>For example to sort the following output from running <code>du -h --max-depth=1 base_map_cache_EPSG27700/</code> by the last component of the path:</p>
+<div class="highlight"><pre><span></span>1.6G    base_map_cache_EPSG27700/10
+524K    base_map_cache_EPSG27700/04
+25G     base_map_cache_EPSG27700/12
+108K    base_map_cache_EPSG27700/01
+328K    base_map_cache_EPSG27700/02
+3.4M    base_map_cache_EPSG27700/06
+360K    base_map_cache_EPSG27700/03
+69M     base_map_cache_EPSG27700/08
+18M     base_map_cache_EPSG27700/07
+68K     base_map_cache_EPSG27700/00
+1.4M    base_map_cache_EPSG27700/05
+266M    base_map_cache_EPSG27700/09
+6.4G    base_map_cache_EPSG27700/11
+34G     base_map_cache_EPSG27700/
 </pre></div>
-<p>You can write your own text filter scripts; this is an example from my <a class="reference external" href="https://github.com/walkermatt/dotbin">~/.bin</a> directory which can be used to filter JSON text. It supports pretty printing the output as well as removing any formatting so that the JSON text is all on one line.</p>
-<p><tt class="docutils literal">jsonformat</tt></p>
-<div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python3</span>
-
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">optparse</span> <span class="kn">import</span> <span class="n">OptionParser</span>
-
-
-<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-
-    <span class="n">parser</span> <span class="o">=</span> <span class="n">OptionParser</span><span class="p">()</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s1">&#39;-i&#39;</span><span class="p">,</span> <span class="s1">&#39;--indent&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;indent&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;int&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s1">&#39;-s&#39;</span><span class="p">,</span> <span class="s1">&#39;--squash&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;squash&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">)</span>
-    <span class="n">options</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
-
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">infile</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdin</span>
-        <span class="n">outfile</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span>
-    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">infile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span>
-        <span class="n">outfile</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span>
-    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="n">infile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span>
-        <span class="n">outfile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot; [infile [outfile]]&quot;</span><span class="p">)</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">obj</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">squash</span><span class="p">:</span>
-        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">outfile</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">outfile</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">indent</span><span class="p">,</span> <span class="n">separators</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="s1">&#39;: &#39;</span><span class="p">))</span>
-    <span class="n">outfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="n">main</span><span class="p">()</span>
+<p>Visually selecting the above in a buffer and typing <code>:sort /\v\d+$/ r</code> will result in:</p>
+<div class="highlight"><pre><span></span>34G     base_map_cache_EPSG27700/
+68K     base_map_cache_EPSG27700/00
+108K    base_map_cache_EPSG27700/01
+328K    base_map_cache_EPSG27700/02
+360K    base_map_cache_EPSG27700/03
+524K    base_map_cache_EPSG27700/04
+1.4M    base_map_cache_EPSG27700/05
+3.4M    base_map_cache_EPSG27700/06
+18M     base_map_cache_EPSG27700/07
+69M     base_map_cache_EPSG27700/08
+266M    base_map_cache_EPSG27700/09
+1.6G    base_map_cache_EPSG27700/10
+6.4G    base_map_cache_EPSG27700/11
+25G     base_map_cache_EPSG27700/12
 </pre></div>
-<p>The Python script makes use of the Python 3 <tt class="docutils literal">json</tt> package for reading and writing JSON and supports reading from standard input (<tt class="docutils literal">stdin</tt>) or a file and writing to standard out (<tt class="docutils literal">stdout</tt>) or file.</p>
-<p>Assuming a file called <tt class="docutils literal">feature.json</tt> it can be pretty printed with an indentation of <tt class="docutils literal">2</tt> spaces to <tt class="docutils literal">stdout</tt> like so:</p>
-<div class="highlight"><pre><span></span>jsonformat --indent <span class="m">2</span> features.json
-</pre></div>
-<div class="highlight"><pre><span></span><span class="p">{</span>
-  <span class="nt">&quot;features&quot;</span><span class="p">:</span> <span class="p">[</span>
-    <span class="p">{</span>
-      <span class="nt">&quot;geometry&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;coordinates&quot;</span><span class="p">:</span> <span class="p">[</span>
-          <span class="p">[</span>
-            <span class="p">[</span>
-              <span class="mf">-2.407379150390625</span><span class="p">,</span>
-              <span class="mf">52.36302183361385</span>
-            <span class="p">],</span>
-            <span class="p">[</span>
-              <span class="mf">-2.3258399963378906</span><span class="p">,</span>
-              <span class="mf">52.36302183361385</span>
-            <span class="p">],</span>
-            <span class="p">[</span>
-              <span class="mf">-2.3258399963378906</span><span class="p">,</span>
-              <span class="mf">52.41488029514571</span>
-            <span class="p">],</span>
-            <span class="p">[</span>
-              <span class="mf">-2.407379150390625</span><span class="p">,</span>
-              <span class="mf">52.41488029514571</span>
-            <span class="p">],</span>
-            <span class="p">[</span>
-              <span class="mf">-2.407379150390625</span><span class="p">,</span>
-              <span class="mf">52.36302183361385</span>
-            <span class="p">]</span>
-          <span class="p">]</span>
-        <span class="p">],</span>
-        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Polygon&quot;</span>
-      <span class="p">},</span>
-      <span class="nt">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Wyre Forest&quot;</span>
-      <span class="p">},</span>
-      <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Feature&quot;</span>
-    <span class="p">}</span>
-  <span class="p">],</span>
-  <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;FeatureCollection&quot;</span>
-<span class="p">}</span>
-</pre></div>
-<p>Or output with formatting removed:</p>
-<div class="highlight"><pre><span></span>jsonformat --squash features.json
-</pre></div>
-<div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;features&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="nt">&quot;geometry&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;coordinates&quot;</span><span class="p">:</span> <span class="p">[[[</span><span class="mf">-2.407379150390625</span><span class="p">,</span> <span class="mf">52.36302183361385</span><span class="p">],</span> <span class="p">[</span><span class="mf">-2.3258399963378906</span><span class="p">,</span> <span class="mf">52.36302183361385</span><span class="p">],</span> <span class="p">[</span><span class="mf">-2.3258399963378906</span><span class="p">,</span> <span class="mf">52.41488029514571</span><span class="p">],</span> <span class="p">[</span><span class="mf">-2.407379150390625</span><span class="p">,</span> <span class="mf">52.41488029514571</span><span class="p">],</span> <span class="p">[</span><span class="mf">-2.407379150390625</span><span class="p">,</span> <span class="mf">52.36302183361385</span><span class="p">]]],</span> <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Polygon&quot;</span><span class="p">},</span> <span class="nt">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Wyre Forest&quot;</span><span class="p">},</span> <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Feature&quot;</span><span class="p">}],</span> <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;FeatureCollection&quot;</span><span class="p">}</span>
-</pre></div>
-<div class="section" id="use-in-vim">
-<h2>Use in Vim</h2>
-<p>Assuming the script is in your system path it can then be used from within Vim to filter text within a buffer.</p>
-<div class="section" id="format-program-formatprg">
-<h3>Format program (<tt class="docutils literal">formatprg</tt>)</h3>
-<p>Add the following to your <tt class="docutils literal">.vimrc</tt> to set <tt class="docutils literal">jsonformat</tt> as the <a class="reference external" href="https://vimhelp.org/options.txt.html#%27formatprg%27">format program</a> for JSON files:</p>
-<div class="highlight"><pre><span></span><span class="k">au</span> <span class="nb">FileType</span> json <span class="k">setlocal</span> <span class="nb">formatprg</span><span class="p">=</span>jsonformat
-</pre></div>
-<p>When you have a buffer with a file type of JSON open you can then use <tt class="docutils literal">gq</tt> followed by a motion to invoke the format program. You can also select lines in visual mode and use <tt class="docutils literal">gq</tt> to format just those lines.</p>
-</div>
-<div class="section" id="execute-shell-command">
-<h3>Execute shell command (<tt class="docutils literal">:!</tt>)</h3>
-<p>It's also possible to select lines in visual mode then call <tt class="docutils literal">jsonformat</tt> <a class="reference external" href="https://vimhelp.org/various.txt.html#%3A%21">via the command-line mode</a> (the <tt class="docutils literal"><span class="pre">'&lt;,'&gt;</span></tt> are inserted for you and represent the range of the currently selected lines):</p>
-<div class="highlight"><pre><span></span><span class="p">:</span><span class="s1">&#39;&lt;,&#39;</span><span class="p">&gt;!</span>jsonformat <span class="p">--</span>squash
-</pre></div>
-<p>This approach has the advantage of allowing options to be specified such as <tt class="docutils literal"><span class="pre">--squash</span></tt> in the above example.</p>
-</div>
+<p>The pattern in the command <code>:sort /\v\d+$/ r</code>, breaks down as:</p>
+<ul class="simple">
+<li><code>\v</code> enables full regular expression support including <code>$</code> to match the end of the line</li>
+<li><code>\d+$</code> matches one or more digits at the end of the line</li>
+</ul>
+<p>The <code>r</code> flag indicates that the sorting should be done based on the search match.</p>
 </div>
 
 <footer class="post-info">
-    <abbr class="published" title="2022-06-22T21:56:00+01:00">Wed 22 June 2022</abbr>
-<p>Tags: <a href="https://longwayaround.org.uk/tag/vim.html">vim</a> <a href="https://longwayaround.org.uk/tag/bash.html">bash</a> <a href="https://longwayaround.org.uk/tag/sh.html">sh</a> <a href="https://longwayaround.org.uk/tag/python.html">python</a> </p></footer><!-- /.post-info -->                    <p><a href="https://longwayaround.org.uk/notes/writing-small-text-filters-for-the-shell-and-vim/#disqus_thread">comments</a>.</p>
+    <abbr class="published" title="2024-04-08T08:45:00+01:00">Mon 08 April 2024</abbr>
+<p>Tags: <a href="https://longwayaround.org.uk/tag/vim.html">vim</a> </p></footer><!-- /.post-info -->                    <p><a href="https://longwayaround.org.uk/notes/sorting-lines-in-neovim/#disqus_thread">comments</a>.</p>
                 </article>
             </aside><!-- /#featured -->
+                <section id="content" class="body">
+                    <h1>Other posts</h1>
+                    <hr />
+                        <ol id="posts-list" class="hfeed">
+
+ 
+            <li><article class="hentry">
+                <header>
+                        <abbr class="published" title="2022-06-22T21:56:00+01:00">Wed 22 June 2022</abbr>
+                        <h1><a href="https://longwayaround.org.uk/notes/writing-small-text-filters-for-the-shell-and-vim/" rel="bookmark" title="Permalink to Writing small text filters for the shell and Vim">Writing small text filters for the shell and Vim</a></h1>
+                </header>
+                <div class="entry-content">
+                <div class="slug">
+                    <p>Text filters are command-line programs that take text as input, transform it then output the results. An example of a common built in text filter is <tt class="docutils literal">sort</tt> which when passed newline separated text will sort each line:</p>
+<div class="highlight"><pre><span></span><span class="nb">printf</span><span class="w"> </span><span class="s1">&#39;b\nc\na&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sort
+</pre></div>
+<p>You can write your own text filter scripts …</p>
+                    <p>
+<a href="https://longwayaround.org.uk/notes/writing-small-text-filters-for-the-shell-and-vim/#disqus_thread">comments</a>.                        <a class="readmore" href="https://longwayaround.org.uk/notes/writing-small-text-filters-for-the-shell-and-vim/">read more</a>
+                    </p>
+                </div>
+                </div><!-- /.entry-content -->
+            </article></li>
     </ol><!-- /#posts-list -->
         <section id="extras" class="body">
         </section><!-- /#extras -->

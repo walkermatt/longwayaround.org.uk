@@ -43,10 +43,10 @@
         <div class="entry-content">
         <p>A bit of a blast from the past now that OpenLayers 3 has been released but it may be useful for someone who is working on or maintaining an OpenLayer 2 project.</p>
 <p>Create a list of OpenLayers 2 classes used within a code base suitable for including in a <a class="reference external" href="http://docs.openlayers.org/library/deploying.html#custom-build-profiles">custom build profile</a>.</p>
-<div class="highlight"><pre><span></span><span class="nb">cd</span> /path/to/your/js/
-grep --ignore-case --recursive --no-filename --only-matching <span class="s1">&#39;new OpenLayers\.[a-z0-9\.]*&#39;</span> <span class="p">|</span> <span class="se">\</span>
-sed -e <span class="s1">&#39;s/new //&#39;</span> -e <span class="s1">&#39;s/\./\//g&#39;</span> -e <span class="s1">&#39;s/$/\.js/&#39;</span> <span class="p">|</span> <span class="se">\</span>
-sort <span class="p">|</span> <span class="se">\</span>
+<div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>/path/to/your/js/
+grep<span class="w"> </span>--ignore-case<span class="w"> </span>--recursive<span class="w"> </span>--no-filename<span class="w"> </span>--only-matching<span class="w"> </span><span class="s1">&#39;new OpenLayers\.[a-z0-9\.]*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+sed<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;s/new //&#39;</span><span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;s/\./\//g&#39;</span><span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;s/$/\.js/&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+sort<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
 uniq
 </pre></div>
 <div class="section" id="explanation">
@@ -96,6 +96,7 @@ uniq
 <section id="content" class="body">
 <h1>Posts</h1>
 <ul>
+    <li><a href='../../notes/sorting-lines-in-neovim/'>Sorting lines in (Neo)Vim</a> - <abbr class="published" title="2024-04-08T08:45:00+01:00">Mon 08 April 2024</abbr></li>
     <li><a href='../../notes/moving-gridref-to-flyio/'>Moving gridref to fly.io</a> - <abbr class="published" title="2023-03-27T11:20:00+01:00">Mon 27 March 2023</abbr></li>
     <li><a href='../../notes/web-mercator-os-vector-tile-api-in-openlayers-take-2/'>Web Mercator OS Vector Tile API in OpenLayers - Take #2</a> - <abbr class="published" title="2022-09-05T08:05:00+01:00">Mon 05 September 2022</abbr></li>
     <li><a href='../../notes/web-mercator-os-vector-tile-api-in-openlayers/'>Web Mercator OS Vector Tile API in OpenLayers</a> - <abbr class="published" title="2022-06-23T21:56:00+01:00">Thu 23 June 2022</abbr></li>

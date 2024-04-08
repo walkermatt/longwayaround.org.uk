@@ -38,119 +38,79 @@
 
             <aside id="featured" class="body">
                 <article>
-                    <abbr class="published" title="2023-03-27T11:20:00+01:00">Mon 27 March 2023</abbr>
-                    <h1 class="entry-title"><a href="https://longwayaround.org.uk/notes/moving-gridref-to-flyio/">Moving gridref to fly.io</a></h1> 
-                    <p>A few years ago I made an effort to learn <a class="reference external" href="http://clojure.org/">Clojure</a>, during which time I built a small Clojure library and command-line app <a class="reference external" href="https://github.com/walkermatt/gridref">GridRef</a> to convert between an Ordnance Survey GB grid reference and British National Grid coordinates. While I was at it I built a web API <a class="reference external" href="https://github.com/walkermatt/gridref-web">GridRef Web</a> which exposes the conversion functions via a <a class="reference external" href="https://github.com/ring-clojure/ring">Ring</a> web app. For several years gridref-web was deployed via Heroku on it's free-tier, following the free-tier coming to an end it needed a new home.</p>
-<p>I saw mention of <a class="reference external" href="https://fly.io/">fly.io</a> a little while ago and saw they had a <a class="reference external" href="https://fly.io/docs/about/pricing/#free-allowances">genorious free tier</a> including support for custom domains, https and deployment via Docker so I thought I'd give it a go.</p>
-<div class="section" id="creating-a-dockerfile">
-<h2>Creating a Dockerfile</h2>
-<p>The first step was to create a Docker container which turned out to be straight forward. This is the <code>Dockerfile</code> which is based on the <a class="reference external" href="https://hub.docker.com/_/clojure/">official clojure Docker image</a>:</p>
-<div class="highlight"><pre><span></span><span class="k">FROM</span><span class="s"> clojure</span>
-<span class="k">ENV</span> <span class="nv">PORT</span><span class="o">=</span><span class="m">8080</span>
-<span class="k">ENV</span> <span class="nv">JVM_OPTS</span><span class="o">=</span><span class="s2">&quot;-Xmx250m&quot;</span>
-<span class="k">COPY</span> . /usr/src/app
-<span class="k">WORKDIR</span><span class="s"> /usr/src/app</span>
-<span class="k">EXPOSE</span><span class="s"> ${PORT}</span>
-<span class="k">CMD</span> lein run <span class="s2">&quot;</span><span class="si">${</span><span class="nv">PORT</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <abbr class="published" title="2024-04-08T08:45:00+01:00">Mon 08 April 2024</abbr>
+                    <h1 class="entry-title"><a href="https://longwayaround.org.uk/notes/sorting-lines-in-neovim/">Sorting lines in (Neo)Vim</a></h1> 
+                    <p>The built-in Vim <code>:sort</code> command supports sorting either all lines in a buffer or a range of lines.</p>
+<p>For example to sort a range of lines it's possible to visually select those lines then run <code>:sort</code>.</p>
+<p>Help docs can be accessed via <code>:help :sort</code> and can be viewed <a class="reference external" href="https://vimhelp.org/change.txt.html#%3Asort">online via vimhelp.org</a>.</p>
+<div class="section" id="example-sort-on-pattern">
+<h2>Example: Sort on pattern</h2>
+<p>It's possible to sort on a specific part of each line by specifying either a search pattern to ignore (the default) or a search pattern that matches the text to search on.</p>
+<p>For example to sort the following output from running <code>du -h --max-depth=1 base_map_cache_EPSG27700/</code> by the last component of the path:</p>
+<div class="highlight"><pre><span></span>1.6G    base_map_cache_EPSG27700/10
+524K    base_map_cache_EPSG27700/04
+25G     base_map_cache_EPSG27700/12
+108K    base_map_cache_EPSG27700/01
+328K    base_map_cache_EPSG27700/02
+3.4M    base_map_cache_EPSG27700/06
+360K    base_map_cache_EPSG27700/03
+69M     base_map_cache_EPSG27700/08
+18M     base_map_cache_EPSG27700/07
+68K     base_map_cache_EPSG27700/00
+1.4M    base_map_cache_EPSG27700/05
+266M    base_map_cache_EPSG27700/09
+6.4G    base_map_cache_EPSG27700/11
+34G     base_map_cache_EPSG27700/
 </pre></div>
-<p>First we define a <code>PORT</code> environment variable which determines which port the embedded Jetty HTTP server will listen on. I'm defaulting to <code>8080</code> which is the default http port that fly.io will forward http requests to.</p>
-<p>The <code>JVM_OPTS</code> environment variable is used to limit the amount of memory that our app can use, I've chosen <code>250m</code> which is slightly lower than the memory available to a fly.io instance on the <a class="reference external" href="https://fly.io/docs/about/pricing/#free-allowances">free tier</a>.</p>
-<p>We then copy the contents of the repo to <code>/usr/src/app</code>, set the current directory (<code>WORKDIR</code>) to the same and <code>EXPOSE</code> the <code>PORT</code>.</p>
-<p>Finally we start the app via <code>lein run</code> passing the value of the <code>PORT</code> environment variable which is handled by the <a class="reference external" href="https://github.com/walkermatt/gridref-web/blob/master/src/gridref_web/web.clj#L95">main method of GridRef Web</a>.</p>
-</div>
-<div class="section" id="build-and-run-locally">
-<h2>Build and run locally</h2>
-<p>The <code>Dockerfile</code> can be built and run locally via:</p>
-<div class="highlight"><pre><span></span>docker build -t gridref-web .
-docker run -it --rm --memory-swap 250m --memory 250m --env <span class="nv">PORT</span><span class="o">=</span><span class="m">8181</span> -p <span class="m">8181</span>:8181 --name gridref-web gridref-web
+<p>Visually selecting the above in a buffer and typing <code>:sort /\v\d+$/ r</code> will result in:</p>
+<div class="highlight"><pre><span></span>34G     base_map_cache_EPSG27700/
+68K     base_map_cache_EPSG27700/00
+108K    base_map_cache_EPSG27700/01
+328K    base_map_cache_EPSG27700/02
+360K    base_map_cache_EPSG27700/03
+524K    base_map_cache_EPSG27700/04
+1.4M    base_map_cache_EPSG27700/05
+3.4M    base_map_cache_EPSG27700/06
+18M     base_map_cache_EPSG27700/07
+69M     base_map_cache_EPSG27700/08
+266M    base_map_cache_EPSG27700/09
+1.6G    base_map_cache_EPSG27700/10
+6.4G    base_map_cache_EPSG27700/11
+25G     base_map_cache_EPSG27700/12
 </pre></div>
-<p>Specifying the same value for <cite>--memory-swap</cite> and <cite>--memory</cite> effectively limits the container to that much memory without swap which mimics the fly.io free-tier.</p>
-<p>We're setting the <code>PORT</code> environment variable used in the Dockerfile to determine which port the Jetty listens on; the <code>-p</code> option exposes the container port to localhost for testing.</p>
-<p>Visiting <code>http://localhost:8181</code> should load the home page.</p>
-</div>
-<div class="section" id="deploy-to-fly-io">
-<h2>Deploy to fly.io</h2>
-<p>First download and install <a class="reference external" href="https://fly.io/docs/#flyctl-your-cli-command-center">flyctl</a> before running the following to authenticate (and create an account):</p>
-<div class="highlight"><pre><span></span>flyctl auth login
-</pre></div>
-<p>Then change to the root of the <code>gridref-web</code> repository and execute the following to configure the app for deployment via fly.io:</p>
-<div class="highlight"><pre><span></span>flyctl launch
-</pre></div>
-<p>Running <code>flyctl launch</code> prompts for various options (shown below) and creates a <code>fly.toml</code> file which contains the apps configuration.</p>
-<div class="highlight"><pre><span></span><span class="c1"># ? Choose an app name (leave blank to generate one): gridref-web</span>
-<span class="c1"># ? Choose a region for deployment: London, United Kingdom (lhr)</span>
-<span class="c1"># Created app &#39;gridref-web&#39; in organization &#39;personal&#39;</span>
-<span class="c1"># ? Would you like to set up a Postgresql database now? No</span>
-<span class="c1"># ? Would you like to set up an Upstash Redis database now? No</span>
-<span class="c1"># ? Create .dockerignore from 3 .gitignore files? Yes</span>
-<span class="c1"># ? Would you like to deploy now? No</span>
-</pre></div>
-<p>These choices resulted in the following <code>fly.toml</code>:</p>
-<div class="highlight"><pre><span></span><span class="n">app</span> <span class="o">=</span> <span class="s">&quot;gridref-web&quot;</span>
-<span class="n">kill_signal</span> <span class="o">=</span> <span class="s">&quot;SIGINT&quot;</span>
-<span class="n">kill_timeout</span> <span class="o">=</span> <span class="mi">5</span>
-<span class="n">primary_region</span> <span class="o">=</span> <span class="s">&quot;lhr&quot;</span>
-<span class="n">processes</span> <span class="o">=</span> <span class="k">[]</span>
-
-<span class="k">[env]</span>
-
-<span class="k">[experimental]</span>
-  <span class="n">auto_rollback</span> <span class="o">=</span> <span class="kc">true</span>
-
-<span class="k">[[services]]</span>
-  <span class="n">http_checks</span> <span class="o">=</span> <span class="k">[]</span>
-  <span class="n">internal_port</span> <span class="o">=</span> <span class="mi">8080</span>
-  <span class="n">processes</span> <span class="o">=</span> <span class="k">[&quot;app&quot;]</span>
-  <span class="n">protocol</span> <span class="o">=</span> <span class="s">&quot;tcp&quot;</span>
-  <span class="n">script_checks</span> <span class="o">=</span> <span class="k">[]</span>
-  <span class="k">[services.concurrency]</span>
-    <span class="n">hard_limit</span> <span class="o">=</span> <span class="mi">25</span>
-    <span class="n">soft_limit</span> <span class="o">=</span> <span class="mi">20</span>
-    <span class="n">type</span> <span class="o">=</span> <span class="s">&quot;connections&quot;</span>
-
-  <span class="k">[[services.ports]]</span>
-    <span class="n">force_https</span> <span class="o">=</span> <span class="kc">true</span>
-    <span class="n">handlers</span> <span class="o">=</span> <span class="k">[&quot;http&quot;]</span>
-    <span class="n">port</span> <span class="o">=</span> <span class="mi">80</span>
-
-  <span class="k">[[services.ports]]</span>
-    <span class="n">handlers</span> <span class="o">=</span> <span class="k">[&quot;tls&quot;, &quot;http&quot;]</span>
-    <span class="n">port</span> <span class="o">=</span> <span class="mi">443</span>
-
-  <span class="k">[[services.tcp_checks]]</span>
-    <span class="n">grace_period</span> <span class="o">=</span> <span class="s">&quot;1s&quot;</span>
-    <span class="n">interval</span> <span class="o">=</span> <span class="s">&quot;15s&quot;</span>
-    <span class="n">restart_limit</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">timeout</span> <span class="o">=</span> <span class="s">&quot;2s&quot;</span>
-</pre></div>
-<p>I couldn't see any obvious changes to <code>fly.toml</code> so I moved onto deploying via:</p>
-<div class="highlight"><pre><span></span>flyctl deploy
-</pre></div>
-<p>At this point the gridref-web application is available at <a class="reference external" href="https://gridref-web.fly.dev/">https://gridref-web.fly.dev/</a>.</p>
-<p>The application is available by default via https on fly.io (with a redirect from http), I had to make a <a class="reference external" href="https://github.com/walkermatt/gridref-web/commit/ff2b5b6bb62ec78f2816ae48ffda8e9b68c1efde">small change to the code</a> to use the <code>x-forwarded-proto</code> header to determine the client protocol to ensure the links shown on the home page use the correct protocol as fly.io makes requests to my application running in Docker via plain http.</p>
-</div>
-<div class="section" id="custom-domain-and-certificate">
-<h2>Custom domain and certificate</h2>
-<p>Setting up a custom domain and associated certificate for http traffic involved:</p>
-<ol class="arabic simple">
-<li>Creating a CNAME to point <code>gridref.longwayaround.org.uk</code> at <code>gridref-web.fly.dev.</code></li>
-<li>Once the CNAME had propagated, requesting a certificate via the <cite>flyctl</cite>:</li>
-</ol>
-<div class="highlight"><pre><span></span>flyctl certs create gridref.longwayaround.org.uk
-</pre></div>
-<p>The web application is now available at <a class="reference external" href="https://gridref.longwayaround.org.uk/">https://gridref.longwayaround.org.uk/</a> 🎉</p>
-<p>The application has been running for a few weeks without any issues, it's now running via https and is more responsive due to the instance always being available.</p>
+<p>The pattern in the command <code>:sort /\v\d+$/ r</code>, breaks down as:</p>
+<ul class="simple">
+<li><code>\v</code> enables full regular expression support including <code>$</code> to match the end of the line</li>
+<li><code>\d+$</code> matches one or more digits at the end of the line</li>
+</ul>
+<p>The <code>r</code> flag indicates that the sorting should be done based on the search match.</p>
 </div>
 
 <footer class="post-info">
-    <abbr class="published" title="2023-03-27T11:20:00+01:00">Mon 27 March 2023</abbr>
-<p>Tags: <a href="https://longwayaround.org.uk/tag/command-line.html">command-line</a> <a href="https://longwayaround.org.uk/tag/geo.html">geo</a> <a href="https://longwayaround.org.uk/tag/clojure.html">clojure</a> <a href="https://longwayaround.org.uk/tag/notes.html">notes</a> </p></footer><!-- /.post-info -->                    <p><a href="https://longwayaround.org.uk/notes/moving-gridref-to-flyio/#disqus_thread">comments</a>.</p>
+    <abbr class="published" title="2024-04-08T08:45:00+01:00">Mon 08 April 2024</abbr>
+<p>Tags: <a href="https://longwayaround.org.uk/tag/vim.html">vim</a> </p></footer><!-- /.post-info -->                    <p><a href="https://longwayaround.org.uk/notes/sorting-lines-in-neovim/#disqus_thread">comments</a>.</p>
                 </article>
             </aside><!-- /#featured -->
                 <section id="content" class="body">
                     <h1>Other posts</h1>
                     <hr />
                         <ol id="posts-list" class="hfeed">
+
+ 
+            <li><article class="hentry">
+                <header>
+                        <abbr class="published" title="2023-03-27T11:20:00+01:00">Mon 27 March 2023</abbr>
+                        <h1><a href="https://longwayaround.org.uk/notes/moving-gridref-to-flyio/" rel="bookmark" title="Permalink to Moving gridref to fly.io">Moving gridref to fly.io</a></h1>
+                </header>
+                <div class="entry-content">
+                <div class="slug">
+                    <p>A few years ago I made an effort to learn <a class="reference external" href="http://clojure.org/">Clojure</a>, during which time I built a small Clojure library and command-line app <a class="reference external" href="https://github.com/walkermatt/gridref">GridRef</a> to convert between an Ordnance Survey GB grid reference and British National Grid coordinates. While I was at it I built a web API <a class="reference external" href="https://github.com/walkermatt/gridref-web">GridRef Web …</a></p>
+                    <p>
+<a href="https://longwayaround.org.uk/notes/moving-gridref-to-flyio/#disqus_thread">comments</a>.                        <a class="readmore" href="https://longwayaround.org.uk/notes/moving-gridref-to-flyio/">read more</a>
+                    </p>
+                </div>
+                </div><!-- /.entry-content -->
+            </article></li>
 
  
             <li><article class="hentry">
@@ -194,7 +154,7 @@ docker run -it --rm --memory-swap 250m --memory 250m --env <span class="nv">PORT
                 <div class="entry-content">
                 <div class="slug">
                     <p>Text filters are command-line programs that take text as input, transform it then output the results. An example of a common built in text filter is <tt class="docutils literal">sort</tt> which when passed newline separated text will sort each line:</p>
-<div class="highlight"><pre><span></span><span class="nb">printf</span> <span class="s1">&#39;b\nc\na&#39;</span> <span class="p">|</span> sort
+<div class="highlight"><pre><span></span><span class="nb">printf</span><span class="w"> </span><span class="s1">&#39;b\nc\na&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sort
 </pre></div>
 <p>You can write your own text filter scripts …</p>
                     <p>
@@ -446,7 +406,7 @@ in a custom projection (EPSG:27700) within Leaflet and OpenLayers 3 (ol3) see �
                 <div class="entry-content">
                 <div class="slug">
                     <p>To recursively delete all empty directories from the command prompt in Windows. Open command prompt and change to the desired directory then enter the following:</p>
-<div class="highlight"><pre><span></span><span class="k">for</span> /F <span class="s2">&quot;tokens=*&quot;</span> %f in <span class="o">(</span><span class="s1">&#39;dir /AD /S /B ^| sort /R&#39;</span><span class="o">)</span> <span class="k">do</span> <span class="nb">echo</span> rd <span class="s2">&quot;%f&quot;</span>
+<div class="highlight"><pre><span></span><span class="k">for</span><span class="w"> </span>/F<span class="w"> </span><span class="s2">&quot;tokens=*&quot;</span><span class="w"> </span>%f<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="o">(</span><span class="s1">&#39;dir /AD /S /B ^| sort /R&#39;</span><span class="o">)</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span>rd<span class="w"> </span><span class="s2">&quot;%f&quot;</span>
 </pre></div>
 <p>This command generates a list of all directories and sub …</p>
                     <p>
@@ -465,7 +425,7 @@ in a custom projection (EPSG:27700) within Leaflet and OpenLayers 3 (ol3) see �
                 <div class="entry-content">
                 <div class="slug">
                     <p>Change to the directory then run the command:</p>
-<div class="highlight"><pre><span></span>mogrify -colorspace Gray *.tif
+<div class="highlight"><pre><span></span>mogrify<span class="w"> </span>-colorspace<span class="w"> </span>Gray<span class="w"> </span>*.tif
 </pre></div>
 
                     <p>

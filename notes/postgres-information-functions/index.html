@@ -47,33 +47,33 @@
 <div class="section" id="find-an-objects-oid">
 <h3>Find an objects oid</h3>
 <p>A lot of the info functions accept the <a class="reference external" href="https://www.postgresql.org/docs/current/static/datatype-oid.html/">Object Identifier Type</a> for objects in the database. This can be obtained by casting to <code>regclass</code> (also described in the  <a class="reference external" href="https://www.postgresql.org/docs/current/static/datatype-oid.html/">oid docs</a>) then to <code>oid</code>:</p>
-<div class="highlight"><pre><span></span><span class="k">select</span> <span class="s1">&#39;schema_name.relation_name&#39;</span><span class="p">::</span><span class="n">regclass</span><span class="p">::</span><span class="n">oid</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><span class="k">select</span><span class="w"> </span><span class="s1">&#39;schema_name.relation_name&#39;</span><span class="p">::</span><span class="n">regclass</span><span class="p">::</span><span class="n">oid</span><span class="p">;</span>
 </pre></div>
 <p>Where <code>relation_name</code> is a table, view, index etc.</p>
 </div>
 <div class="section" id="view-definition">
 <h3>View definition</h3>
-<div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">pg_get_viewdef</span><span class="p">(</span><span class="s1">&#39;schema_name.view_name&#39;</span><span class="p">::</span><span class="n">regclass</span><span class="p">::</span><span class="n">oid</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><span class="k">select</span><span class="w"> </span><span class="n">pg_get_viewdef</span><span class="p">(</span><span class="s1">&#39;schema_name.view_name&#39;</span><span class="p">::</span><span class="n">regclass</span><span class="p">::</span><span class="n">oid</span><span class="p">);</span>
 </pre></div>
 <p>Or in <code>psql</code> you can use one of the built in commands:</p>
-<div class="highlight"><pre><span></span><span class="err">\</span><span class="n">d</span><span class="o">+</span> <span class="k">schema_name</span><span class="p">.</span><span class="n">view_name</span>
+<div class="highlight"><pre><span></span><span class="err">\</span><span class="n">d</span><span class="o">+</span><span class="w"> </span><span class="k">schema_name</span><span class="p">.</span><span class="n">view_name</span>
 </pre></div>
 </div>
 <div class="section" id="function-definition">
 <h3>Function definition</h3>
 <p>Returns the function definition for a given function. Many built-in functions don't reveal much due to them not being written in SQL but for those that are you'll get the complete create function statement. For example to view the definition of the PostGIS <code>st_colormap</code> function:</p>
-<div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">pg_get_functiondef</span><span class="p">(</span><span class="s1">&#39;st_colormap(raster, integer, text, text)&#39;</span><span class="p">::</span><span class="n">regprocedure</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><span class="k">select</span><span class="w"> </span><span class="n">pg_get_functiondef</span><span class="p">(</span><span class="s1">&#39;st_colormap(raster, integer, text, text)&#39;</span><span class="p">::</span><span class="n">regprocedure</span><span class="p">);</span>
 </pre></div>
 </div>
 <div class="section" id="privileges">
 <h3>Privileges</h3>
 <p>A <a class="reference external" href="https://www.postgresql.org/docs/current/static/functions-info.html#FUNCTIONS-INFO-ACCESS-TABLE/">whole host of functions exist to determine privileges for schemas, tables, functions etc.</a> Some examples:</p>
 <p>Determine if the current users can select from a table:</p>
-<div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">has_table_privilege</span><span class="p">(</span><span class="s1">&#39;schema_name.relation_name&#39;</span><span class="p">,</span> <span class="s1">&#39;select&#39;</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><span class="k">select</span><span class="w"> </span><span class="n">has_table_privilege</span><span class="p">(</span><span class="s1">&#39;schema_name.relation_name&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;select&#39;</span><span class="p">);</span>
 </pre></div>
 <p>Note: The docs state that &quot;multiple privilege types can be listed separated by commas, in which case the result will be true if any of the listed privileges is held&quot;. This means that in order to test a number of privileges it is normally better to test each privilege individually as <code>select has_table_privilege('schema_name.relation_name', 'select,update');</code> would return <code>t</code> even if only <code>select</code> is supported.</p>
 <p>Determine if a user can use a schema:</p>
-<div class="highlight"><pre><span></span><span class="k">select</span> <span class="n">has_schema_privilege</span><span class="p">(</span><span class="s1">&#39;schema_name&#39;</span><span class="p">,</span> <span class="s1">&#39;usage&#39;</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><span class="k">select</span><span class="w"> </span><span class="n">has_schema_privilege</span><span class="p">(</span><span class="s1">&#39;schema_name&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;usage&#39;</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -100,6 +100,7 @@
 <section id="content" class="body">
 <h1>Posts</h1>
 <ul>
+    <li><a href='../../notes/sorting-lines-in-neovim/'>Sorting lines in (Neo)Vim</a> - <abbr class="published" title="2024-04-08T08:45:00+01:00">Mon 08 April 2024</abbr></li>
     <li><a href='../../notes/moving-gridref-to-flyio/'>Moving gridref to fly.io</a> - <abbr class="published" title="2023-03-27T11:20:00+01:00">Mon 27 March 2023</abbr></li>
     <li><a href='../../notes/web-mercator-os-vector-tile-api-in-openlayers-take-2/'>Web Mercator OS Vector Tile API in OpenLayers - Take #2</a> - <abbr class="published" title="2022-09-05T08:05:00+01:00">Mon 05 September 2022</abbr></li>
     <li><a href='../../notes/web-mercator-os-vector-tile-api-in-openlayers/'>Web Mercator OS Vector Tile API in OpenLayers</a> - <abbr class="published" title="2022-06-23T21:56:00+01:00">Thu 23 June 2022</abbr></li>

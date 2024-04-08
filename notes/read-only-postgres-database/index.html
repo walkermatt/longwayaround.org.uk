@@ -43,7 +43,7 @@
         <div class="entry-content">
         <p>There are times when I've needed to effectively make a Postgres database read-only, for example after loading or updating reference data. In the past I've revoked permissions from database roles to achieve this but as <a class="reference external" href="http://www.postgresql.org/message-id/5fe0d78bda51d7176940fb8e78739b54&#64;biglumber.com">this post on the PostgreSQL list states, it's possible to do so by making all transactions against the database read-only by default</a>.</p>
 <p>For example assuming I have an <code>osdata</code> database, I can alter it to set <code>default_transaction_read_only</code> (<a class="reference external" href="http://www.postgresql.org/docs/9.4/static/runtime-config-client.html#GUC-DEFAULT-TRANSACTION-READ-ONLY">docs</a>) to <code>true</code> which will make future transitions read-only regardless of which login role connects:</p>
-<div class="highlight"><pre><span></span>ALTER DATABASE osdata SET <span class="nv">default_transaction_read_only</span> <span class="o">=</span> true<span class="p">;</span>
+<div class="highlight"><pre><span></span>ALTER<span class="w"> </span>DATABASE<span class="w"> </span>osdata<span class="w"> </span>SET<span class="w"> </span><span class="nv">default_transaction_read_only</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>true<span class="p">;</span>
 </pre></div>
 <p>As the name implies setting <code>default_transaction_read_only</code> to <code>true</code> only sets transactions to be read-only by default, a user can override or unset the setting on a per-session basis e.g. <code>set default_transaction_read_only = false;</code>.</p>
 
@@ -69,6 +69,7 @@
 <section id="content" class="body">
 <h1>Posts</h1>
 <ul>
+    <li><a href='../../notes/sorting-lines-in-neovim/'>Sorting lines in (Neo)Vim</a> - <abbr class="published" title="2024-04-08T08:45:00+01:00">Mon 08 April 2024</abbr></li>
     <li><a href='../../notes/moving-gridref-to-flyio/'>Moving gridref to fly.io</a> - <abbr class="published" title="2023-03-27T11:20:00+01:00">Mon 27 March 2023</abbr></li>
     <li><a href='../../notes/web-mercator-os-vector-tile-api-in-openlayers-take-2/'>Web Mercator OS Vector Tile API in OpenLayers - Take #2</a> - <abbr class="published" title="2022-09-05T08:05:00+01:00">Mon 05 September 2022</abbr></li>
     <li><a href='../../notes/web-mercator-os-vector-tile-api-in-openlayers/'>Web Mercator OS Vector Tile API in OpenLayers</a> - <abbr class="published" title="2022-06-23T21:56:00+01:00">Thu 23 June 2022</abbr></li>

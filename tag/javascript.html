@@ -44,72 +44,72 @@
 <p>Thanks to <a class="reference external" href="https://twitter.com/ahoce/status/1545409888226099200">some feedback from Andreas Hocevar</a> and <a class="reference external" href="https://github.com/openlayers/ol-mapbox-style/pull/618">a pull request I made to ol-mapbox-style</a> adding a Vector Tile layer of Ordnance Survey data from the OS Data Hub to an OpenLayers map in Web Mercator is a little easier than it was <a class="reference external" href="/notes/web-mercator-os-vector-tile-api-in-openlayers/">a few months ago</a> 🎉</p>
 <p>The following uses <a class="reference external" href="https://github.com/openlayers/create-ol-app">create-ol-app</a> to create a basic OpenLayers app, we then add the <a class="reference external" href="https://github.com/openlayers/ol-mapbox-style/pull/618">ol-mapbox-style</a> package and install the other dependencies:</p>
 <div class="highlight"><pre><span></span><span class="c1"># Create a new OpenLayers app in a folder called os-vt-api-ol</span>
-npx create-ol-app os-vt-api-ol
+npx<span class="w"> </span>create-ol-app<span class="w"> </span>os-vt-api-ol
 
 <span class="c1"># Change to the newly created folder which contains our app</span>
-<span class="nb">cd</span> os-vt-api-ol/
+<span class="nb">cd</span><span class="w"> </span>os-vt-api-ol/
 
 <span class="c1"># Install the ol-mapbox-style package from npm</span>
-npm i ol-mapbox-style
+npm<span class="w"> </span>i<span class="w"> </span>ol-mapbox-style
 
 <span class="c1"># Install the other dependencies (vite and ol)</span>
-npm i
+npm<span class="w"> </span>i
 
 <span class="c1"># Start the vite local web server which reloads during development (see the &quot;start&quot; script in package.json)</span>
-npm start
+npm<span class="w"> </span>start
 </pre></div>
 <p>Next update the code to add the OS Vector Tile layer:</p>
 <div class="section" id="main-js">
 <h2><tt class="docutils literal">main.js</tt></h2>
-<div class="highlight"><pre><span></span><span class="kr">import</span> <span class="s1">&#39;./style.css&#39;</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">Map</span><span class="p">,</span> <span class="nx">View</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;ol&#39;</span><span class="p">;</span>
-<span class="kr">import</span> <span class="nx">VectorTileLayer</span> <span class="nx">from</span> <span class="s1">&#39;ol/layer/VectorTile&#39;</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">transform</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;ol/proj&#39;</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">applyStyle</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;ol-mapbox-style&#39;</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><span class="k">import</span><span class="w"> </span><span class="s1">&#39;./style.css&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nb">Map</span><span class="p">,</span><span class="w"> </span><span class="nx">View</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;ol&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="nx">VectorTileLayer</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;ol/layer/VectorTile&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">transform</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;ol/proj&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">applyStyle</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;ol-mapbox-style&#39;</span><span class="p">;</span>
 
-<span class="kd">let</span> <span class="nx">OS_API_KEY</span> <span class="o">=</span> <span class="s1">&#39;YOUR_OS_API_KEY&#39;</span><span class="p">;</span>
+<span class="kd">let</span><span class="w"> </span><span class="nx">OS_API_KEY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;YOUR_OS_API_KEY&#39;</span><span class="p">;</span>
 
-<span class="kd">let</span> <span class="nx">OsVtLyr</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">VectorTileLayer</span><span class="p">({</span>
-  <span class="nx">declutter</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+<span class="kd">let</span><span class="w"> </span><span class="nx">OsVtLyr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">VectorTileLayer</span><span class="p">({</span>
+<span class="w">  </span><span class="nx">declutter</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
 <span class="p">});</span>
 
 <span class="nx">applyStyle</span><span class="p">(</span>
-  <span class="nx">OsVtLyr</span><span class="p">,</span>
-  <span class="s1">&#39;https://api.os.uk/maps/vector/v1/vts/resources/styles?srs=3857&amp;key=&#39;</span> <span class="o">+</span>
-    <span class="nx">OS_API_KEY</span><span class="p">,</span>
-  <span class="s1">&#39;&#39;</span><span class="p">,</span>
-  <span class="p">{</span>
-    <span class="c1">// Specify the optional transformRequest function which is</span>
-    <span class="c1">// called before each resource associated with the style</span>
-    <span class="c1">// is fetched. In this instance we are ensuring the `srs`</span>
-    <span class="c1">// parameter is set to `3857` (Web Mercator) when fetching</span>
-    <span class="c1">// each resource (Source, Sprite, Tiles etc.). Full docs at</span>
-    <span class="c1">// https://github.com/openlayers/ol-mapbox-style#transformRequest</span>
-    <span class="nx">transformRequest</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">url</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">URL</span><span class="p">(</span><span class="nx">url</span><span class="p">);</span>
-      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">url</span><span class="p">.</span><span class="nx">searchParams</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="s1">&#39;srs&#39;</span><span class="p">))</span> <span class="p">{</span>
-        <span class="nx">url</span><span class="p">.</span><span class="nx">searchParams</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">&#39;srs&#39;</span><span class="p">,</span> <span class="s1">&#39;3857&#39;</span><span class="p">);</span>
-      <span class="p">}</span>
-      <span class="k">return</span> <span class="k">new</span> <span class="nx">Request</span><span class="p">(</span><span class="nx">url</span><span class="p">);</span>
-    <span class="p">},</span>
-  <span class="p">}</span>
-<span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">e</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
-  <span class="c1">// Once the style has been applied set the attribution which is missing</span>
-  <span class="c1">// from the source document</span>
-  <span class="nx">OsVtLyr</span>
-    <span class="p">.</span><span class="nx">getSource</span><span class="p">()</span>
-    <span class="p">.</span><span class="nx">setAttributions</span><span class="p">(</span>
-      <span class="s1">&#39;&amp;copy; &lt;a href=&quot;http://www.ordnancesurvey.co.uk/&quot;&gt;Ordnance Survey&lt;/a&gt;&#39;</span>
-    <span class="p">);</span>
+<span class="w">  </span><span class="nx">OsVtLyr</span><span class="p">,</span>
+<span class="w">  </span><span class="s1">&#39;https://api.os.uk/maps/vector/v1/vts/resources/styles?srs=3857&amp;key=&#39;</span><span class="w"> </span><span class="o">+</span>
+<span class="w">    </span><span class="nx">OS_API_KEY</span><span class="p">,</span>
+<span class="w">  </span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Specify the optional transformRequest function which is</span>
+<span class="w">    </span><span class="c1">// called before each resource associated with the style</span>
+<span class="w">    </span><span class="c1">// is fetched. In this instance we are ensuring the `srs`</span>
+<span class="w">    </span><span class="c1">// parameter is set to `3857` (Web Mercator) when fetching</span>
+<span class="w">    </span><span class="c1">// each resource (Source, Sprite, Tiles etc.). Full docs at</span>
+<span class="w">    </span><span class="c1">// https://github.com/openlayers/ol-mapbox-style#transformRequest</span>
+<span class="w">    </span><span class="nx">transformRequest</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span><span class="w"> </span><span class="nx">type</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">URL</span><span class="p">(</span><span class="nx">url</span><span class="p">);</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">url</span><span class="p">.</span><span class="nx">searchParams</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="s1">&#39;srs&#39;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">url</span><span class="p">.</span><span class="nx">searchParams</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="s1">&#39;srs&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;3857&#39;</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Request</span><span class="p">(</span><span class="nx">url</span><span class="p">);</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">).</span><span class="nx">then</span><span class="p">((</span><span class="nx">e</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Once the style has been applied set the attribution which is missing</span>
+<span class="w">  </span><span class="c1">// from the source document</span>
+<span class="w">  </span><span class="nx">OsVtLyr</span>
+<span class="w">    </span><span class="p">.</span><span class="nx">getSource</span><span class="p">()</span>
+<span class="w">    </span><span class="p">.</span><span class="nx">setAttributions</span><span class="p">(</span>
+<span class="w">      </span><span class="s1">&#39;&amp;copy; &lt;a href=&quot;http://www.ordnancesurvey.co.uk/&quot;&gt;Ordnance Survey&lt;/a&gt;&#39;</span>
+<span class="w">    </span><span class="p">);</span>
 <span class="p">});</span>
 
-<span class="kr">const</span> <span class="nx">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Map</span><span class="p">({</span>
-  <span class="nx">target</span><span class="o">:</span> <span class="s1">&#39;map&#39;</span><span class="p">,</span>
-  <span class="nx">layers</span><span class="o">:</span> <span class="p">[</span><span class="nx">OsVtLyr</span><span class="p">],</span>
-  <span class="nx">view</span><span class="o">:</span> <span class="k">new</span> <span class="nx">View</span><span class="p">({</span>
-    <span class="nx">center</span><span class="o">:</span> <span class="nx">transform</span><span class="p">([</span><span class="o">-</span><span class="mf">2.333029</span><span class="p">,</span> <span class="mf">52.109524</span><span class="p">],</span> <span class="s1">&#39;EPSG:4326&#39;</span><span class="p">,</span> <span class="s1">&#39;EPSG:3857&#39;</span><span class="p">),</span>
-    <span class="nx">zoom</span><span class="o">:</span> <span class="mi">14</span><span class="p">,</span>
-  <span class="p">}),</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nb">Map</span><span class="p">({</span>
+<span class="w">  </span><span class="nx">target</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;map&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">layers</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="nx">OsVtLyr</span><span class="p">],</span>
+<span class="w">  </span><span class="nx">view</span><span class="o">:</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">View</span><span class="p">({</span>
+<span class="w">    </span><span class="nx">center</span><span class="o">:</span><span class="w"> </span><span class="nx">transform</span><span class="p">([</span><span class="o">-</span><span class="mf">2.333029</span><span class="p">,</span><span class="w"> </span><span class="mf">52.109524</span><span class="p">],</span><span class="w"> </span><span class="s1">&#39;EPSG:4326&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;EPSG:3857&#39;</span><span class="p">),</span>
+<span class="w">    </span><span class="nx">zoom</span><span class="o">:</span><span class="w"> </span><span class="mf">14</span><span class="p">,</span>
+<span class="w">  </span><span class="p">}),</span>
 <span class="p">});</span>
 </pre></div>
 <p>See the comments in the code for an explanation of the steps involved. The you should end up with a map that looks something like this:</p>

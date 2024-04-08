@@ -75,14 +75,14 @@
 <div class="section" id="examples">
 <h2>Examples</h2>
 <p>All examples use the <a class="reference external" href="http://www.naturalearthdata.com/">Natural Earth Vector data</a>, a <a class="reference external" href="http://kelso.it/x/nevector">full download</a> is available if you'd like to follow along. Assumes loading into a database called <code>postgis</code> with a <code>loader</code> login role with the password set via the <code>PGPASSWORD</code> environment variable: <code>PGPASSWORD=password</code>.</p>
-<div class="section" id="id1">
+<div class="section" id="shp2pgsql-1">
 <h3>shp2pgsql</h3>
 <p>Load a Shapefile using <code>shp2pgsql</code> and <code>psql</code>. <code>shp2pgsql</code> doesn't load into the database directly but instead outputs SQL which can then be loaded via <code>psql</code>. This example pipes the SQL output by <code>shp2pgsql</code> to stdout to <code>psql</code> which executes it against the specified database.</p>
-<div class="highlight"><pre><span></span>shp2pgsql -W LATIN1 <span class="se">\</span>
-            -s <span class="m">4326</span> <span class="se">\</span>
-            -I natural_earth_vector/10m_cultural/ne_10m_admin_0_countries.shp <span class="se">\</span>
-            ne.ne_10m_admin_0_countries <span class="se">\</span>
-        <span class="p">|</span> psql -U loader -d postgis
+<div class="highlight"><pre><span></span>shp2pgsql<span class="w"> </span>-W<span class="w"> </span>LATIN1<span class="w"> </span><span class="se">\</span>
+<span class="w">            </span>-s<span class="w"> </span><span class="m">4326</span><span class="w"> </span><span class="se">\</span>
+<span class="w">            </span>-I<span class="w"> </span>natural_earth_vector/10m_cultural/ne_10m_admin_0_countries.shp<span class="w"> </span><span class="se">\</span>
+<span class="w">            </span>ne.ne_10m_admin_0_countries<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span><span class="p">|</span><span class="w"> </span>psql<span class="w"> </span>-U<span class="w"> </span>loader<span class="w"> </span>-d<span class="w"> </span>postgis
 </pre></div>
 <ul class="simple">
 <li><a class="reference external" href="http://prj2epsg.org/search">http://prj2epsg.org/search</a></li>
@@ -91,10 +91,10 @@
 <div class="section" id="ogr2ogr-f-postgresql">
 <h3>ogr2ogr -f PostgreSQL</h3>
 <p>Load an equivalent Shapefile into PostGIS using <code>ogr2ogr</code>.</p>
-<div class="highlight"><pre><span></span>ogr2ogr -f PostgreSQL <span class="se">\</span>
-        PG:<span class="s1">&#39;dbname=postgis user=loader active_schema=ne&#39;</span> <span class="se">\</span>
-        natural_earth_vector/10m_cultural/ne_10m_time_zones.shp <span class="se">\</span>
-        -nlt PROMOTE_TO_MULTI
+<div class="highlight"><pre><span></span>ogr2ogr<span class="w"> </span>-f<span class="w"> </span>PostgreSQL<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>PG:<span class="s1">&#39;dbname=postgis user=loader active_schema=ne&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>natural_earth_vector/10m_cultural/ne_10m_time_zones.shp<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>-nlt<span class="w"> </span>PROMOTE_TO_MULTI
 </pre></div>
 </div>
 </div>
@@ -105,14 +105,14 @@
 <p>When loading large quantities of data both <code>shp2pgsql</code> and <code>ogr2ogr</code> support loading via PostgreSQL Dump format. This involves bulk loading of rows in a textual CSV like format using the <code>COPY</code> command which can be much quicker than <code>INSERT</code> statement.</p>
 <p>Enabling Dump format with <code>shp2pgsql</code> is as simple as specifying the <code>-D</code> flag (<code>shp2pgsql -D ...</code>).</p>
 <p>For <code>ogr2ogr</code> use the <code>PGDump</code> output format with the <code>PG_USE_COPY</code> config set to <code>YES</code>. The are a number of layer creation (<code>-lco</code>) and config options detailed on the <a class="reference external" href="http://www.gdal.org/drv_pgdump.html">PGDump driver page</a>.</p>
-<div class="highlight"><pre><span></span>ogr2ogr -f PGDump <span class="se">\</span>
-        --config PG_USE_COPY YES <span class="se">\</span>
-        -lco <span class="nv">schema</span><span class="o">=</span>ne <span class="se">\</span>
-        -lco <span class="nv">create_schema</span><span class="o">=</span>off <span class="se">\</span>
-        /vsistdout/ <span class="se">\</span>
-        natural_earth_vector/10m_cultural/ne_10m_admin_1_states_provinces_shp.shp <span class="se">\</span>
-        -nlt PROMOTE_TO_MULTI <span class="se">\</span>
-        <span class="p">|</span> psql -U loader -d postgis
+<div class="highlight"><pre><span></span>ogr2ogr<span class="w"> </span>-f<span class="w"> </span>PGDump<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>--config<span class="w"> </span>PG_USE_COPY<span class="w"> </span>YES<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>-lco<span class="w"> </span><span class="nv">schema</span><span class="o">=</span>ne<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>-lco<span class="w"> </span><span class="nv">create_schema</span><span class="o">=</span>off<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>/vsistdout/<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>natural_earth_vector/10m_cultural/ne_10m_admin_1_states_provinces_shp.shp<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>-nlt<span class="w"> </span>PROMOTE_TO_MULTI<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span><span class="p">|</span><span class="w"> </span>psql<span class="w"> </span>-U<span class="w"> </span>loader<span class="w"> </span>-d<span class="w"> </span>postgis
 </pre></div>
 <p>When loading multi file datasets such as Ordnance Survey <a class="reference external" href="http://www.ordnancesurvey.co.uk/business-and-government/products/topography-layer.html">OSMM Topography Layer</a> or <a class="reference external" href="http://www.ordnancesurvey.co.uk/business-and-government/products/vectormap-local.html">VectorMap Local</a> the general approach is:</p>
 <ul class="simple">
@@ -121,14 +121,14 @@
 <li>Create indexes, vacuum etc.</li>
 </ul>
 <p>An example of this workflow for VectorMap Local can be found in the <a class="reference external" href="https://github.com/AstunTechnology/Loader/tree/master/extras/ordnancesurvey/vml/pgdump">Loader repository</a>. Deferring the creation of indexes can also improve performance significantly as it avoids the database continually rebuilding the indexes during load. In this instance the <code>ogr2ogr</code> command might look like:</p>
-<div class="highlight"><pre><span></span>ogr2ogr --config PG_USE_COPY YES <span class="se">\</span>
-        -lco <span class="nv">schema</span><span class="o">=</span>ne <span class="se">\</span>
-        -lco <span class="nv">create_schema</span><span class="o">=</span>off <span class="se">\</span>
-        -lco <span class="nv">create_table</span><span class="o">=</span>off <span class="se">\</span>
-        -lco <span class="nv">spatial_index</span><span class="o">=</span>off <span class="se">\</span>
-        -f PGDump <span class="se">\</span>
-        /vsistdout/ <span class="se">\</span>
-        /path/to/source.gml
+<div class="highlight"><pre><span></span>ogr2ogr<span class="w"> </span>--config<span class="w"> </span>PG_USE_COPY<span class="w"> </span>YES<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>-lco<span class="w"> </span><span class="nv">schema</span><span class="o">=</span>ne<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>-lco<span class="w"> </span><span class="nv">create_schema</span><span class="o">=</span>off<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>-lco<span class="w"> </span><span class="nv">create_table</span><span class="o">=</span>off<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>-lco<span class="w"> </span><span class="nv">spatial_index</span><span class="o">=</span>off<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>-f<span class="w"> </span>PGDump<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>/vsistdout/<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>/path/to/source.gml
 </pre></div>
 <p>A benefit of this approach is that you can also fine tune the column types and provide support for date fields which <code>ogr2ogr</code> doesn't natively understand.</p>
 </div>
@@ -137,8 +137,8 @@
 <p>Databases are designed to handle lots of concurrent activity and can easily handle more than one process loading data at the same time. Often load performance can be improved by running several <code>shp2pgsql</code> or <code>ogr2ogr</code> processes at a time. This can be done manually but for large datasets this becomes a pain, lucky on *unix systems we have <a class="reference external" href="http://www.gnu.org/software/parallel/">GNU Parallel</a> which can automate it for use. A <a class="reference external" href="../gnu-parallel-all-the-things/">previous post</a> has covered loading with GNU Parallel in more detail but it fits well with this discussion.</p>
 <p>The <code>parallel</code> command is very flexible and can take some time to understand but a simple</p>
 <p>In a previous post I provided an example of loading all Natural Earth vectors using <code>shp2pgsql</code> so this time lets do the same with <code>ogr2ogr</code>:</p>
-<div class="highlight"><pre><span></span><span class="nb">time</span> find natural_earth_vector/10m_physical/ -name <span class="s1">&#39;*.shp&#39;</span> <span class="se">\</span>
-    <span class="p">|</span> parallel <span class="s2">&quot;ogr2ogr -f PGDump \</span>
+<div class="highlight"><pre><span></span><span class="nb">time</span><span class="w"> </span>find<span class="w"> </span>natural_earth_vector/10m_physical/<span class="w"> </span>-name<span class="w"> </span><span class="s1">&#39;*.shp&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="p">|</span><span class="w"> </span>parallel<span class="w"> </span><span class="s2">&quot;ogr2ogr -f PGDump \</span>
 <span class="s2">                    --config PG_USE_COPY YES \</span>
 <span class="s2">                    -lco schema=ne \</span>
 <span class="s2">                    -lco create_schema=off \</span>
@@ -155,17 +155,17 @@
 <li>Create indexes, vacuum etc.</li>
 </ul>
 <p>As an example lets load a CSV with details of WMS requests with the bounding box expressed as EWKT:</p>
-<div class="highlight"><pre><span></span>cat requests1.csv
-<span class="m">2014</span>-10-20 <span class="m">06</span>:33:24,elmbridge,wms,<span class="s2">&quot;SRID=27700;POLYGON((516601 163293, 516729 163293, 516729 163421, 516601 163421, 516601 163293))&quot;</span>
-<span class="m">2014</span>-10-20 <span class="m">06</span>:33:32,surrey,wms,<span class="s2">&quot;SRID=27700;POLYGON((492801 166401, 499201 166401, 499201 172801, 492801 172801, 492801 166401))&quot;</span>
-<span class="m">2014</span>-10-20 <span class="m">06</span>:38:09,exactrak,wms,<span class="s2">&quot;SRID=27700;POLYGON((206848 67200, 206976 67200, 206976 67328, 206848 67328, 206848 67200))&quot;</span>
+<div class="highlight"><pre><span></span>cat<span class="w"> </span>requests1.csv
+<span class="m">2014</span>-10-20<span class="w"> </span><span class="m">06</span>:33:24,elmbridge,wms,<span class="s2">&quot;SRID=27700;POLYGON((516601 163293, 516729 163293, 516729 163421, 516601 163421, 516601 163293))&quot;</span>
+<span class="m">2014</span>-10-20<span class="w"> </span><span class="m">06</span>:33:32,surrey,wms,<span class="s2">&quot;SRID=27700;POLYGON((492801 166401, 499201 166401, 499201 172801, 492801 172801, 492801 166401))&quot;</span>
+<span class="m">2014</span>-10-20<span class="w"> </span><span class="m">06</span>:38:09,exactrak,wms,<span class="s2">&quot;SRID=27700;POLYGON((206848 67200, 206976 67200, 206976 67328, 206848 67328, 206848 67200))&quot;</span>
 ...
 
-psql -U loader -d postgis
-drop table <span class="k">if</span> exists requests<span class="p">;</span>
-create table requests<span class="o">(</span>reqtime timestamp, org text, service text, bbox geometry<span class="o">)</span><span class="p">;</span>
-<span class="se">\c</span>opy requests FROM <span class="s1">&#39;requests1.csv&#39;</span> DELIMITER <span class="s1">&#39;,&#39;</span> CSV<span class="p">;</span>
-<span class="k">select</span> populate_geometry_columns<span class="o">()</span><span class="p">;</span>
+psql<span class="w"> </span>-U<span class="w"> </span>loader<span class="w"> </span>-d<span class="w"> </span>postgis
+drop<span class="w"> </span>table<span class="w"> </span><span class="k">if</span><span class="w"> </span>exists<span class="w"> </span>requests<span class="p">;</span>
+create<span class="w"> </span>table<span class="w"> </span>requests<span class="o">(</span>reqtime<span class="w"> </span>timestamp,<span class="w"> </span>org<span class="w"> </span>text,<span class="w"> </span>service<span class="w"> </span>text,<span class="w"> </span>bbox<span class="w"> </span>geometry<span class="o">)</span><span class="p">;</span>
+<span class="se">\c</span>opy<span class="w"> </span>requests<span class="w"> </span>FROM<span class="w"> </span><span class="s1">&#39;requests1.csv&#39;</span><span class="w"> </span>DELIMITER<span class="w"> </span><span class="s1">&#39;,&#39;</span><span class="w"> </span>CSV<span class="p">;</span>
+<span class="k">select</span><span class="w"> </span>populate_geometry_columns<span class="o">()</span><span class="p">;</span>
 </pre></div>
 </div>
 </div>
@@ -192,6 +192,7 @@ create table requests<span class="o">(</span>reqtime timestamp, org text, servic
 <section id="content" class="body">
 <h1>Posts</h1>
 <ul>
+    <li><a href='../../notes/sorting-lines-in-neovim/'>Sorting lines in (Neo)Vim</a> - <abbr class="published" title="2024-04-08T08:45:00+01:00">Mon 08 April 2024</abbr></li>
     <li><a href='../../notes/moving-gridref-to-flyio/'>Moving gridref to fly.io</a> - <abbr class="published" title="2023-03-27T11:20:00+01:00">Mon 27 March 2023</abbr></li>
     <li><a href='../../notes/web-mercator-os-vector-tile-api-in-openlayers-take-2/'>Web Mercator OS Vector Tile API in OpenLayers - Take #2</a> - <abbr class="published" title="2022-09-05T08:05:00+01:00">Mon 05 September 2022</abbr></li>
     <li><a href='../../notes/web-mercator-os-vector-tile-api-in-openlayers/'>Web Mercator OS Vector Tile API in OpenLayers</a> - <abbr class="published" title="2022-06-23T21:56:00+01:00">Thu 23 June 2022</abbr></li>

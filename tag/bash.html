@@ -41,7 +41,7 @@
                     <abbr class="published" title="2022-06-22T21:56:00+01:00">Wed 22 June 2022</abbr>
                     <h1 class="entry-title"><a href="https://longwayaround.org.uk/notes/writing-small-text-filters-for-the-shell-and-vim/">Writing small text filters for the shell and Vim</a></h1> 
                     <p>Text filters are command-line programs that take text as input, transform it then output the results. An example of a common built in text filter is <tt class="docutils literal">sort</tt> which when passed newline separated text will sort each line:</p>
-<div class="highlight"><pre><span></span><span class="nb">printf</span> <span class="s1">&#39;b\nc\na&#39;</span> <span class="p">|</span> sort
+<div class="highlight"><pre><span></span><span class="nb">printf</span><span class="w"> </span><span class="s1">&#39;b\nc\na&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sort
 </pre></div>
 <p>You can write your own text filter scripts; this is an example from my <a class="reference external" href="https://github.com/walkermatt/dotbin">~/.bin</a> directory which can be used to filter JSON text. It supports pretty printing the output as well as removing any formatting so that the JSON text is all on one line.</p>
 <p><tt class="docutils literal">jsonformat</tt></p>
@@ -77,7 +77,7 @@
     <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">squash</span><span class="p">:</span>
         <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">outfile</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">outfile</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">indent</span><span class="p">,</span> <span class="n">separators</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="s1">&#39;: &#39;</span><span class="p">))</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">outfile</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">indent</span><span class="p">,</span> <span class="n">separators</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="s1">&#39;: &#39;</span><span class="p">))</span>
     <span class="n">outfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 
 
@@ -86,51 +86,51 @@
 </pre></div>
 <p>The Python script makes use of the Python 3 <tt class="docutils literal">json</tt> package for reading and writing JSON and supports reading from standard input (<tt class="docutils literal">stdin</tt>) or a file and writing to standard out (<tt class="docutils literal">stdout</tt>) or file.</p>
 <p>Assuming a file called <tt class="docutils literal">feature.json</tt> it can be pretty printed with an indentation of <tt class="docutils literal">2</tt> spaces to <tt class="docutils literal">stdout</tt> like so:</p>
-<div class="highlight"><pre><span></span>jsonformat --indent <span class="m">2</span> features.json
+<div class="highlight"><pre><span></span>jsonformat<span class="w"> </span>--indent<span class="w"> </span><span class="m">2</span><span class="w"> </span>features.json
 </pre></div>
 <div class="highlight"><pre><span></span><span class="p">{</span>
-  <span class="nt">&quot;features&quot;</span><span class="p">:</span> <span class="p">[</span>
-    <span class="p">{</span>
-      <span class="nt">&quot;geometry&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;coordinates&quot;</span><span class="p">:</span> <span class="p">[</span>
-          <span class="p">[</span>
-            <span class="p">[</span>
-              <span class="mf">-2.407379150390625</span><span class="p">,</span>
-              <span class="mf">52.36302183361385</span>
-            <span class="p">],</span>
-            <span class="p">[</span>
-              <span class="mf">-2.3258399963378906</span><span class="p">,</span>
-              <span class="mf">52.36302183361385</span>
-            <span class="p">],</span>
-            <span class="p">[</span>
-              <span class="mf">-2.3258399963378906</span><span class="p">,</span>
-              <span class="mf">52.41488029514571</span>
-            <span class="p">],</span>
-            <span class="p">[</span>
-              <span class="mf">-2.407379150390625</span><span class="p">,</span>
-              <span class="mf">52.41488029514571</span>
-            <span class="p">],</span>
-            <span class="p">[</span>
-              <span class="mf">-2.407379150390625</span><span class="p">,</span>
-              <span class="mf">52.36302183361385</span>
-            <span class="p">]</span>
-          <span class="p">]</span>
-        <span class="p">],</span>
-        <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Polygon&quot;</span>
-      <span class="p">},</span>
-      <span class="nt">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Wyre Forest&quot;</span>
-      <span class="p">},</span>
-      <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Feature&quot;</span>
-    <span class="p">}</span>
-  <span class="p">],</span>
-  <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;FeatureCollection&quot;</span>
+<span class="w">  </span><span class="nt">&quot;features&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;geometry&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;coordinates&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">          </span><span class="p">[</span>
+<span class="w">            </span><span class="p">[</span>
+<span class="w">              </span><span class="mf">-2.407379150390625</span><span class="p">,</span>
+<span class="w">              </span><span class="mf">52.36302183361385</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">            </span><span class="p">[</span>
+<span class="w">              </span><span class="mf">-2.3258399963378906</span><span class="p">,</span>
+<span class="w">              </span><span class="mf">52.36302183361385</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">            </span><span class="p">[</span>
+<span class="w">              </span><span class="mf">-2.3258399963378906</span><span class="p">,</span>
+<span class="w">              </span><span class="mf">52.41488029514571</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">            </span><span class="p">[</span>
+<span class="w">              </span><span class="mf">-2.407379150390625</span><span class="p">,</span>
+<span class="w">              </span><span class="mf">52.41488029514571</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">            </span><span class="p">[</span>
+<span class="w">              </span><span class="mf">-2.407379150390625</span><span class="p">,</span>
+<span class="w">              </span><span class="mf">52.36302183361385</span>
+<span class="w">            </span><span class="p">]</span>
+<span class="w">          </span><span class="p">]</span>
+<span class="w">        </span><span class="p">],</span>
+<span class="w">        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Polygon&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Wyre Forest&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Feature&quot;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FeatureCollection&quot;</span>
 <span class="p">}</span>
 </pre></div>
 <p>Or output with formatting removed:</p>
-<div class="highlight"><pre><span></span>jsonformat --squash features.json
+<div class="highlight"><pre><span></span>jsonformat<span class="w"> </span>--squash<span class="w"> </span>features.json
 </pre></div>
-<div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;features&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="nt">&quot;geometry&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;coordinates&quot;</span><span class="p">:</span> <span class="p">[[[</span><span class="mf">-2.407379150390625</span><span class="p">,</span> <span class="mf">52.36302183361385</span><span class="p">],</span> <span class="p">[</span><span class="mf">-2.3258399963378906</span><span class="p">,</span> <span class="mf">52.36302183361385</span><span class="p">],</span> <span class="p">[</span><span class="mf">-2.3258399963378906</span><span class="p">,</span> <span class="mf">52.41488029514571</span><span class="p">],</span> <span class="p">[</span><span class="mf">-2.407379150390625</span><span class="p">,</span> <span class="mf">52.41488029514571</span><span class="p">],</span> <span class="p">[</span><span class="mf">-2.407379150390625</span><span class="p">,</span> <span class="mf">52.36302183361385</span><span class="p">]]],</span> <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Polygon&quot;</span><span class="p">},</span> <span class="nt">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Wyre Forest&quot;</span><span class="p">},</span> <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Feature&quot;</span><span class="p">}],</span> <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;FeatureCollection&quot;</span><span class="p">}</span>
+<div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;features&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="nt">&quot;geometry&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;coordinates&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[[[</span><span class="mf">-2.407379150390625</span><span class="p">,</span><span class="w"> </span><span class="mf">52.36302183361385</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mf">-2.3258399963378906</span><span class="p">,</span><span class="w"> </span><span class="mf">52.36302183361385</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mf">-2.3258399963378906</span><span class="p">,</span><span class="w"> </span><span class="mf">52.41488029514571</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mf">-2.407379150390625</span><span class="p">,</span><span class="w"> </span><span class="mf">52.41488029514571</span><span class="p">],</span><span class="w"> </span><span class="p">[</span><span class="mf">-2.407379150390625</span><span class="p">,</span><span class="w"> </span><span class="mf">52.36302183361385</span><span class="p">]]],</span><span class="w"> </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Polygon&quot;</span><span class="p">},</span><span class="w"> </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Wyre Forest&quot;</span><span class="p">},</span><span class="w"> </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Feature&quot;</span><span class="p">}],</span><span class="w"> </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;FeatureCollection&quot;</span><span class="p">}</span>
 </pre></div>
 <div class="section" id="use-in-vim">
 <h2>Use in Vim</h2>

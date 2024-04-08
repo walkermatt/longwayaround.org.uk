@@ -45,16 +45,16 @@
 </pre></div>
 <p>The main thing to note is that the rows are sorted by the <code>choice2kmrank</code> value to ensure features are rendered in the correct order (a similar problem as described in <a class="reference external" href="http://mapgears.com/en/blog/archive/2013-03-05-roads_network_mapping">Mapping a road network with MapServer - Understanding the display order</a>).</p>
 <p>This SQL results in the following query being executed by MapServer:</p>
-<div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="ss">&quot;choice2kmrank&quot;</span><span class="p">,</span>
-    <span class="ss">&quot;line_width&quot;</span><span class="p">,</span>
-    <span class="n">encode</span><span class="p">(</span><span class="n">ST_AsBinary</span><span class="p">(</span><span class="n">ST_Force_2D</span><span class="p">(</span><span class="ss">&quot;wkb_geometry&quot;</span><span class="p">),</span><span class="s1">&#39;NDR&#39;</span><span class="p">),</span><span class="s1">&#39;hex&#39;</span><span class="p">)</span> <span class="k">AS</span> <span class="n">geom</span><span class="p">,</span>
-    <span class="ss">&quot;fid&quot;</span>
+<div class="highlight"><pre><span></span><span class="k">SELECT</span><span class="w"> </span><span class="ss">&quot;choice2kmrank&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="ss">&quot;line_width&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="n">encode</span><span class="p">(</span><span class="n">ST_AsBinary</span><span class="p">(</span><span class="n">ST_Force_2D</span><span class="p">(</span><span class="ss">&quot;wkb_geometry&quot;</span><span class="p">),</span><span class="s1">&#39;NDR&#39;</span><span class="p">),</span><span class="s1">&#39;hex&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">geom</span><span class="p">,</span>
+<span class="w">    </span><span class="ss">&quot;fid&quot;</span>
 <span class="k">FROM</span>
-<span class="p">(</span><span class="k">SELECT</span> <span class="n">meridian_class_scale</span> <span class="o">*</span> <span class="mi">10</span> <span class="k">AS</span> <span class="n">line_width</span><span class="p">,</span>
-        <span class="o">*</span>
-<span class="k">FROM</span> <span class="n">openmapping</span><span class="p">.</span><span class="n">openmapping_gb_v1</span>
-<span class="k">ORDER</span> <span class="k">BY</span> <span class="n">choice2kmrank</span><span class="p">)</span> <span class="k">AS</span> <span class="n">a</span>
-<span class="k">WHERE</span> <span class="n">wkb_geometry</span> <span class="o">&amp;&amp;</span> <span class="n">ST_GeomFromText</span><span class="p">(</span><span class="s1">&#39;POLYGON((441580.992440577 112973.855285226,441580.992440577 115008.987681971,443621.486046148 115008.987681971,443621.486046148 112973.855285226,441580.992440577 112973.855285226))&#39;</span><span class="p">,</span><span class="mi">27700</span><span class="p">);</span>
+<span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="n">meridian_class_scale</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">line_width</span><span class="p">,</span>
+<span class="w">        </span><span class="o">*</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">openmapping</span><span class="p">.</span><span class="n">openmapping_gb_v1</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">choice2kmrank</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">a</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">wkb_geometry</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">ST_GeomFromText</span><span class="p">(</span><span class="s1">&#39;POLYGON((441580.992440577 112973.855285226,441580.992440577 115008.987681971,443621.486046148 115008.987681971,443621.486046148 112973.855285226,441580.992440577 112973.855285226))&#39;</span><span class="p">,</span><span class="mi">27700</span><span class="p">);</span>
 </pre></div>
 <p>There are two issues with the original query performance-wise:</p>
 <div class="section" id="ordering-too-many-rows">
@@ -73,35 +73,35 @@
 <div class="highlight"><pre><span></span>DATA &quot;wkb_geometry from (select meridian_class_scale * 10 as line_width, * from openmapping.openmapping_gb_v1 where wkb_geometry &amp;&amp; !BOX! order by choice2kmrank) as a using unique fid using srid=27700&quot;
 </pre></div>
 <p>Results in MapServer generating:</p>
-<div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="ss">&quot;choice2kmrank&quot;</span><span class="p">,</span>
-    <span class="ss">&quot;line_width&quot;</span><span class="p">,</span>
-    <span class="n">encode</span><span class="p">(</span><span class="n">ST_AsBinary</span><span class="p">(</span><span class="n">ST_Force_2D</span><span class="p">(</span><span class="ss">&quot;wkb_geometry&quot;</span><span class="p">),</span><span class="s1">&#39;NDR&#39;</span><span class="p">),</span><span class="s1">&#39;hex&#39;</span><span class="p">)</span> <span class="k">AS</span> <span class="n">geom</span><span class="p">,</span>
-    <span class="ss">&quot;fid&quot;</span>
+<div class="highlight"><pre><span></span><span class="k">SELECT</span><span class="w"> </span><span class="ss">&quot;choice2kmrank&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="ss">&quot;line_width&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="n">encode</span><span class="p">(</span><span class="n">ST_AsBinary</span><span class="p">(</span><span class="n">ST_Force_2D</span><span class="p">(</span><span class="ss">&quot;wkb_geometry&quot;</span><span class="p">),</span><span class="s1">&#39;NDR&#39;</span><span class="p">),</span><span class="s1">&#39;hex&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">geom</span><span class="p">,</span>
+<span class="w">    </span><span class="ss">&quot;fid&quot;</span>
 <span class="k">FROM</span>
-<span class="p">(</span><span class="k">SELECT</span> <span class="n">meridian_class_scale</span> <span class="o">*</span> <span class="mi">10</span> <span class="k">AS</span> <span class="n">line_width</span><span class="p">,</span>
-        <span class="o">*</span>
-<span class="k">FROM</span> <span class="n">openmapping</span><span class="p">.</span><span class="n">openmapping_gb_v1</span>
-<span class="k">WHERE</span> <span class="n">wkb_geometry</span> <span class="o">&amp;&amp;</span> <span class="n">ST_GeomFromText</span><span class="p">(</span><span class="s1">&#39;POLYGON((441580.992440577 112973.855285226,441580.992440577 115008.987681971,443621.486046148 115008.987681971,443621.486046148 112973.855285226,441580.992440577 112973.855285226))&#39;</span><span class="p">,</span><span class="mi">27700</span><span class="p">)</span>
-<span class="k">ORDER</span> <span class="k">BY</span> <span class="n">choice2kmrank</span><span class="p">)</span> <span class="k">AS</span> <span class="n">a</span><span class="p">;</span>
+<span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="n">meridian_class_scale</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">line_width</span><span class="p">,</span>
+<span class="w">        </span><span class="o">*</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">openmapping</span><span class="p">.</span><span class="n">openmapping_gb_v1</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">wkb_geometry</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">ST_GeomFromText</span><span class="p">(</span><span class="s1">&#39;POLYGON((441580.992440577 112973.855285226,441580.992440577 115008.987681971,443621.486046148 115008.987681971,443621.486046148 112973.855285226,441580.992440577 112973.855285226))&#39;</span><span class="p">,</span><span class="mi">27700</span><span class="p">)</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">choice2kmrank</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
 </pre></div>
 <p>To improve the likelihood that the spatial index is used, we can use a technique described by <a class="reference external" href="https://gis.stackexchange.com/users/429/john-powell">John Powell</a> in <a class="reference external" href="https://gis.stackexchange.com/a/253987/6004">this gis.stackexchange.com answer</a>, which involves moving the geometry creation to a <a class="reference external" href="https://www.postgresql.org/docs/11/queries-with.html">CTE (Common Table Expression)</a> resulting in the query optimiser having prior knowledge of the geometry which generally results in the spatial index being used.</p>
 <div class="highlight"><pre><span></span>DATA &quot;wkb_geometry from (WITH box (geom) AS (SELECT !BOX! as geom) SELECT fid, wkb_geometry, choice2kmrank, meridian_class_scale * 10 AS line_width FROM openmapping.openmapping_gb_v1, box WHERE wkb_geometry &amp;&amp; box.geom ORDER BY choice2kmrank) as a using unique fid using srid=27700&quot;
 </pre></div>
 <p>Results in MapServer generating:</p>
-<div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="ss">&quot;choice2kmrank&quot;</span><span class="p">,</span>
-    <span class="ss">&quot;line_width&quot;</span><span class="p">,</span>
-    <span class="n">encode</span><span class="p">(</span><span class="n">ST_AsBinary</span><span class="p">(</span><span class="n">ST_Force_2D</span><span class="p">(</span><span class="ss">&quot;wkb_geometry&quot;</span><span class="p">),</span><span class="s1">&#39;NDR&#39;</span><span class="p">),</span><span class="s1">&#39;hex&#39;</span><span class="p">)</span> <span class="k">AS</span> <span class="n">geom</span><span class="p">,</span>
-    <span class="ss">&quot;fid&quot;</span>
-<span class="k">FROM</span> <span class="p">(</span><span class="k">WITH</span> <span class="n">box</span> <span class="p">(</span><span class="n">geom</span><span class="p">)</span> <span class="k">AS</span>
-        <span class="p">(</span><span class="k">SELECT</span> <span class="n">ST_GeomFromText</span><span class="p">(</span><span class="s1">&#39;POLYGON((441580.992440577 112973.855285226,441580.992440577 115008.987681971,443621.486046148 115008.987681971,443621.486046148 112973.855285226,441580.992440577 112973.855285226))&#39;</span><span class="p">,</span><span class="mi">27700</span><span class="p">)</span> <span class="k">AS</span> <span class="n">geom</span><span class="p">)</span>
-    <span class="k">SELECT</span> <span class="n">fid</span><span class="p">,</span>
-            <span class="n">wkb_geometry</span><span class="p">,</span>
-            <span class="n">choice2kmrank</span><span class="p">,</span>
-            <span class="n">meridian_class_scale</span> <span class="o">*</span> <span class="mi">10</span> <span class="k">AS</span> <span class="n">line_width</span>
-    <span class="k">FROM</span> <span class="n">openmapping</span><span class="p">.</span><span class="n">openmapping_gb_v1</span><span class="p">,</span>
-        <span class="n">box</span>
-    <span class="k">WHERE</span> <span class="n">wkb_geometry</span> <span class="o">&amp;&amp;</span> <span class="n">box</span><span class="p">.</span><span class="n">geom</span>
-    <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">choice2kmrank</span><span class="p">)</span> <span class="k">AS</span> <span class="n">a</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><span class="k">SELECT</span><span class="w"> </span><span class="ss">&quot;choice2kmrank&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="ss">&quot;line_width&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="n">encode</span><span class="p">(</span><span class="n">ST_AsBinary</span><span class="p">(</span><span class="n">ST_Force_2D</span><span class="p">(</span><span class="ss">&quot;wkb_geometry&quot;</span><span class="p">),</span><span class="s1">&#39;NDR&#39;</span><span class="p">),</span><span class="s1">&#39;hex&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">geom</span><span class="p">,</span>
+<span class="w">    </span><span class="ss">&quot;fid&quot;</span>
+<span class="k">FROM</span><span class="w"> </span><span class="p">(</span><span class="k">WITH</span><span class="w"> </span><span class="n">box</span><span class="w"> </span><span class="p">(</span><span class="n">geom</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span>
+<span class="w">        </span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="n">ST_GeomFromText</span><span class="p">(</span><span class="s1">&#39;POLYGON((441580.992440577 112973.855285226,441580.992440577 115008.987681971,443621.486046148 115008.987681971,443621.486046148 112973.855285226,441580.992440577 112973.855285226))&#39;</span><span class="p">,</span><span class="mi">27700</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">geom</span><span class="p">)</span>
+<span class="w">    </span><span class="k">SELECT</span><span class="w"> </span><span class="n">fid</span><span class="p">,</span>
+<span class="w">            </span><span class="n">wkb_geometry</span><span class="p">,</span>
+<span class="w">            </span><span class="n">choice2kmrank</span><span class="p">,</span>
+<span class="w">            </span><span class="n">meridian_class_scale</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">line_width</span>
+<span class="w">    </span><span class="k">FROM</span><span class="w"> </span><span class="n">openmapping</span><span class="p">.</span><span class="n">openmapping_gb_v1</span><span class="p">,</span>
+<span class="w">        </span><span class="n">box</span>
+<span class="w">    </span><span class="k">WHERE</span><span class="w"> </span><span class="n">wkb_geometry</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">box</span><span class="p">.</span><span class="n">geom</span>
+<span class="w">    </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">choice2kmrank</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
 </pre></div>
 <p>With this change we're now using the spatial index when applying the spatial filter, then only sorting the filtered rows. In my case the query execution time went from several seconds to less than 500ms with identical results.</p>
 <p>Thanks to <a class="reference external" href="https://twitter.com/devsupportman">Peter Goulborn</a> and <a class="reference external" href="https://twitter.com/ijturton">Ian Turton</a> for their help getting to the final solution.</p>

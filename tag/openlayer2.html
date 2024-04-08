@@ -42,10 +42,10 @@
                     <h1 class="entry-title"><a href="https://longwayaround.org.uk/notes/openlayers-2-custom-build/">OpenLayers 2 Custom Build</a></h1> 
                     <p>A bit of a blast from the past now that OpenLayers 3 has been released but it may be useful for someone who is working on or maintaining an OpenLayer 2 project.</p>
 <p>Create a list of OpenLayers 2 classes used within a code base suitable for including in a <a class="reference external" href="http://docs.openlayers.org/library/deploying.html#custom-build-profiles">custom build profile</a>.</p>
-<div class="highlight"><pre><span></span><span class="nb">cd</span> /path/to/your/js/
-grep --ignore-case --recursive --no-filename --only-matching <span class="s1">&#39;new OpenLayers\.[a-z0-9\.]*&#39;</span> <span class="p">|</span> <span class="se">\</span>
-sed -e <span class="s1">&#39;s/new //&#39;</span> -e <span class="s1">&#39;s/\./\//g&#39;</span> -e <span class="s1">&#39;s/$/\.js/&#39;</span> <span class="p">|</span> <span class="se">\</span>
-sort <span class="p">|</span> <span class="se">\</span>
+<div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>/path/to/your/js/
+grep<span class="w"> </span>--ignore-case<span class="w"> </span>--recursive<span class="w"> </span>--no-filename<span class="w"> </span>--only-matching<span class="w"> </span><span class="s1">&#39;new OpenLayers\.[a-z0-9\.]*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+sed<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;s/new //&#39;</span><span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;s/\./\//g&#39;</span><span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;s/$/\.js/&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
+sort<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="se">\</span>
 uniq
 </pre></div>
 <div class="section" id="explanation">
